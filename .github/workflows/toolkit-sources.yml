@@ -1,0 +1,28 @@
+name: Bundle Codex toolkit sources
+on:
+  push:
+    branches: [chatgpt/toolkit-sources]
+    paths: [.github/workflows/toolkit-sources.yml]
+permissions: {}
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download upstream sources and record revisions
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir sources
+          for repo in openai/skills openai/plugins anthropics/skills vercel-labs/agent-skills supabase/agent-skills composio-community/awesome-codex-skills ComposioHQ/awesome-claude-skills VoltAgent/awesome-agent-skills gmh5225/awesome-skills obra/superpowers openai/codex openai/codex-action; do
+            dest="sources/$repo"
+            mkdir -p "$(dirname "$dest")"
+            git clone --quiet --depth 1 "https://github.com/$repo.git" "$dest"
+            git -C "$dest" rev-parse HEAD | awk -v repo="$repo" '{print $1, repo}' >> sources/REVISIONS.txt
+            rm -rf "$dest/.git"
+          done
+          tar -czf codex-toolkit-sources.tar.gz -C sources .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codex-toolkit-sources
+          path: codex-toolkit-sources.tar.gz
+          retention-days: 14
