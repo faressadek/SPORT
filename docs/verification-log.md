@@ -95,3 +95,7 @@ The bundle added an API, a PostgreSQL schema, a provider/admin portal, Gyms and 
 - Original 62 / 66, fixed **66 / 66**.
 - Fixed: a cancelled facility booking stayed blocked; the facility review dialog was unstyled with no accessible name; the desktop detail layout was misaligned.
 - Covered: home, sports grid, club search, slot hint, facility booking and cancel, pitch listing, review focus and Escape, fixed vs flexible coach, itemized 900 EGP total, "No shared times", padel coach location rule.
+
+## 28 Nov 2026 · ChatGPT · live booking test exit status
+
+Ran the committed Python exit condition with three inputs. All checks passing yielded status 0. A mixture of passing and failing checks yielded status 1. An empty result set also yielded status 1. The full browser and database jobs run in PR #4.
