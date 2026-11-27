@@ -1,0 +1,12 @@
+{
+  "name": "sport-marketplace",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start:api": "node apps/api/src/server.mjs",
+    "test:api": "node --test \"tests/api/*.test.mjs\"",
+    "test:db": "node --test \"tests/db/*.test.mjs\"",
+    "test": "node --test \"tests/api/*.test.mjs\" \"tests/db/*.test.mjs\""
+  }
+}

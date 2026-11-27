@@ -1,341 +1,1049 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Athlete home | SPORT</title>
 <style>
-:root{color-scheme:light;--ink:#142921;--muted:#53685e;--green:#174a37;--dark:#102f24;--paper:#f5f5ee;--white:#fffefa;--line:#d5ddd2;--lime:#ddfa93;font:16px/1.5 'Segoe UI',system-ui,sans-serif}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}h1,h2,p{margin:0}button,select{font:inherit}button,select{min-height:44px}button{cursor:pointer}button:focus-visible,select:focus-visible{outline:3px solid #4b7d45;outline-offset:3px}[hidden]{display:none!important}
-.shell{width:min(1100px,calc(100% - 40px));margin:auto}.top{min-height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-size:1.65rem;letter-spacing:-.09em;font-weight:900;font-style:italic}.mark{color:#448253}.preview{color:var(--muted);font-size:.8rem;font-weight:650}.intro{padding:45px 0 27px}.location{color:var(--green);font-size:.78rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:9px}h1{font-size:clamp(2.6rem,6vw,5.15rem);line-height:.98;letter-spacing:-.085em;font-weight:780}.intro p:last-child{margin-top:13px;color:var(--muted)}
-.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(285px,1fr);gap:24px;align-items:start;padding-bottom:52px}.card{padding:26px;border:1px solid var(--line);border-radius:22px;background:var(--white)}.card h2{font-size:1.35rem;letter-spacing:-.035em;margin-bottom:13px}fieldset{border:0;padding:0;margin:0 0 22px;min-width:0}legend{font-weight:750;margin-bottom:9px}.modes,.times{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.choice{border:1px solid var(--line);border-radius:11px;background:var(--white);color:var(--ink);padding:9px 6px;font-weight:700;font-size:.88rem}.choice[aria-pressed=true]{background:#e9f2dd;border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green)}.choice:hover:not([aria-pressed=true]){background:#f1f4ea}.resources{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:20px}label{display:block;font-weight:700;font-size:.9rem;margin-bottom:6px}select{width:100%;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--white);color:var(--ink)}.day{margin-bottom:13px}.details{color:var(--muted);font-size:.87rem;margin-top:10px}.details:empty{display:none}
-.summary{position:relative;overflow:hidden;background:var(--dark);color:#fafff5;border-radius:22px;padding:26px;min-height:380px}.summary h2{font-size:1.45rem;letter-spacing:-.04em}.mini-court{height:105px;position:relative;background:#24533f;margin:-26px -26px 22px;overflow:hidden}.court-lines{width:185px;height:114px;position:absolute;top:-6px;right:28px;transform:rotate(-20deg);border:2px solid #a9cc92;border-radius:4px;background:linear-gradient(90deg,transparent calc(50% - 1px),#a9cc92 calc(50% - 1px),#a9cc92 calc(50% + 1px),transparent calc(50% + 1px))}.court-lines:before,.court-lines:after{content:'';position:absolute;left:24px;right:24px;height:1px;background:#a9cc92}.court-lines:before{top:32px}.court-lines:after{bottom:32px}.ball{position:absolute;width:20px;height:20px;border-radius:50%;background:var(--lime);right:76px;top:50px;box-shadow:3px 5px 0 #102f2460}.summary p,.summary dl{font-size:.89rem}.meta{color:#c7dfce;margin:5px 0 14px}.price{display:flex;justify-content:space-between;gap:10px;margin:6px 0}.price dd{margin:0;white-space:nowrap}.total{border-top:1px solid #759380;padding-top:11px;margin-top:11px;font-size:1.02rem;font-weight:800}.primary{width:100%;padding:11px;border:0;border-radius:11px;background:var(--lime);color:#193322;font-weight:800;margin-top:12px}.primary:disabled{opacity:.65;cursor:default}.primary:focus-visible{outline-color:#fff}.demo{color:#c7dfce;margin-top:9px}.back{background:none;border:1px solid var(--line);color:var(--green);padding:8px 14px;border-radius:10px;font-weight:700;margin-top:15px}.notice{color:var(--muted);max-width:38ch}.review h2{margin-bottom:8px}.review p+p{margin-top:8px}
-@media(max-width:710px){.shell{width:calc(100% - 28px)}.top{min-height:58px}.intro{padding:30px 0 20px}.layout{grid-template-columns:1fr;gap:12px}.card,.summary{padding:17px;border-radius:16px}.mini-court{margin:-17px -17px 16px;height:76px}.summary{min-height:0}.resources{gap:8px}.court-lines{right:23px;top:-20px}}
-.top nav{display:flex;gap:5px}.top nav a{display:grid;place-items:center;min-height:44px;padding:6px 13px;border-radius:9px;color:var(--ink);font-weight:750;text-decoration:none}.top nav a[aria-current=page]{background:#e9f2dd;color:var(--green)}.top nav a:focus-visible,input:focus-visible{outline:3px solid #4b7d45;outline-offset:3px}.resources{grid-template-columns:1fr}.coach-location{margin-top:9px;color:var(--muted);font-size:.9rem}.venue-options{margin:12px 0 0;padding:12px;border:1px solid var(--line);border-radius:10px}.toggle{display:flex;align-items:center;min-height:44px;gap:9px}.toggle input{width:18px;height:18px;accent-color:var(--green)}#own-location{min-height:44px;width:100%;padding:8px;border:1px solid var(--line);border-radius:10px;font:inherit}.venue-options label[for=own-location]{margin-top:8px}
-@media(max-width:420px){.top{flex-wrap:wrap;gap:5px;padding:5px 0}.top .preview{display:none}}
-.catalog{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.catalog .choice{text-align:left;padding:10px 12px}.catalog strong,.catalog small{display:block}.catalog small{color:var(--muted);font-weight:500;margin-top:2px}.catalog .rate{font-size:.79rem;font-weight:750;margin-top:6px;color:var(--green)}.dates{margin-bottom:11px}.times:empty{display:none}.choice{transition:background-color 150ms,border-color 150ms}@media(prefers-reduced-motion:reduce){.choice{transition:none}}@media(max-width:350px){.catalog{grid-template-columns:1fr}}
-/* The moving navigation indicator adapts Motion Primitives' shared-background pattern.
-   The mobile review surface adapts Vaul's bottom drawer with a native dialog. */
-.top nav{display:grid;grid-template-columns:1fr 1fr;position:relative;padding:4px;gap:0;background:#e6ece3;border-radius:100px;isolation:isolate}.top nav:before{content:'';position:absolute;inset:4px auto 4px 4px;width:calc((100% - 8px)/2);border-radius:100px;background:var(--white);box-shadow:0 1px 3px #15203530;z-index:-1;transition:transform 280ms cubic-bezier(.32,.72,0,1)}.top[data-page=coaches] nav:before{transform:translateX(100%)}.top nav a,.top nav a[aria-current=page]{padding:3px 24px;min-height:44px;border-radius:100px;background:transparent;color:var(--ink)}.intro h1{font-size:clamp(2.4rem,5vw,3.8rem)}
-.layout{grid-template-columns:minmax(0,1fr) minmax(286px,350px);gap:18px}.card,.summary{border-radius:16px}.card{box-shadow:0 10px 28px #15203508}.summary{min-height:0;position:sticky;top:16px}.choice[aria-pressed=true]{background:#edf7e0}.catalog .choice{min-height:82px}.dates .choice{border-radius:100px}.times:not(.dates) .choice{border-radius:8px}
-#checkout,.sheet{border:0;border-radius:20px;padding:25px;color:var(--ink);background:var(--white);width:min(460px,calc(100% - 32px));max-height:85dvh;box-shadow:0 30px 90px #101a3277}#checkout::backdrop,.sheet::backdrop{background:#101a3288;backdrop-filter:blur(3px)}#checkout[open],.sheet[open]{animation:arrive 280ms cubic-bezier(.32,.72,0,1)}#checkout h2,.sheet h2{font-size:1.65rem;letter-spacing:-.045em}.review-total{font-weight:800;margin-top:10px}.review .primary:focus-visible{outline-color:#4b7d45}@keyframes arrive{from{transform:translateY(22px);opacity:0}to{transform:translateY(0);opacity:1}}
-@media(max-width:710px){.top nav a,.top nav a[aria-current=page]{padding-inline:14px}.layout{grid-template-columns:1fr}.summary{position:static}#checkout,.sheet{margin:auto 0 0;width:100%;max-width:none;border-radius:20px 20px 0 0;padding-bottom:max(22px,env(safe-area-inset-bottom))}}
-@media(prefers-reduced-motion:reduce){.top nav:before{transition:none}#checkout[open],.sheet[open]{animation:none}}
+:root{
+  color-scheme:light;
+  --ink:#181b28;--muted:#555c70;--green:#3555bd;--brand:#4265df;--brand-dark:#2949ba;
+  --accent:#ab461e;--teal:#174a37;--paper:#f5f6fa;--white:#ffffff;--line:#dfe2ec;--lime:#ddfa93;
+  font:16px/1.5 'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink)}
+[dir="rtl"] body{font-family:'Segoe UI',Tahoma,'Noto Sans Arabic',system-ui,sans-serif}
+h1,h2,h3,p{margin:0}
+button,select,input,textarea{font:inherit}
+button,select{min-height:44px}
+button{cursor:pointer}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #4265df;outline-offset:3px}
+[hidden]{display:none!important}
 
-.intro{position:relative;isolation:isolate;background:#163e31;color:white;margin:22px 0;padding:clamp(24px,4vw,44px);border-radius:18px;overflow:hidden}
-.intro .location,.intro #page-description{color:#def2df}.intro h1{max-width:75%;font-family:Barlow,'Arial Narrow',system-ui,sans-serif;font-weight:800;font-size:clamp(2.4rem,5vw,4.5rem);letter-spacing:-.065em}
-.intro:after{content:'';position:absolute;z-index:-1;right:-25px;top:12%;height:76%;aspect-ratio:1.55;border:2px solid #8ec09a;transform:rotate(-13deg);background:radial-gradient(circle at 50% 50%,transparent 0 14%,#85b18e 14% 15%,transparent 15.5%),linear-gradient(90deg,transparent 49.6%,#85b18e 49.6% 50.4%,transparent 50.4%),repeating-linear-gradient(90deg,#245442 0 12.5%,#285c47 12.5% 25%);opacity:.75}
-.format{display:flex;align-items:center;gap:12px;margin:12px 0;color:var(--muted)}.format select{width:auto}.history-link{background:none;border:0;color:var(--green);font-weight:700;text-decoration:underline;text-underline-offset:4px}.catalog .rate{display:block;font-size:.9rem}.catalog{grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr))}#saved article{padding:14px 0;border-bottom:1px solid var(--line)}#saved strong{display:block}#history{max-height:80vh;overflow-y:auto}#history h2{margin:0 0 12px}.summary{min-height:0}
-@media(max-width:650px){.intro:after{right:-75px;opacity:.27}.intro h1{max-width:100%}.history-link{font-size:.85rem}.top nav a{padding-inline:8px}.intro{margin:14px 0}.intro #page-description{max-width:27ch}.catalog{grid-template-columns:1fr}.catalog .choice{padding:13px}}
-#discover{padding-bottom:40px}.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;border-bottom:1px solid var(--line);padding:8px 0 20px}.filters select{margin-top:5px}.listing-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.listing{border:1px solid var(--line);background:white;border-radius:15px;overflow:hidden}.listing-body{padding:18px}.listing h2{font-size:1.45rem;letter-spacing:-.045em}.eyeline,.description,#count,.sample{color:var(--muted)}.eyeline{font-size:.85rem;font-weight:650}.description{margin:3px 0 12px}.listing-price{font-size:1.05rem}.quick-times{display:flex;flex-wrap:wrap;gap:5px;margin:14px 0}.quick-times button{min-height:38px;background:#eef6e9;border:1px solid #ccdbc9;color:#193f2a;border-radius:6px;padding:3px 9px;font-weight:650}.open-listing{width:100%;background:#173c2d;color:white;border:0;border-radius:8px;font-weight:700}.field,.coach-art{height:132px;background:#18513b;display:grid;place-items:center}.field.gleem{background:#244d4b}.field.montaza{background:#4c5930}.markings{height:84%;aspect-ratio:1.6;border:1px solid #b2c9a6;position:relative;background:radial-gradient(circle at center,transparent 0 11%,#a4ba99 11% 12%,transparent 12.5%),linear-gradient(90deg,transparent 49.6%,#afbea4 49.6% 50.3%,transparent 50.3%)}.markings i{position:absolute;width:9px;height:9px;border:2px solid #e5f3d2;border-radius:50%;transform:translate(-50%,-50%);background:#d0e88e}.coach-art{background:#263e35;color:#eef5e8;gap:10px;align-content:center}.coach-art span{border:1px solid #a0b0a5;border-radius:50%;padding:8px;font-size:1.4rem}.coach-art b{font-weight:550}#count,.sample{margin:14px 0}.sample{font-size:.85rem}#return-results{margin:0 0 14px}body:has(#discover:not([hidden])) .intro{background:transparent;padding:22px 0 4px;color:var(--ink)}body:has(#discover:not([hidden])) .intro:after{display:none}body:has(#discover:not([hidden])) .intro :is(.location,#page-description){color:var(--muted)}@media(max-width:760px){.listing-grid{grid-template-columns:repeat(auto-fit,minmax(min(245px,100%),1fr))}.filters{gap:8px}.filters select{font-size:.88rem;padding:5px}.intro h1{max-width:100%}}@media(max-width:450px){.filters{grid-template-columns:1fr 1fr}.filters label:last-child{grid-column:1/-1}.field,.coach-art{height:116px}}
-#home,#discover,.intro,.layout,#return-results{max-width:820px;margin-inline:auto}#return-results{display:block;margin-left:max(0px,calc((100% - 820px)/2))}#return-results[hidden]{display:none}#home{padding:16px 0 40px}.brand{text-decoration:none;color:inherit}.at-home .top nav{display:none}:root{--paper:#f5f6fa;--line:#dfe2ec;--ink:#181b28;--muted:#555c70;--green:#3555bd}.welcome{background:#4265df;color:white;border-radius:20px;padding:clamp(22px,5vw,40px)}.welcome h1{font-size:clamp(2rem,6vw,4rem);letter-spacing:-.06em;margin:16px 0}.welcome>b{font-size:.85rem;letter-spacing:.05em}#search-home,.toolbar,.counts,.shortcuts{display:flex;align-items:center;gap:8px}input[type=search]{font:inherit;background:white;border:1px solid var(--line);border-radius:11px;padding:12px;min-width:0;flex:1}#search-home button,.toolbar button,.shortcuts button{border:1px solid var(--line);background:white;color:#253c88;border-radius:10px;font-weight:700;padding:8px 12px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.actions a{display:grid;gap:6px;background:#2949ba;color:white;text-decoration:none;padding:18px;border-radius:14px}.actions a+a{background:#ab461e}.actions span{font-size:1.45rem}.actions strong{font-size:1.2rem}.shortcuts{margin-bottom:24px}.shortcuts button{flex:1}#local-picks{display:flex;gap:10px;overflow:auto;padding:12px 0}#local-picks a{background:white;min-width:155px;flex:1;border-radius:14px;overflow:hidden;color:inherit;text-decoration:none;padding-bottom:12px}#local-picks a :is(strong,small){display:block;margin:3px 12px}#local-picks .field{height:90px}.filters label:last-child{display:none}.filters{grid-template-columns:1fr 1fr}.counts{justify-content:space-between}.counts select{width:auto}#week{display:flex;overflow:auto;gap:6px;margin:14px 0 5px}#week button{flex:1;min-width:44px;padding:8px 3px;background:white;border:1px solid var(--line);border-radius:10px;color:inherit}#week b,#week small{display:block}#week b{font-size:1.16rem}#week [aria-pressed=true],#likes[aria-pressed=true]{background:#4265df;color:white}.listing-grid{display:grid;grid-template-columns:1fr}.listing{display:grid;grid-template-columns:100px 1fr 44px;align-items:center;gap:10px;padding:12px}.listing>.field,.listing>.coach-art{height:82px;border-radius:10px;overflow:hidden}.listing .markings{width:84%;height:auto;aspect-ratio:1.55}.listing .coach-art b{display:none}.listing .listing-body{padding:0}.listing .description{margin:0}.listing h2 button{font-size:1.15rem;min-height:32px;background:none;text-align:left;color:inherit;padding:0}.heart{border:0;background:#f5f6fa;color:#a4284e;font-size:1.4rem;border-radius:50%;align-self:start}.listing .quick-times{grid-column:1/-1;flex-wrap:nowrap;overflow-x:auto;border-top:1px solid var(--line);padding-top:10px;margin:0}.quick-times button{background:white;border-color:var(--line);color:var(--ink);min-width:65px}.toolbar #likes{font-size:1.3rem}@media(max-width:480px){.listing{grid-template-columns:75px 1fr 36px;padding:10px;gap:8px}.listing>.field{height:68px}.listing .description,.listing .listing-price,.listing .eyeline{font-size:.83rem}.toolbar input{width:0}}
-#market{max-width:800px;margin:18px auto 50px}#market h1{font-size:clamp(1.9rem,5vw,3.4rem);letter-spacing:-.055em;margin:14px 0;color:#344fb6}#market h2{font-size:1.16rem;margin:20px 0 10px}#market a{text-decoration:none;color:inherit}.mback{display:inline-flex;align-items:center;min-height:44px;color:#3854ad!important;font-weight:700}.sportgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px}.sportgrid a,.branches a{border:1px solid var(--line);border-radius:14px;padding:16px;background:white}.sportgrid span{display:block;font-size:2rem;margin-bottom:8px}.sporttabs,.mstrip,.branches,.vslots{display:flex;gap:8px;overflow-x:auto;padding:5px 0}.sporttabs a,.vslots a,.mtools button,.mstrip button{padding:10px;border:1px solid var(--line);background:white;border-radius:11px;font-weight:650;white-space:nowrap}.sporttabs [aria-current],.branches [aria-current],.mstrip [aria-pressed=true],.mtools [aria-pressed=true]{background:#e8eefe;color:#254ca9!important;border-color:#4263d5}.mtools{display:flex;gap:8px;margin:12px 0}.mtools input{width:1px}.mstrip button{flex:1;min-width:46px}.mstrip small,.mstrip strong,.branches small{display:block}.branches small{margin-top:4px;color:var(--muted)}.counts{margin:12px 0}.venuecard{position:relative;border:1px solid var(--line);background:white;border-radius:16px;padding:12px;margin-bottom:12px}.venuehead{display:flex;align-items:center;gap:12px;padding-right:36px}.venuehead h2{margin:0 0 4px!important}.venuehead strong,.venuehead small{display:block;font-size:.85rem}.sportart{display:grid;place-items:center;flex:0 0 80px;height:72px;font-size:2rem;border-radius:10px}.venuecard>.heart{position:absolute;right:8px;top:8px}.vslots{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.vslots a{font-size:.88rem}.vbanner{padding:22px;color:white;font-weight:700;border-radius:14px;margin-top:7px}.branches a{min-width:115px}.gridslide{overflow:auto;margin-top:15px}#market table{width:100%;border-spacing:6px}#market td{min-width:108px}#market td button{width:100%;border:1px solid var(--line);background:white;color:#243e86;border-radius:9px;font-weight:700}#market td button:disabled{color:#979ca7;background:#eaecf1;text-decoration:line-through}#market td .hint:enabled{border-color:#4263d5;background:#edf0ff}.in-market .top nav{display:none}#market dialog p{margin:10px 0}#market dialog{padding:25px}#market dialog h2{margin:0 0 6px!important}#market th{padding:8px 0}
+.shell{width:min(1100px,calc(100% - 32px));margin-inline:auto}
+.top{min-height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:8px}
+.brand{font-size:1.65rem;letter-spacing:-.09em;font-weight:900;font-style:italic;text-decoration:none;color:inherit}
+[dir="rtl"] .brand{font-style:normal;letter-spacing:0}
+.top-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.api-badge{font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;background:#eef1f8;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.api-badge i{width:7px;height:7px;border-radius:50%;background:#d97706;display:inline-block}
+.api-badge[data-live="true"] i{background:#16a34a}
+.lang-toggle,.history-link{background:var(--white);border:1px solid var(--line);color:var(--green);font-weight:700;padding:6px 12px;border-radius:10px;min-height:40px}
+.history-link{border:0;background:none;text-decoration:underline;text-underline-offset:4px}
+
+.top nav{display:grid;grid-template-columns:repeat(4,1fr);position:relative;padding:4px;background:#e6ece3;border-radius:100px;isolation:isolate}
+.top nav:before{content:'';position:absolute;inset-block:4px;inset-inline-start:4px;width:calc((100% - 8px)/4);border-radius:100px;background:var(--white);box-shadow:0 1px 3px #15203530;z-index:-1;transition:transform 280ms cubic-bezier(.32,.72,0,1)}
+.top[data-page=courts] nav:before{transform:translateX(0%)}
+.top[data-page=coaches] nav:before{transform:translateX(100%)}
+.top[data-page=gyms] nav:before{transform:translateX(200%)}
+.top[data-page=academies] nav:before{transform:translateX(300%)}
+[dir="rtl"] .top[data-page=coaches] nav:before{transform:translateX(-100%)}
+[dir="rtl"] .top[data-page=gyms] nav:before{transform:translateX(-200%)}
+[dir="rtl"] .top[data-page=academies] nav:before{transform:translateX(-300%)}
+.top nav a{display:grid;place-items:center;min-height:40px;padding:3px 16px;border-radius:100px;color:var(--ink);font-weight:750;text-decoration:none;font-size:.9rem;white-space:nowrap}
+.at-home .top nav,.in-market .top nav{display:none}
+
+#home,#discover,.intro,#market,#gyms-view,#academies-view{max-width:860px;margin-inline:auto}
+#home{padding:16px 0 44px}
+.welcome{background:var(--brand);color:white;border-radius:20px;padding:clamp(22px,5vw,40px)}
+.welcome h1{font-size:clamp(2rem,6vw,3.6rem);letter-spacing:-.05em;margin:12px 0 18px;line-height:1.05}
+.welcome>b{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+#search-home,.toolbar,.counts,.shortcuts{display:flex;align-items:center;gap:8px}
+input[type=search]{font:inherit;background:white;border:1px solid var(--line);border-radius:11px;padding:11px 14px;min-width:0;flex:1;color:var(--ink)}
+#search-home button,.toolbar button,.shortcuts button{border:1px solid var(--line);background:white;color:#253c88;border-radius:10px;font-weight:700;padding:8px 14px}
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:16px 0}
+.actions a{display:grid;gap:4px;background:var(--brand-dark);color:white;text-decoration:none;padding:18px;border-radius:14px}
+.actions a:nth-child(2){background:var(--accent)}
+.actions a:nth-child(3){background:#165b49}
+.actions a:nth-child(4){background:#5a3e8c}
+.actions span{font-size:1.45rem}
+.actions strong{font-size:1.15rem}
+.actions small{opacity:.9;font-size:.86rem}
+.shortcuts{margin-bottom:24px;flex-wrap:wrap}
+.shortcuts button{flex:1;min-width:140px}
+#local-picks{display:flex;gap:10px;overflow:auto;padding:12px 0}
+#local-picks a{background:white;min-width:170px;flex:1;border-radius:14px;overflow:hidden;color:inherit;text-decoration:none;padding-bottom:12px;border:1px solid var(--line)}
+#local-picks a :is(strong,small){display:block;margin:4px 12px}
+#local-picks .field{height:90px}
+
+.intro{padding:24px 0 10px}
+.location{color:var(--green);font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.intro h1{font-size:clamp(2.1rem,5vw,3.4rem);line-height:1.05;letter-spacing:-.05em;font-weight:800}
+.intro p:last-child{margin-top:8px;color:var(--muted)}
+
+#discover,#gyms-view,#academies-view{padding-bottom:48px}
+.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-bottom:1px solid var(--line);padding:12px 0 18px;margin-bottom:10px}
+.filters label{display:block;font-weight:700;font-size:.88rem}
+.filters select{width:100%;margin-top:5px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--white);color:var(--ink)}
+.counts{justify-content:space-between;margin:12px 0}
+.counts select{width:auto;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--white)}
+#count,.sample{color:var(--muted);font-size:.9rem}
+.sample{margin-top:16px;font-size:.83rem}
+
+#week{display:flex;overflow:auto;gap:6px;margin:14px 0 5px}
+#week button{flex:1;min-width:48px;padding:8px 3px;background:white;border:1px solid var(--line);border-radius:10px;color:inherit}
+#week b,#week small{display:block}
+#week b{font-size:1.12rem}
+#week [aria-pressed=true],#likes[aria-pressed=true]{background:var(--brand);color:white;border-color:var(--brand)}
+
+.listing-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.listing{display:grid;grid-template-columns:100px 1fr 44px;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);background:white;border-radius:15px}
+.listing>.field,.listing>.coach-art{height:82px;border-radius:10px;overflow:hidden}
+.field,.coach-art{background:#18513b;display:grid;place-items:center}
+.field.gleem{background:#244d4b}
+.field.montaza{background:#4c5930}
+.markings{width:84%;height:auto;aspect-ratio:1.55;border:1px solid #b2c9a6;position:relative;background:radial-gradient(circle at center,transparent 0 11%,#a4ba99 11% 12%,transparent 12.5%),linear-gradient(90deg,transparent 49.6%,#afbea4 49.6% 50.3%,transparent 50.3%)}
+.markings i{position:absolute;width:8px;height:8px;border:2px solid #e5f3d2;border-radius:50%;transform:translate(-50%,-50%);background:#d0e88e}
+.coach-art{background:#263e35;color:#eef5e8;gap:6px;align-content:center}
+.coach-art span{border:1px solid #a0b0a5;border-radius:50%;padding:8px;font-size:1.25rem}
+.listing h2 button{font-size:1.15rem;min-height:32px;background:none;border:0;text-align:start;color:inherit;padding:0;font-weight:800}
+.eyeline{font-size:.82rem;font-weight:700;color:var(--muted)}
+.description{color:var(--muted);font-size:.9rem;margin:2px 0 6px}
+.listing-price{font-size:1rem;color:var(--ink)}
+.heart{border:0;background:#f5f6fa;color:#a4284e;font-size:1.35rem;border-radius:50%;align-self:start;width:40px;height:40px}
+.listing .quick-times{grid-column:1/-1;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;border-top:1px solid var(--line);padding-top:10px}
+.quick-times button{min-height:38px;background:white;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:4px 10px;font-weight:650;min-width:66px}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,350px);gap:18px;align-items:start;padding-bottom:52px;max-width:860px;margin-inline:auto}
+.card{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--white);box-shadow:0 10px 28px #15203508}
+fieldset{border:0;padding:0;margin:0 0 18px;min-width:0}
+legend{font-weight:750;margin-bottom:9px}
+.times{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.dates{margin-bottom:11px}
+.choice{border:1px solid var(--line);border-radius:10px;background:var(--white);color:var(--ink);padding:9px 8px;font-weight:700;font-size:.88rem}
+.dates .choice{border-radius:100px}
+.choice[aria-pressed=true]{background:#edf7e0;border-color:var(--teal);box-shadow:inset 0 0 0 1px var(--teal)}
+.catalog{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:9px;margin-top:8px}
+.catalog .choice{text-align:start;padding:11px 12px;min-height:82px}
+.catalog strong,.catalog small{display:block}
+.catalog small{color:var(--muted);font-weight:500;margin-top:2px}
+.catalog .rate{display:block;font-size:.85rem;font-weight:750;margin-top:6px;color:var(--teal)}
+.coach-location{margin-top:9px;color:var(--muted);font-size:.9rem}
+.venue-options{margin:12px 0 0;padding:12px;border:1px solid var(--line);border-radius:10px}
+.toggle{display:flex;align-items:center;min-height:40px;gap:9px;font-weight:700}
+.toggle input{width:18px;height:18px;accent-color:var(--teal)}
+#own-location{min-height:44px;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-top:6px}
+.format{display:flex;align-items:center;gap:10px;margin:10px 0;color:var(--muted);font-weight:650}
+.format select{padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--white)}
+.details{color:var(--muted);font-size:.87rem;margin-top:10px}
+
+.summary{position:sticky;top:16px;background:#102f24;color:#fafff5;border-radius:16px;padding:24px}
+.summary h2{font-size:1.4rem;letter-spacing:-.03em}
+.meta{color:#c7dfce;margin:6px 0 14px;font-size:.9rem}
+.summary dl{font-size:.9rem}
+.price{display:flex;justify-content:space-between;gap:10px;margin:6px 0}
+.price dd{margin:0;white-space:nowrap}
+.total{border-top:1px solid #759380;padding-top:11px;margin-top:11px;font-size:1.05rem;font-weight:800}
+.primary{width:100%;padding:11px 16px;border:0;border-radius:11px;background:var(--lime);color:#193322;font-weight:800;margin-top:12px}
+.primary:disabled{opacity:.6;cursor:default}
+.demo{color:#c7dfce;margin-top:9px;font-size:.82rem}
+.back{background:var(--white);border:1px solid var(--line);color:var(--green);padding:8px 14px;border-radius:10px;font-weight:700;margin-top:12px}
+#return-results{max-width:860px;margin:0 auto 14px;display:block}
+
+#market{max-width:860px;margin:18px auto 50px}
+#market h1{font-size:clamp(1.9rem,5vw,3.2rem);letter-spacing:-.05em;margin:14px 0;color:#344fb6}
+#market h2{font-size:1.15rem;margin:20px 0 10px}
+#market a{text-decoration:none;color:inherit}
+.mback{display:inline-flex;align-items:center;min-height:44px;color:#3854ad!important;font-weight:700}
+.sportgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.sportgrid a,.branches a{border:1px solid var(--line);border-radius:14px;padding:16px;background:white}
+.sportgrid span{display:block;font-size:2rem;margin-bottom:8px}
+.sporttabs,.mstrip,.branches,.vslots{display:flex;gap:8px;overflow-x:auto;padding:5px 0}
+.sporttabs a,.vslots a,.mtools button,.mstrip button{padding:10px 12px;border:1px solid var(--line);background:white;border-radius:11px;font-weight:650;white-space:nowrap}
+.sporttabs [aria-current],.branches [aria-current],.mstrip [aria-pressed=true],.mtools [aria-pressed=true]{background:#e8eefe;color:#254ca9!important;border-color:#4263d5}
+.mtools{display:flex;gap:8px;margin:12px 0}
+.mstrip button{flex:1;min-width:48px}
+.mstrip small,.mstrip strong,.branches small{display:block}
+.branches small{margin-top:4px;color:var(--muted)}
+.venuecard{position:relative;border:1px solid var(--line);background:white;border-radius:16px;padding:14px;margin-bottom:12px}
+.venuehead{display:flex;align-items:center;gap:12px;padding-inline-end:42px}
+.venuehead h2{margin:0 0 4px!important}
+.venuehead strong,.venuehead small{display:block;font-size:.86rem}
+.sportart{display:grid;place-items:center;flex:0 0 76px;height:72px;font-size:2rem;border-radius:10px;color:white}
+.venuecard>.heart{position:absolute;inset-inline-end:10px;top:10px}
+.vslots{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
+.vslots a{font-size:.88rem}
+.vbanner{padding:22px;color:white;font-weight:700;border-radius:14px;margin-top:7px}
+.branches a{min-width:120px}
+.gridslide{overflow:auto;margin-top:15px}
+#market table{width:100%;border-spacing:6px}
+#market td{min-width:106px}
+#market td button{width:100%;border:1px solid var(--line);background:white;color:#243e86;border-radius:9px;font-weight:700}
+#market td button:disabled{color:#979ca7;background:#eaecf1;text-decoration:line-through}
+#market td .hint:enabled{border-color:#4263d5;background:#edf0ff}
+#market th{padding:8px 0}
+
+.directory-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr));gap:14px;margin-top:12px}
+.dir-card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px}
+.dir-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.dir-badge{display:inline-block;font-size:.76rem;font-weight:750;padding:3px 9px;border-radius:999px;background:#eef2ff;color:var(--green)}
+.dir-card h2{font-size:1.25rem;letter-spacing:-.03em;margin-top:4px}
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{font-size:.78rem;padding:3px 8px;border-radius:6px;background:#f2f4f8;color:var(--ink);font-weight:600}
+.price-strip{border-top:1px solid var(--line);padding-top:10px;display:flex;justify-content:space-between;align-items:baseline}
+.price-strip strong{font-size:1.15rem;color:var(--teal)}
+.card-actions{display:flex;gap:8px;margin-top:6px}
+.card-actions button{flex:1;padding:9px 12px;border-radius:10px;font-weight:700;font-size:.88rem;border:1px solid var(--line);background:var(--white);color:var(--ink)}
+.card-actions button.cta{background:var(--brand);color:white;border-color:var(--brand)}
+.card-actions button[aria-pressed="true"]{background:#e8eefe;border-color:var(--brand);color:var(--brand-dark)}
+
+.compare-bar{position:sticky;bottom:14px;background:#181b28;color:white;padding:12px 18px;border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;box-shadow:0 12px 32px #00000033;z-index:10}
+.compare-bar button{background:var(--lime);color:#142921;border:0;padding:8px 16px;border-radius:9px;font-weight:800}
+.compare-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.9rem}
+.compare-table th,.compare-table td{border:1px solid var(--line);padding:10px;text-align:start;vertical-align:top}
+.compare-table th{background:#f5f6fa;font-weight:750;width:28%}
+
+dialog{border:0;border-radius:20px;padding:24px;color:var(--ink);background:var(--white);width:min(540px,calc(100% - 28px));max-height:86dvh;overflow-y:auto;box-shadow:0 30px 90px #101a3277}
+dialog::backdrop{background:#101a3288;backdrop-filter:blur(3px)}
+dialog h2{font-size:1.5rem;letter-spacing:-.04em;margin-bottom:8px}
+.review-total{font-weight:800;margin-top:10px}
+.notice{color:var(--muted);margin-top:6px}
+.form-stack{display:grid;gap:12px;margin-top:14px}
+.form-stack label{display:grid;gap:4px;font-weight:700;font-size:.88rem}
+.form-stack input,.form-stack select,.form-stack textarea{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--white);color:var(--ink)}
+.dialog-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.dialog-actions button{flex:1}
+#saved article{padding:14px 0;border-bottom:1px solid var(--line)}
+#saved strong{display:block}
+@media(max-width:710px){
+  .layout{grid-template-columns:1fr}
+  .summary{position:static}
+  .actions{grid-template-columns:1fr}
+  .filters{grid-template-columns:1fr 1fr}
+  .top nav a{padding-inline:8px;font-size:.82rem}
+  dialog{margin:auto 0 0;width:100%;max-width:none;border-radius:20px 20px 0 0;padding-bottom:max(22px,env(safe-area-inset-bottom))}
+}
 </style>
 </head>
 <body>
-<header class="shell top"><a class="brand" href="#/home" aria-label="SPORT home">SPORT.</a><nav aria-label="Booking pages"><a href="#/sports" id="courts-link">Facilities</a><a href="#/coaches" id="coaches-link">Coaches</a></nav><button class="history-link" id="history-link">My bookings</button></header>
-<main class="shell"><section id="market" hidden></section>
-  <section id="home" hidden><div class="welcome"><b>ALEXANDRIA</b><h1>Hey, Marwan 👋</h1><form id="search-home"><input id="home-text" type="search" placeholder="Search a venue or neighborhood" aria-label="Search a venue or neighborhood"><button>Search</button></form></div><div class="actions"><a href="#/sports"><span>▦</span><strong>Book a court</strong><small>Choose a sport and venue</small></a><a href="#/coaches"><span>◎</span><strong>Find a coach</strong><small>Choose a sport and training session</small></a></div><div class="shortcuts"><button id="booked">My bookings</button><button id="liked">Saved football pitches</button></div><h2>Football pitches in Alexandria</h2><div id="local-picks"></div></section><div class="intro"><p class="location">Alexandria</p><h1 id="page-title" tabindex="-1">Book a football pitch.</h1><p id="page-description">Choose a pitch and find an hour to play.</p></div>
+<header class="shell top" data-page="courts">
+  <a class="brand" href="#/home" aria-label="SPORT home">SPORT.</a>
+  <nav aria-label="Marketplace sections">
+    <a href="#/sports" id="courts-link" data-i18n="nav_courts">Courts</a>
+    <a href="#/coaches" id="coaches-link" data-i18n="nav_coaches">Coaches</a>
+    <a href="#/gyms" id="gyms-link" data-i18n="nav_gyms">Gyms</a>
+    <a href="#/academies" id="academies-link" data-i18n="nav_academies">Academies</a>
+  </nav>
+  <div class="top-controls">
+    <span class="api-badge" id="api-status" data-live="false"><i></i><span id="api-status-text">Demo mode</span></span>
+    <button type="button" class="lang-toggle" id="lang-toggle">عربي</button>
+    <button type="button" class="history-link" id="history-link" data-i18n="my_bookings">My bookings</button>
+  </div>
+</header>
+
+<main class="shell">
+  <section id="market" hidden></section>
+  <section id="home" hidden>
+    <div class="welcome">
+      <b data-i18n="city_alex">ALEXANDRIA</b>
+      <h1 data-i18n="welcome_user">Hey, Marwan 👋</h1>
+      <form id="search-home">
+        <input id="home-text" type="search" data-i18n-placeholder="search_home_ph" placeholder="Search a venue, gym, academy, or neighborhood">
+        <button type="submit" data-i18n="btn_search">Search</button>
+      </form>
+    </div>
+    <div class="actions">
+      <a href="#/sports"><span>▦</span><strong data-i18n="act_court_t">Book a court</strong><small data-i18n="act_court_d">Padel, football, tennis & more</small></a>
+      <a href="#/coaches"><span>◎</span><strong data-i18n="act_coach_t">Find a coach</strong><small data-i18n="act_coach_d">Private or group training sessions</small></a>
+      <a href="#/gyms"><span>◈</span><strong data-i18n="act_gym_t">Compare gyms</strong><small data-i18n="act_gym_d">Memberships, facilities & free trials</small></a>
+      <a href="#/academies"><span>★</span><strong data-i18n="act_acad_t">Join an academy</strong><small data-i18n="act_acad_d">Youth & adult programs by age & level</small></a>
+    </div>
+    <div class="shortcuts">
+      <button type="button" id="booked" data-i18n="my_bookings">My bookings</button>
+      <button type="button" id="liked" data-i18n="saved_pitches">Saved listings</button>
+    </div>
+    <h2 data-i18n="featured_courts">Featured courts & pitches in Alexandria</h2>
+    <div id="local-picks"></div>
+  </section>
+
+  <div class="intro">
+    <p class="location" data-i18n="city_alex">Alexandria</p>
+    <h1 id="page-title" tabindex="-1">Book a court.</h1>
+    <p id="page-description">Choose a court and find an hour to play.</p>
+  </div>
+
   <section id="discover" aria-label="Booking results">
-<a id="coach-sports" class="mback" href="#/coaches" hidden>‹ Sports</a>
-<div class="toolbar"><input id="search" type="search" placeholder="Search name or area" aria-label="Search name or area"><button id="likes" aria-label="Show saved listings" aria-pressed="false">♡</button><button id="refine" aria-expanded="false">Filters</button></div><div class="filters" hidden><label id="area-label">Neighborhood<select id="area"><option value="">All Alexandria</option><option>Smouha</option><option>Gleem</option><option>Montaza</option></select></label><label id="type-label"><span id="type-title">Match format</span><select id="kind"></select></label><label>Playing date<select id="browse-date"></select></label></div>
-<div id="week" aria-label="Playing date"></div><div class="counts"><p id="count" aria-live="polite"></p><select id="sort" aria-label="Sort listings"><option value="">Recommended</option><option value="price">Lowest price</option><option value="early">Earliest time</option></select></div><div class="listing-grid" id="listings"></div><p class="sample">Demo listings · Prices in EGP · Alexandria local time</p></section>
-<button id="return-results" class="back" hidden>Back to results</button><div class="layout" hidden>
-    <section class="card" aria-label="Session choices">
+    <a id="coach-sports" class="mback" href="#/coaches" hidden data-i18n="back_sports">‹ Sports</a>
+    <div class="toolbar">
+      <input id="search" type="search" data-i18n-placeholder="search_area_ph" placeholder="Search name or area">
+      <button type="button" id="likes" aria-pressed="false">♡</button>
+      <button type="button" id="refine" aria-expanded="false" data-i18n="btn_filters">Filters</button>
+    </div>
+    <div class="filters" hidden>
+      <label id="area-label"><span data-i18n="lbl_neighborhood">Neighborhood</span>
+        <select id="area">
+          <option value="" data-i18n="opt_all_alex">All Alexandria</option>
+          <option value="Smouha">Smouha</option>
+          <option value="Gleem">Gleem</option>
+          <option value="Montaza">Montaza</option>
+        </select>
+      </label>
+      <label id="type-label"><span id="type-title">Match format</span><select id="kind"></select></label>
+      <label><span data-i18n="lbl_playing_date">Playing date</span><select id="browse-date"></select></label>
+    </div>
+    <div id="week"></div>
+    <div class="counts">
+      <p id="count" aria-live="polite"></p>
+      <select id="sort">
+        <option value="" data-i18n="sort_rec">Recommended</option>
+        <option value="price" data-i18n="sort_price">Lowest price</option>
+        <option value="early" data-i18n="sort_early">Earliest time</option>
+      </select>
+    </div>
+    <div class="listing-grid" id="listings"></div>
+    <p class="sample" data-i18n="sample_note">Demo listings · Prices in EGP · Alexandria local time</p>
+  </section>
+
+  <section id="gyms-view" hidden>
+    <div class="toolbar">
+      <input id="gym-search" type="search" data-i18n-placeholder="gym_search_ph" placeholder="Search gym name, neighborhood, or facility">
+      <select id="gym-sort">
+        <option value="rec" data-i18n="sort_rec">Recommended</option>
+        <option value="price" data-i18n="sort_price">Lowest price</option>
+      </select>
+    </div>
+    <div class="filters">
+      <label><span data-i18n="lbl_neighborhood">Neighborhood</span>
+        <select id="gym-area">
+          <option value="" data-i18n="opt_all_alex">All Alexandria</option>
+          <option value="Smouha">Smouha</option>
+          <option value="Gleem">Gleem</option>
+          <option value="Sporting">Sporting</option>
+          <option value="Roushdy">Roushdy</option>
+          <option value="Montaza">Montaza</option>
+        </select>
+      </label>
+      <label><span data-i18n="lbl_billing">Billing period</span>
+        <select id="gym-billing">
+          <option value="" data-i18n="opt_all_periods">All periods</option>
+          <option value="Monthly" data-i18n="bill_monthly">Monthly</option>
+          <option value="Quarterly" data-i18n="bill_quarterly">Quarterly</option>
+          <option value="Annual" data-i18n="bill_annual">Annual</option>
+        </select>
+      </label>
+      <label><span data-i18n="lbl_facility">Facility</span>
+        <select id="gym-facility">
+          <option value="" data-i18n="opt_all_facilities">All facilities</option>
+          <option value="Pool">Pool</option>
+          <option value="Sauna">Sauna</option>
+          <option value="Padel Access">Padel Access</option>
+          <option value="Women-Only Hours">Women-Only Hours</option>
+          <option value="CrossFit Zone">CrossFit Zone</option>
+        </select>
+      </label>
+    </div>
+    <p id="gym-count" class="eyeline" aria-live="polite"></p>
+    <div class="directory-grid" id="gym-list"></div>
+    <div class="compare-bar" id="gym-compare-bar" hidden>
+      <span id="gym-compare-label">0 gyms selected</span>
+      <div style="display:flex;gap:8px">
+        <button type="button" id="gym-clear-compare" style="background:transparent;color:white;border:1px solid #ffffff55" data-i18n="btn_clear">Clear</button>
+        <button type="button" id="gym-open-compare" data-i18n="btn_compare_now">Compare side-by-side</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="academies-view" hidden>
+    <div class="toolbar">
+      <input id="acad-search" type="search" data-i18n-placeholder="acad_search_ph" placeholder="Search academy, sport, or neighborhood">
+    </div>
+    <div class="filters" style="grid-template-columns:repeat(4,1fr)">
+      <label><span data-i18n="lbl_sport">Sport</span>
+        <select id="acad-sport">
+          <option value="" data-i18n="opt_all_sports">All sports</option>
+          <option value="Padel">Padel</option>
+          <option value="Football">Football</option>
+          <option value="Tennis">Tennis</option>
+          <option value="Squash">Squash</option>
+          <option value="Basketball">Basketball</option>
+        </select>
+      </label>
+      <label><span data-i18n="lbl_neighborhood">Neighborhood</span>
+        <select id="acad-area">
+          <option value="" data-i18n="opt_all_alex">All Alexandria</option>
+          <option value="Smouha">Smouha</option>
+          <option value="Gleem">Gleem</option>
+          <option value="Montaza">Montaza</option>
+          <option value="Sporting">Sporting</option>
+        </select>
+      </label>
+      <label><span data-i18n="lbl_age_group">Age group</span>
+        <select id="acad-age">
+          <option value="" data-i18n="opt_all_ages">All ages</option>
+          <option value="U8 (5–8 yrs)">U8 (5–8 yrs)</option>
+          <option value="U12 (9–12 yrs)">U12 (9–12 yrs)</option>
+          <option value="U16 (13–16 yrs)">U16 (13–16 yrs)</option>
+          <option value="Adults (17+)">Adults (17+)</option>
+        </select>
+      </label>
+      <label><span data-i18n="lbl_skill">Skill level</span>
+        <select id="acad-level">
+          <option value="" data-i18n="opt_all_levels">All levels</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Competitive">Competitive</option>
+        </select>
+      </label>
+    </div>
+    <p id="acad-count" class="eyeline" aria-live="polite"></p>
+    <div class="directory-grid" id="acad-list"></div>
+  </section>
+
+  <button type="button" id="return-results" class="back" hidden data-i18n="back_results">Back to results</button>
+  <div class="layout" hidden>
+    <section class="card">
       <div id="pick">
-        <div class="resources"><div id="coach-field" hidden><p id="coach-label"><strong>Choose a coach</strong></p><div class="catalog" id="coach" role="group" aria-labelledby="coach-label"></div><p class="coach-location" id="coach-location" aria-live="polite"></p><div class="venue-options" id="venue-options" hidden><label class="toggle"><input type="checkbox" id="add-court">Add a pitch to this session</label><div id="own-location-field"><label for="own-location">Training location you arranged</label><input id="own-location" maxlength="120" placeholder="Enter a venue or location"></div></div></div><div id="court-field"><p id="court-label"><strong>Choose a pitch</strong></p><label class="format">Match format <select id="format"><option value="">All formats</option><option>5-a-side</option><option>7-a-side</option><option>11-a-side</option></select></label><div class="catalog" id="court" role="group" aria-labelledby="court-label"></div></div></div>
-        <fieldset><legend>Choose a date and time</legend><div class="times dates" id="day" role="group" aria-label="Dates"></div><div class="times" id="times" role="group" aria-label="Available times"></div><p class="details" id="availability-note" aria-live="polite"></p></fieldset>
+        <div class="resources">
+          <div id="coach-field" hidden>
+            <p id="coach-label"><strong data-i18n="choose_coach">Choose a coach</strong></p>
+            <div class="catalog" id="coach" role="group"></div>
+            <p class="coach-location" id="coach-location" aria-live="polite"></p>
+            <div class="venue-options" id="venue-options" hidden>
+              <label class="toggle"><input type="checkbox" id="add-court"><span data-i18n="add_court_addon">Add a court/pitch to this session</span></label>
+              <div id="own-location-field">
+                <label for="own-location" data-i18n="arranged_loc_lbl">Training location you arranged</label>
+                <input id="own-location" maxlength="120" data-i18n-placeholder="arranged_loc_ph" placeholder="Enter a venue or location">
+              </div>
+            </div>
+          </div>
+          <div id="court-field">
+            <p id="court-label"><strong data-i18n="choose_court">Choose a court / pitch</strong></p>
+            <label class="format"><span data-i18n="match_format">Match format</span>
+              <select id="format">
+                <option value="" data-i18n="all_formats">All formats</option>
+                <option value="5-a-side">5-a-side</option>
+                <option value="7-a-side">7-a-side</option>
+                <option value="11-a-side">11-a-side</option>
+              </select>
+            </label>
+            <div class="catalog" id="court" role="group"></div>
+          </div>
+        </div>
+        <fieldset>
+          <legend data-i18n="choose_datetime">Choose a date and time</legend>
+          <div class="times dates" id="day" role="group"></div>
+          <div class="times" id="times" role="group"></div>
+          <p class="details" id="availability-note" aria-live="polite"></p>
+        </fieldset>
       </div>
     </section>
-    <aside class="summary" aria-labelledby="summary-title"><h2 id="summary-title">Your session</h2><p class="meta" id="summary-time" aria-live="polite"></p><dl id="prices"></dl><button class="primary" id="next" type="button">Review booking</button><p class="demo">Sample pitches, schedules and prices · Times in Cairo</p></aside>
+    <aside class="summary">
+      <h2 id="summary-title" data-i18n="your_session">Your session</h2>
+      <p class="meta" id="summary-time" aria-live="polite"></p>
+      <dl id="prices"></dl>
+      <button class="primary" id="next" type="button" data-i18n="review_booking">Review booking</button>
+      <p class="demo" data-i18n="summary_note">5-minute hold on confirmation · Times in Cairo</p>
+    </aside>
   </div>
-  <dialog id="checkout" aria-labelledby="checkout-title">
-    <section class="review" id="review"><h2 tabindex="-1" id="checkout-title">Review your session</h2><p class="notice" id="review-details"></p><p class="review-total" id="review-total"></p><button class="primary" id="confirm" type="button">Confirm demo booking</button><button class="back" id="edit" type="button">Edit selection</button></section>
-    <section class="review" id="done" hidden><h2 tabindex="-1" id="done-title">Demo booking confirmed</h2><p class="notice" id="confirmation"></p><p class="notice">No payment was taken.</p><button class="back" id="again" type="button">Book another session</button></section>
+
+  <dialog id="checkout">
+    <section class="review" id="review">
+      <h2 tabindex="-1" id="checkout-title" data-i18n="review_session">Review your session</h2>
+      <p class="notice" id="review-details"></p>
+      <p class="review-total" id="review-total"></p>
+      <button class="primary" id="confirm" type="button" data-i18n="confirm_booking">Confirm booking</button>
+      <button class="back" id="edit" type="button" data-i18n="edit_selection">Edit selection</button>
+    </section>
+    <section class="review" id="done" hidden>
+      <h2 tabindex="-1" id="done-title" data-i18n="booking_confirmed">Booking confirmed</h2>
+      <p class="notice" id="confirmation"></p>
+      <p class="notice" id="hold-ref"></p>
+      <button class="back" id="again" type="button" data-i18n="book_another">Book another session</button>
+    </section>
   </dialog>
-<dialog id="history" aria-labelledby="history-heading"><h2 id="history-heading">My bookings</h2><div id="saved"></div><button class="back" id="close-history">Close</button></dialog></main>
+
+  <dialog id="compare-dialog">
+    <h2 id="compare-title" data-i18n="compare_gyms_title">Compare Gyms</h2>
+    <div id="compare-body" style="overflow-x:auto"></div>
+    <button type="button" class="back" id="close-compare" data-i18n="btn_close">Close</button>
+  </dialog>
+
+  <dialog id="enquiry-dialog">
+    <div id="enquiry-form-wrap">
+      <h2 id="enquiry-title">Send enquiry</h2>
+      <p class="notice" id="enquiry-subtitle"></p>
+      <form id="enquiry-form" class="form-stack">
+        <label><span data-i18n="enq_name">Full name</span><input id="enq-name" required value="Marwan"></label>
+        <label><span data-i18n="enq_phone">Mobile number (WhatsApp)</span><input id="enq-phone" type="tel" required placeholder="+20 100 000 0000"></label>
+        <label id="enq-participant-wrap" hidden><span data-i18n="enq_age">Participant age & experience</span><input id="enq-participant" placeholder="e.g., 11 yrs · Beginner"></label>
+        <label><span data-i18n="enq_notes">Preferred start date or questions</span><textarea id="enq-notes" rows="3"></textarea></label>
+        <div class="dialog-actions">
+          <button type="submit" class="primary" style="margin-top:0" data-i18n="enq_submit">Send direct enquiry</button>
+          <button type="button" class="back" style="margin-top:0" id="close-enquiry" data-i18n="btn_cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+    <div id="enquiry-done" hidden>
+      <h2 data-i18n="enq_sent_title">Enquiry sent</h2>
+      <p class="notice" id="enquiry-confirm-text"></p>
+      <button type="button" class="primary" id="done-enquiry" data-i18n="btn_done">Done</button>
+    </div>
+  </dialog>
+
+  <dialog id="history">
+    <h2 id="history-heading" data-i18n="my_bookings">My bookings & enquiries</h2>
+    <div id="saved"></div>
+    <button type="button" class="back" id="close-history" data-i18n="btn_close">Close</button>
+  </dialog>
+</main>
+
 <script>
-const coaches={nour:{name:'Nour Amin',price:350,location:'Smouha training ground',hours:[9,11,16,18]},omar:{name:'Omar Adel',price:400,location:null,hours:[10,11,17,18]}};
-const courts={
- smouha:{name:'North Pitch',area:'Smouha',format:'5-a-side',surface:'Artificial turf',price:500,hours:[9,10,11,18]},
- gleem:{name:'Seafront Pitch',area:'Gleem',format:'7-a-side',surface:'Artificial turf',price:700,hours:[10,11,16,17]},
- montaza:{name:'East Ground',area:'Montaza',format:'11-a-side',surface:'Natural grass',price:1100,hours:[9,12,15,20]}
+let lang = localStorage.getItem('sport.lang') || 'en';
+const I18N = {
+  en: {
+    nav_courts:'Courts', nav_coaches:'Coaches', nav_gyms:'Gyms', nav_academies:'Academies',
+    my_bookings:'My bookings', city_alex:'ALEXANDRIA', welcome_user:'Hey, Marwan 👋',
+    search_home_ph:'Search a venue, gym, academy, or neighborhood', btn_search:'Search',
+    act_court_t:'Book a court', act_court_d:'Padel, football, tennis & more',
+    act_coach_t:'Find a coach', act_coach_d:'Private or group training sessions',
+    act_gym_t:'Compare gyms', act_gym_d:'Memberships, facilities & free trials',
+    act_acad_t:'Join an academy', act_acad_d:'Youth & adult programs by age & level',
+    saved_pitches:'Saved listings', featured_courts:'Featured courts & pitches in Alexandria',
+    back_sports:'‹ Sports', search_area_ph:'Search name or area', btn_filters:'Filters',
+    lbl_neighborhood:'Neighborhood', opt_all_alex:'All Alexandria', lbl_playing_date:'Playing date',
+    sort_rec:'Recommended', sort_price:'Lowest price', sort_early:'Earliest time',
+    sample_note:'Demo listings · Prices in EGP · Alexandria local time',
+    gym_search_ph:'Search gym name, neighborhood, or facility',
+    lbl_billing:'Billing period', opt_all_periods:'All periods',
+    bill_monthly:'Monthly', bill_quarterly:'Quarterly', bill_annual:'Annual',
+    lbl_facility:'Facility', opt_all_facilities:'All facilities',
+    btn_clear:'Clear', btn_compare_now:'Compare side-by-side',
+    acad_search_ph:'Search academy, sport, or neighborhood',
+    lbl_sport:'Sport', opt_all_sports:'All sports',
+    lbl_age_group:'Age group', opt_all_ages:'All ages',
+    lbl_skill:'Skill level', opt_all_levels:'All levels',
+    back_results:'Back to results', choose_coach:'Choose a coach',
+    add_court_addon:'Add a court/pitch to this session',
+    arranged_loc_lbl:'Training location you arranged', arranged_loc_ph:'Enter a venue or location',
+    choose_court:'Choose a court / pitch', match_format:'Match format', all_formats:'All formats',
+    choose_datetime:'Choose a date and time', your_session:'Your session',
+    review_booking:'Review booking', summary_note:'5-minute hold on confirmation · Times in Cairo',
+    review_session:'Review your session', confirm_booking:'Confirm booking', edit_selection:'Edit selection',
+    booking_confirmed:'Booking confirmed', book_another:'Book another session',
+    compare_gyms_title:'Compare Gyms', btn_close:'Close', btn_cancel:'Cancel', btn_done:'Done',
+    enq_name:'Full name', enq_phone:'Mobile number (WhatsApp)', enq_age:'Participant age & experience',
+    enq_notes:'Preferred start date or questions', enq_submit:'Send direct enquiry',
+    enq_sent_title:'Enquiry sent', live_api:'API Connected', demo_mode:'Demo mode',
+    gyms_title:'Compare gyms in Alexandria.', gyms_desc:'Filter by membership period, facilities, and request a trial or callback.',
+    acad_title:'Sports academies & programs.', acad_desc:'Discover structured training by sport, age group, and skill level.',
+    btn_enquire:'Enquire / Free Trial', btn_compare_add:'+ Compare', btn_compare_added:'✓ Selected'
+  },
+  ar: {
+    nav_courts:'الملاعب', nav_coaches:'المدربون', nav_gyms:'الجيم', nav_academies:'الأكاديميات',
+    my_bookings:'حجوزاتي', city_alex:'الإسكندرية', welcome_user:'أهلاً يا مروان 👋',
+    search_home_ph:'ابحث عن ملعب، جيم، أكاديمية، أو منطقة', btn_search:'بحث',
+    act_court_t:'احجز ملعب', act_court_d:'بادل، كرة قدم، تنس والمزيد',
+    act_coach_t:'ابحث عن مدرب', act_coach_d:'حصص تدريب فردية أو جماعية',
+    act_gym_t:'قارن بين الجيم', act_gym_d:'الاشتراكات، المرافق وحصص التجربة',
+    act_acad_t:'انضم لأكاديمية', act_acad_d:'برامج للناشئين والكبار حسب العمر والمستوى',
+    saved_pitches:'المفضلة', featured_courts:'ملاعب مميزة في الإسكندرية',
+    back_sports:'‹ الرياضات', search_area_ph:'ابحث بالاسم أو المنطقة', btn_filters:'تصفية',
+    lbl_neighborhood:'المنطقة', opt_all_alex:'كل الإسكندرية', lbl_playing_date:'تاريخ اللعب',
+    sort_rec:'الموصى به', sort_price:'الأقل سعراً', sort_early:'أقرب موعد',
+    sample_note:'قوائم تجريبية · الأسعار بالجنيه المصري · توقيت الإسكندرية',
+    gym_search_ph:'ابحث باسم الجيم، المنطقة، أو المرافق',
+    lbl_billing:'فترة الاشتراك', opt_all_periods:'كل الفترات',
+    bill_monthly:'شهري', bill_quarterly:'ربع سنوي', bill_annual:'سنوي',
+    lbl_facility:'المرافق', opt_all_facilities:'كل المرافق',
+    btn_clear:'مسح', btn_compare_now:'قارن الآن',
+    acad_search_ph:'ابحث عن أكاديمية، رياضة، أو منطقة',
+    lbl_sport:'الرياضة', opt_all_sports:'كل الرياضات',
+    lbl_age_group:'الفئة العمرية', opt_all_ages:'كل الأعمار',
+    lbl_skill:'المستوى', opt_all_levels:'كل المستويات',
+    back_results:'العودة للنتائج', choose_coach:'اختر المدرب',
+    add_court_addon:'أضف ملعباً لهذه الحصة التدريبية',
+    arranged_loc_lbl:'مكان التدريب الذي قمت بترتيبه', arranged_loc_ph:'أدخل اسم الملعب أو الموقع',
+    choose_court:'اختر الملعب', match_format:'نظام اللعب', all_formats:'كل الأنظمة',
+    choose_datetime:'اختر التاريخ والوقت', your_session:'تفاصيل جلستك',
+    review_booking:'مراجعة الحجز', summary_note:'حجز مبدئي لمدة ٥ دقائق · بتوقيت القاهرة',
+    review_session:'راجع تفاصيل حجزك', confirm_booking:'تأكيد الحجز', edit_selection:'تعديل الاختيار',
+    booking_confirmed:'تم تأكيد الحجز', book_another:'احجز جلسة أخرى',
+    compare_gyms_title:'مقارنة صالات الجيم', btn_close:'إغلاق', btn_cancel:'إلغاء', btn_done:'تم',
+    enq_name:'الاسم بالكامل', enq_phone:'رقم الموبايل (واتساب)', enq_age:'عمر المشترك ومستواه',
+    enq_notes:'تاريخ البدء المفضل أو أي استفسارات', enq_submit:'إرسال استفسار مباشر',
+    enq_sent_title:'تم إرسال استفسارك', live_api:'متصل بالخادم', demo_mode:'وضع تجريبي',
+    gyms_title:'قارن الجيم في الإسكندرية.', gyms_desc:'قارن الأسعار، فترات الاشتراك، والمرافق واطلب حصة تجريبية.',
+    acad_title:'الأكاديميات الرياضية.', acad_desc:'اكتشف برامج التدريب حسب الرياضة، الفئة العمرية، والمستوى.',
+    btn_enquire:'استفسار / تجربة مجانية', btn_compare_add:'+ مقارنة', btn_compare_added:'✓ محدد'
+  }
 };
-const $=id=>document.getElementById(id);
-const days=Array.from({length:7},(_,i)=>{const cairo=new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Cairo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const dateParts=Object.fromEntries(cairo.map(p=>[p.type,p.value]));return new Date(Date.UTC(+dateParts.year,+dateParts.month-1,+dateParts.day+i+1,12));});
-const dayLabel=(i)=>new Intl.DateTimeFormat('en-EG',{weekday:'short',day:'numeric',month:'short',timeZone:'Africa/Cairo'}).format(days[i]);
-const timeLabel=(h)=>new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'}).format(new Date(Date.UTC(2026,0,1,h)));
-const money=n=>new Intl.NumberFormat('en-EG',{maximumFractionDigits:0}).format(n)+' EGP';
-let page='courts',coachSport=null,hour=null,stage='pick';
-const selection={coach:'nour',court:'smouha',day:0};
-function addOptions(group,entries,decorate){
-  for(const [key,item] of entries){
-    const button=document.createElement('button');button.type='button';button.className='choice';button.dataset.key=String(key);
-    decorate(button,item);
-    button.addEventListener('click',()=>{if(selection[group]===key)return;selection[group]=key;if(group==='coach')$('add-court').checked=false;hour=null;render();});
+const t = key => (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key;
+
+function applyLanguage() {
+  const isAr = lang === 'ar';
+  document.documentElement.lang = isAr ? 'ar' : 'en';
+  document.documentElement.dir = isAr ? 'rtl' : 'ltr';
+  $('lang-toggle').textContent = isAr ? 'EN' : 'عربي';
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+  $('api-status-text').textContent = ApiClient.live ? t('live_api') : t('demo_mode');
+}
+
+const API_BASE = new URLSearchParams(location.search).get('api') || window.SPORT_API_BASE || 'http://127.0.0.1:3000';
+const ApiClient = {
+  live: false,
+  token: localStorage.getItem('sport.auth.token') || 'demo-athlete-marwan',
+  async probe() {
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 1200);
+      const res = await fetch(`${API_BASE}/api/health`, { signal: ctrl.signal });
+      clearTimeout(timer);
+      this.live = res.ok;
+    } catch { this.live = false; }
+    $('api-status').dataset.live = String(this.live);
+    $('api-status-text').textContent = this.live ? t('live_api') : t('demo_mode');
+    if (this.live) await this.syncRemoteState();
+  },
+  async request(path, options = {}) {
+    if (!this.live) return null;
+    const res = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.token}`, ...(options.headers || {}) }
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Request failed' }));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    return res.json();
+  },
+  async syncRemoteState() {
+    try {
+      const remoteBookings = await this.request('/api/bookings');
+      if (!Array.isArray(remoteBookings)) return;
+      const live = new Map(remoteBookings.map(b => [b.id, b]));
+      bookings = bookings.filter(b => !b.id?.startsWith?.('BKG-') || live.has(b.id));
+      for (const r of remoteBookings) if (!bookings.some(b => b.id === r.id)) {
+        bookings.push({ id: r.id, day: r.day, hour: r.hour, pitch: r.pitch, coach: r.coach, resource: r.resource,
+          details: [r.label, new Date(r.day).toLocaleDateString(localeCode(), { timeZone: 'Africa/Cairo' }), timeLabel(r.hour)].filter(Boolean).join(' · '),
+          total: money(r.total) });
+      }
+      persist();
+    } catch {}
+  },
+  async createBooking(payload) {
+    if (!this.live) return { id: Date.now().toString(36), status: 'CONFIRMED', holdRef: 'DEMO-' + Math.random().toString(36).slice(2, 7).toUpperCase() };
+    const hold = await this.request('/api/holds', { method: 'POST', body: JSON.stringify(payload) });
+    const confirmed = await this.request('/api/checkout/capture', {
+      method: 'POST', body: JSON.stringify({ bookingId: hold.bookingId, idempotencyKey: `cap-${hold.bookingId}` })
+    });
+    return { id: hold.bookingId, status: confirmed.status || 'CONFIRMED', holdRef: hold.bookingId };
+  },
+  async cancelBooking(id) {
+    if (this.live) await this.request(`/api/bookings/${encodeURIComponent(id)}/cancel`, { method: 'POST' });
+  },
+  async submitEnquiry(payload) {
+    if (!this.live) return { id: 'ENQ-' + Date.now().toString(36).toUpperCase(), status: 'RECEIVED' };
+    return this.request('/api/enquiries', { method: 'POST', body: JSON.stringify(payload) });
+  }
+};
+
+const coaches = {
+  'padel-coach': { name: 'Karim El-Masry (Padel)', price: 450, location: 'Smouha Padel Club', hours: [9, 11, 17, 19] },
+  nour: { name: 'Nour Amin', price: 350, location: 'Smouha training ground', hours: [9, 11, 16, 18] },
+  omar: { name: 'Omar Adel', price: 400, location: null, hours: [10, 11, 17, 18] }
+};
+const courts = {
+  smouha: { name: 'North Pitch', area: 'Smouha', format: '5-a-side', surface: 'Artificial turf', price: 500, hours: [9, 10, 11, 18] },
+  gleem: { name: 'Seafront Pitch', area: 'Gleem', format: '7-a-side', surface: 'Artificial turf', price: 700, hours: [10, 11, 16, 17] },
+  montaza: { name: 'East Ground', area: 'Montaza', format: '11-a-side', surface: 'Natural grass', price: 1100, hours: [9, 12, 15, 20] }
+};
+const gymsData = [
+  { id: 'gold-smouha', name: 'Apex Athletic Club', area: 'Smouha', plans: { Monthly: 1450, Quarterly: 3800, Annual: 12500 }, facilities: ['Pool', 'Sauna', 'CrossFit Zone', 'Padel Access'], hours: '06:00 – 00:00', trial: 'Free 1-day guest pass', note: 'Olympic indoor lap pool + direct member discount on Smouha padel courts.' },
+  { id: 'gleem-bay-fit', name: 'Bayfront Performance Gym', area: 'Gleem', plans: { Monthly: 1800, Quarterly: 4700, Annual: 15200 }, facilities: ['Sauna', 'Women-Only Hours', 'CrossFit Zone'], hours: '06:00 – 23:30', trial: 'Free body composition + trial session', note: 'Seafront cardio deck with dedicated women-only daily window (10:00–14:00).' },
+  { id: 'sporting-iron', name: 'Sporting Strength & Conditioning', area: 'Sporting', plans: { Monthly: 950, Quarterly: 2500, Annual: 8400 }, facilities: ['CrossFit Zone'], hours: '07:00 – 23:00', trial: 'Free trial workout', note: 'Athlete-focused turf sprint lane, Olympic lifting platforms, and mobility studio.' },
+  { id: 'montaza-wellness', name: 'Royal Gardens Health Club', area: 'Montaza', plans: { Monthly: 1600, Quarterly: 4200, Annual: 13800 }, facilities: ['Pool', 'Sauna', 'Women-Only Hours', 'Padel Access'], hours: '06:30 – 23:30', trial: 'Complimentary weekend day pass', note: 'Full spa recovery suite, heated pool, and 3 panoramic outdoor padel courts.' }
+];
+const academiesData = [
+  { id: 'kick-smash-padel', name: 'Kick Smash Padel Academy', sport: 'Padel', area: 'Smouha', ages: ['U12 (9–12 yrs)', 'U16 (13–16 yrs)', 'Adults (17+)'], levels: ['Beginner', 'Intermediate', 'Competitive'], schedule: 'Sun & Tue · 17:00–18:30 (Youth) / 20:00–21:30 (Adults)', price: 2200, billing: 'Monthly (8 sessions)', coachLead: 'Coach Fares Sadek & Certified Padel Staff', summary: 'Structured technical drills, match-play tactics, and ranked ladder nights.' },
+  { id: 'alex-striker-fc', name: 'Alexandria Youth Football Academy', sport: 'Football', area: 'Montaza', ages: ['U8 (5–8 yrs)', 'U12 (9–12 yrs)', 'U16 (13–16 yrs)'], levels: ['Beginner', 'Intermediate', 'Competitive'], schedule: 'Mon, Wed & Fri · 16:30–18:00', price: 1650, billing: 'Monthly (12 sessions)', coachLead: 'CAF-Licensed Youth Coaching Team', summary: 'Age-grouped technical ball mastery, small-sided tactical games, and fitness tracking.' },
+  { id: 'gleem-tennis-pro', name: 'Mediterranean Tennis School', sport: 'Tennis', area: 'Gleem', ages: ['U8 (5–8 yrs)', 'U12 (9–12 yrs)', 'Adults (17+)'], levels: ['Beginner', 'Intermediate'], schedule: 'Sat & Thu · 10:00–11:30 or 18:00–19:30', price: 1900, billing: 'Monthly (8 sessions)', coachLead: 'Egyptian Tennis Federation Certified Coaches', summary: 'Red/orange/green ball progression for juniors and evening cardio tennis for adults.' },
+  { id: 'sporting-squash', name: 'Alexandria Squash Excellence', sport: 'Squash', area: 'Sporting', ages: ['U12 (9–12 yrs)', 'U16 (13–16 yrs)', 'Adults (17+)'], levels: ['Intermediate', 'Competitive'], schedule: 'Sun, Tue & Thu · 18:00–19:30', price: 2400, billing: 'Monthly (12 sessions)', coachLead: 'PSA Tour Alumni Coaching Staff', summary: 'Glass-back court footwork, ghosting conditioning, and national junior tournament prep.' }
+];
+
+const $ = id => document.getElementById(id);
+const days = Array.from({ length: 7 }, (_, i) => {
+  const cairo = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Cairo', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+  const p = Object.fromEntries(cairo.map(x => [x.type, x.value]));
+  return new Date(Date.UTC(+p.year, +p.month - 1, +p.day + i + 1, 12));
+});
+const localeCode = () => lang === 'ar' ? 'ar-EG' : 'en-EG';
+const dayLabel = i => new Intl.DateTimeFormat(localeCode(), { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Africa/Cairo' }).format(days[i]);
+const timeLabel = h => new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }).format(new Date(Date.UTC(2026, 0, 1, h)));
+const money = n => new Intl.NumberFormat(localeCode(), { maximumFractionDigits: 0 }).format(n) + (lang === 'ar' ? ' ج.م' : ' EGP');
+
+let page = 'courts', coachSport = null, hour = null, stage = 'pick';
+const selection = { coach: 'nour', court: 'smouha', day: 0 };
+let selectedGymsCompare = [];
+let bookings = [], enquiries = [], hearts = [];
+try { bookings = JSON.parse(localStorage.getItem('sport.athlete.bookings.v2') || '[]'); } catch {}
+try { enquiries = JSON.parse(localStorage.getItem('sport.athlete.enquiries.v1') || '[]'); } catch {}
+try { hearts = JSON.parse(localStorage.getItem('sport.football.hearts') || '[]'); } catch {}
+const persist = () => { try { localStorage.setItem('sport.athlete.bookings.v2', JSON.stringify(bookings)); } catch {} };
+const persistEnquiries = () => { try { localStorage.setItem('sport.athlete.enquiries.v1', JSON.stringify(enquiries)); } catch {} };
+
+function addOptions(group, entries, decorate) {
+  for (const [key, item] of entries) {
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'choice'; button.dataset.key = String(key);
+    decorate(button, item);
+    button.addEventListener('click', () => {
+      if (selection[group] === key) return;
+      selection[group] = key;
+      if (group === 'coach') $('add-court').checked = false;
+      hour = null; render();
+    });
     $(group).append(button);
   }
 }
-function catalogCard(button,item){
-  const name=document.createElement('strong'),rate=document.createElement('span');
-  name.textContent=item.name;rate.className='rate';rate.textContent=money(item.price)+' / hour';
+function catalogCard(button, item) {
+  const name = document.createElement('strong'), rate = document.createElement('span');
+  name.textContent = item.name; rate.className = 'rate'; rate.textContent = money(item.price) + (lang === 'ar' ? ' / ساعة' : ' / hour');
   button.append(name);
-  if(item.format){const detail=document.createElement('small');detail.textContent=[item.area,item.format,item.surface].join(' · ');button.append(detail);}
-  if(Object.hasOwn(item,'location')){const venue=document.createElement('small');venue.textContent=item.location??'Flexible location';button.append(venue);}
+  if (item.format) { const d = document.createElement('small'); d.textContent = [item.area, item.format, item.surface].join(' · '); button.append(d); }
+  if (Object.hasOwn(item, 'location')) { const v = document.createElement('small'); v.textContent = item.location ?? (lang === 'ar' ? 'موقع مرن' : 'Flexible location'); button.append(v); }
   button.append(rate);
 }
-addOptions('coach',Object.entries(coaches),catalogCard);
-addOptions('court',Object.entries(courts),catalogCard);
-addOptions('day',days.map((_,i)=>[i,dayLabel(i)]),(button,label)=>{button.textContent=label;});
-function selected(){
-  const coach=page==='coaches'?coaches[selection.coach]:null;
-  const flexible=Boolean(coach&&!coach.location);
-  const court=page==='courts'||(flexible&&coachSport?.[0]==='football'&&$('add-court').checked)?courts[selection.court]:null;
-  const venue=court?.name??coach?.location??$('own-location').value.trim();
-  return {coach,court,flexible,venue,day:selection.day};
+addOptions('coach', Object.entries(coaches), catalogCard);
+addOptions('court', Object.entries(courts), catalogCard);
+addOptions('day', days.map((_, i) => [i, dayLabel(i)]), (button, label) => { button.textContent = label; });
+
+function selected() {
+  const coach = page === 'coaches' ? coaches[selection.coach] : null;
+  const flexible = Boolean(coach && !coach.location);
+  const court = page === 'courts' || (flexible && coachSport?.[0] === 'football' && $('add-court').checked) ? courts[selection.court] : null;
+  const venue = court?.name ?? coach?.location ?? $('own-location').value.trim();
+  return { coach, court, flexible, venue, day: selection.day };
 }
-function slots({coach,court,day},courtKey=selection.court,coachKey=selection.coach){
-  const forDay=resource=>resource.hours.filter((_,i)=>day!==1||i!==0).filter((_,i)=>day!==2||i<2);
-  const available=(coach?forDay(coach):forDay(court));
-  const possible=court&&coach?available.filter(h=>forDay(court).includes(h)):available;
-  return possible.filter(h=>!bookings.some(b=>b.day===days[day].toISOString() && b.hour===h && ((court && b.pitch===courtKey)||(coach && b.coach===coachKey))));
+function slots({ coach, court, day }, courtKey = selection.court, coachKey = selection.coach) {
+  const forDay = resource => resource.hours.filter((_, i) => day !== 1 || i !== 0).filter((_, i) => day !== 2 || i < 2);
+  const available = (coach ? forDay(coach) : forDay(court));
+  const possible = court && coach ? available.filter(h => forDay(court).includes(h)) : available;
+  return possible.filter(h => !bookings.some(b => b.day === days[day].toISOString() && b.hour === h && ((court && b.pitch === courtKey) || (coach && b.coach === coachKey))));
 }
-function showStage(next){
-  stage=next;const dialog=$('checkout');
-  $('review').hidden=stage!=='review';$('done').hidden=stage!=='done';render();
-  if(stage==='pick'){if(dialog.open)dialog.close();($('next').disabled?$('page-title'):$('next')).focus();return;}
-  dialog.setAttribute('aria-labelledby',stage==='review'?'checkout-title':'done-title');
-  if(!dialog.open)dialog.showModal();
-  $(stage==='review'?'checkout-title':'done-title').focus();
+function showStage(next) {
+  stage = next; const dialog = $('checkout');
+  $('review').hidden = stage !== 'review'; $('done').hidden = stage !== 'done'; render();
+  if (stage === 'pick') { if (dialog.open) dialog.close(); ($('next').disabled ? $('page-title') : $('next')).focus(); return; }
+  if (!dialog.open) dialog.showModal();
+  $(stage === 'review' ? 'checkout-title' : 'done-title').focus();
 }
-function renderPage(){
-  const isCoaches=page==='coaches';
-  document.querySelector('.top').dataset.page=page;
-  $('page-title').textContent=isCoaches?'Book a '+coachSport[1].toLowerCase()+' coach.':'Book a football pitch.';
-  $('page-description').textContent=isCoaches?'Choose a coach and check where they train.':'Choose a pitch and find an hour to play.';
-  document.title=(isCoaches?'Book a '+coachSport[1].toLowerCase()+' coach':'Book a football pitch')+' in Alexandria | SPORT';
-  for(const name of ['courts','coaches']){
-    if(page===name)$(name+'-link').setAttribute('aria-current','page');else $(name+'-link').removeAttribute('aria-current');
+function renderPage() {
+  const isCoaches = page === 'coaches';
+  document.querySelector('.top').dataset.page = page;
+  if (page === 'gyms') { $('page-title').textContent = t('gyms_title'); $('page-description').textContent = t('gyms_desc'); return; }
+  if (page === 'academies') { $('page-title').textContent = t('acad_title'); $('page-description').textContent = t('acad_desc'); return; }
+  $('page-title').textContent = isCoaches ? (lang === 'ar' ? `احجز مدرب ${coachSport[1]}` : `Book a ${coachSport[1].toLowerCase()} coach.`) : (lang === 'ar' ? 'احجز ملعباً.' : 'Book a football pitch.');
+  $('page-description').textContent = isCoaches ? (lang === 'ar' ? 'اختر المدرب وتعرف على مكان التدريب.' : 'Choose a coach and check where they train.') : (lang === 'ar' ? 'اختر الملعب والساعة المناسبة للعب.' : 'Choose a pitch and find an hour to play.');
+}
+function render() {
+  const choice = selected();
+  if (!choice.coach && !choice.court) return; // Gyms, Academies: no booking summary
+  const available = slots(choice);
+  if (!available.includes(hour)) hour = null;
+  for (const group of ['coach', 'court', 'day']) {
+    for (const button of $(group).children) button.setAttribute('aria-pressed', String(button.dataset.key === String(selection[group])));
+  }
+  $('coach-field').hidden = !choice.coach; $('court-field').hidden = !choice.court;
+  $('venue-options').hidden = !choice.flexible;
+  $('add-court').closest('label').hidden = coachSport?.[0] !== 'football';
+  $('own-location-field').hidden = !choice.flexible || Boolean(choice.court);
+  $('coach-location').textContent = choice.coach ? (choice.coach.location ? (lang === 'ar' ? 'التدريب في: ' : 'Trains at ') + choice.coach.location : (coachSport?.[0] === 'football' ? (lang === 'ar' ? 'أضف ملعباً أو أدخل موقعاً قمت بترتيبه.' : 'Add a pitch or use a location you arranged.') : (lang === 'ar' ? 'أدخل موقع التدريب الذي رتبته.' : 'Enter a training location you arranged.'))) : '';
+  $('times').replaceChildren(...available.map(h => {
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'choice'; button.textContent = timeLabel(h);
+    button.setAttribute('aria-pressed', String(h === hour));
+    button.addEventListener('click', () => { hour = h; render(); });
+    return button;
+  }));
+  $('availability-note').textContent = available.length ? '' : (lang === 'ar' ? 'لا توجد مواعيد متاحة في هذا التاريخ.' : 'No shared times on this date.');
+  const time = hour === null ? (lang === 'ar' ? 'اختر وقت البدء' : 'Select a start time') : timeLabel(hour) + '–' + timeLabel(hour + 1);
+  $('summary-time').textContent = [dayLabel(choice.day), time, choice.venue].filter(Boolean).join(' · ');
+  const resources = [choice.coach, choice.court].filter(Boolean), total = resources.reduce((sum, r) => sum + r.price, 0);
+  $('prices').replaceChildren(...[...resources.map(r => [r.name, money(r.price)]), [lang === 'ar' ? 'الإجمالي' : 'Total', money(total)]].map(([label, value], i) => {
+    const row = document.createElement('div'); row.className = i === resources.length ? 'price total' : 'price';
+    const name = document.createElement('dt'), amount = document.createElement('dd'); name.textContent = label; amount.textContent = value; row.append(name, amount);
+    return row;
+  }));
+  $('next').disabled = hour === null || !choice.venue;
+  $('review-details').textContent = resources.map(r => r.name).join(' + ') + ' · ' + $('summary-time').textContent;
+  $('review-total').textContent = (lang === 'ar' ? 'الإجمالي · ' : 'Total · ') + money(total);
+  $('confirmation').textContent = $('review-details').textContent;
+}
+
+$('add-court').addEventListener('change', () => { hour = null; render(); });
+$('own-location').addEventListener('input', render);
+$('next').addEventListener('click', () => { if (!$('next').disabled) showStage('review'); });
+$('confirm').addEventListener('click', async () => {
+  if (stage !== 'review') return;
+  const choice = selected();
+  if (!slots(choice).includes(hour)) { showStage('pick'); return; }
+  const btn = $('confirm'); btn.disabled = true;
+  try {
+    const res = await ApiClient.createBooking({ day: days[choice.day].toISOString(), hour, pitchId: choice.court ? selection.court : null, coachId: choice.coach ? selection.coach : null, customVenue: choice.venue });
+    const session = { id: res.id, day: days[choice.day].toISOString(), hour, pitch: choice.court ? selection.court : null, coach: choice.coach ? selection.coach : null, details: $('review-details').textContent, total: $('review-total').textContent };
+    bookings.push(session); persist(); showStage('done');
+    $('confirmation').textContent = session.details + ' · ' + session.total;
+    $('hold-ref').textContent = (lang === 'ar' ? 'رقم المرجع: ' : 'Reference: ') + res.holdRef;
+  } catch (err) { $('review-details').textContent = err.message; } finally { btn.disabled = false; }
+});
+$('edit').addEventListener('click', () => showStage('pick'));
+$('again').addEventListener('click', () => { hour = null; showStage('pick'); openResults(false); });
+$('checkout').addEventListener('cancel', event => { event.preventDefault(); if (stage === 'done') hour = null; showStage('pick'); });
+
+function renderHistory() {
+  const list = $('saved'); list.replaceChildren();
+  if (!bookings.length && !enquiries.length) { list.textContent = lang === 'ar' ? 'ستظهر حجوزاتك واستفساراتك المؤكدة هنا.' : 'Your confirmed sessions and enquiries will appear here.'; return; }
+  for (const booking of [...bookings].reverse()) {
+    const row = document.createElement('article'), description = document.createElement('p'), amount = document.createElement('strong'), cancel = document.createElement('button');
+    description.textContent = booking.details; amount.textContent = booking.total; cancel.className = 'back'; cancel.textContent = lang === 'ar' ? 'إلغاء الحجز' : 'Cancel booking';
+    cancel.onclick = async () => { await ApiClient.cancelBooking(booking.id); bookings = bookings.filter(b => b.id !== booking.id); persist(); renderHistory(); render(); };
+    row.append(description, amount, cancel); list.append(row);
+  }
+  for (const enq of [...enquiries].reverse()) {
+    const row = document.createElement('article');
+    row.append(node('span', enq.kind === 'gym' ? 'Gym Enquiry' : 'Academy Enquiry', 'dir-badge'), node('strong', enq.targetName), node('p', `${enq.name} · ${enq.phone} · ${enq.ref}`, 'notice'));
+    list.append(row);
   }
 }
-function render(){
-  const choice=selected(),available=slots(choice);
-  if(!available.includes(hour))hour=null;
-  for(const group of ['coach','court','day'])for(const button of $(group).children)button.setAttribute('aria-pressed',String(button.dataset.key===String(selection[group])));
-  $('coach-field').hidden=!choice.coach;$('court-field').hidden=!choice.court;
-  $('venue-options').hidden=!choice.flexible;
-  $('add-court').closest('label').hidden=coachSport?.[0]!=='football';
-  $('own-location-field').hidden=!choice.flexible||Boolean(choice.court);
-  $('coach-location').textContent=choice.coach?(choice.coach.location?'Trains at '+choice.coach.location:(coachSport?.[0]==='football'?'Add a pitch or use a location you arranged.':'Enter a training location you arranged.')) : '';
-  $('times').replaceChildren(...available.map(h=>{
-    const button=document.createElement('button');button.type='button';button.className='choice';button.textContent=timeLabel(h);
-    button.setAttribute('aria-pressed',String(h===hour));button.addEventListener('click',()=>{hour=h;render();const current=Array.from($('times').children).find(b=>b.textContent===timeLabel(h));current?.focus();});return button;
-  }));
-  $('availability-note').textContent=available.length?'':choice.coach&&choice.court?'No shared times on this date. Try another pitch or date.':'No times available on this date.';
-  const time=hour===null?'Select a start time':timeLabel(hour)+'-'+timeLabel(hour+1);
-  $('summary-time').textContent=[dayLabel(choice.day),time,choice.venue].filter(Boolean).join(' · ');
-  const resources=[choice.coach,choice.court].filter(Boolean),total=resources.reduce((sum,r)=>sum+r.price,0);
-  $('prices').replaceChildren(...[...resources.map(r=>[r.name,money(r.price)]),['Total',money(total)]].map(([label,value],i)=>{
-    const row=document.createElement('div');row.className=i===resources.length?'price total':'price';const name=document.createElement('dt'),amount=document.createElement('dd');name.textContent=label;amount.textContent=value;row.append(name,amount);return row;
-  }));
-  $('next').disabled=hour===null||!choice.venue;
-  $('review-details').textContent=resources.map(r=>r.name).join(' + ')+' · '+$('summary-time').textContent;
-  $('review-total').textContent='Total · '+money(total);
-  $('confirmation').textContent=$('review-details').textContent;
+$('history-link').onclick = () => { renderHistory(); $('history').showModal(); };
+$('close-history').onclick = () => $('history').close();
+$('history').addEventListener('close', () => { if (!$('market').hidden) showMarket(); else if (!$('discover').hidden) drawResults(); });
+
+let activeEnquiryTarget = null;
+function openEnquiryModal(kind, item) {
+  activeEnquiryTarget = { kind, item };
+  $('enquiry-form-wrap').hidden = false; $('enquiry-done').hidden = true;
+  $('enquiry-title').textContent = (lang === 'ar' ? 'استفسار: ' : 'Enquire: ') + item.name;
+  $('enquiry-subtitle').textContent = kind === 'gym' ? `${item.area} · ${item.trial}` : `${item.sport} · ${item.area} · ${item.schedule}`;
+  $('enq-participant-wrap').hidden = kind !== 'academy'; $('enq-notes').value = '';
+  $('enquiry-dialog').showModal();
 }
-$('add-court').addEventListener('change',()=>{hour=null;render();});
-$('own-location').addEventListener('input',render);
-$('next').addEventListener('click',()=>{if(!$('next').disabled)showStage('review');});
-$('confirm').addEventListener('click',()=>{if(stage!=='review')return;
-  const choice=selected();
-  if(!slots(choice).includes(hour)){showStage('pick');return;}
-  const session={id:Date.now().toString(36),day:days[choice.day].toISOString(),hour,
-    pitch:choice.court?selection.court:null,coach:choice.coach?selection.coach:null,
-    details:$('review-details').textContent,total:$('review-total').textContent};
-  bookings.push(session);persist();showStage('done');$('confirmation').textContent=session.details+' · '+session.total;});
-$('edit').addEventListener('click',()=>showStage('pick'));
-$('again').addEventListener('click',()=>{hour=null;showStage('pick');});
-$('checkout').addEventListener('cancel',event=>{event.preventDefault();if(stage==='done')hour=null;showStage('pick');});
-const storageKey='sport.athlete.football.bookings.v1';
-let bookings=[];
-try{const records=JSON.parse(localStorage.getItem(storageKey)||'[]');if(Array.isArray(records))bookings=records.filter(b=>b&&typeof b.details==='string');}catch{}
-function persist(){try{localStorage.setItem(storageKey,JSON.stringify(bookings));}catch{}}
-function renderHistory(){
-  const list=$('saved');list.replaceChildren();
-  if(!bookings.length){list.textContent='Your confirmed demo sessions will appear here.';return;}
-  for(const booking of [...bookings].reverse()){
-    const row=document.createElement('article'), description=document.createElement('p'),amount=document.createElement('strong'),cancel=document.createElement('button');
-    description.textContent=booking.details;amount.textContent=booking.total;
-    cancel.className='back';cancel.textContent='Cancel demo booking';
-    cancel.onclick=()=>{bookings=bookings.filter(b=>b.id!==booking.id);persist();renderHistory();render();};
-    row.append(description,amount,cancel);list.append(row);
-  }
-}
-$('history-link').onclick=()=>{renderHistory();$('history').showModal();};
-$('close-history').onclick=()=>$('history').close();
-$('format').onchange=()=>{
-  const format=$('format').value;
-  for(const button of $('court').children)button.hidden=!!format&&courts[button.dataset.key].format!==format;
-  if(format&&courts[selection.court].format!==format)selection.court=Object.keys(courts).find(k=>courts[k].format===format);
-  hour=null;render();
+$('close-enquiry').onclick = () => $('enquiry-dialog').close();
+$('done-enquiry').onclick = () => $('enquiry-dialog').close();
+$('enquiry-form').onsubmit = async e => {
+  e.preventDefault();
+  const payload = { kind: activeEnquiryTarget.kind, targetId: activeEnquiryTarget.item.id, targetName: activeEnquiryTarget.item.name, name: $('enq-name').value.trim(), phone: $('enq-phone').value.trim(), participant: $('enq-participant').value.trim(), notes: $('enq-notes').value.trim() };
+  const res = await ApiClient.submitEnquiry(payload);
+  enquiries.push({ ...payload, ref: res.id }); persistEnquiries();
+  $('enquiry-form-wrap').hidden = true; $('enquiry-done').hidden = false;
+  $('enquiry-confirm-text').textContent = `Reference: ${res.id}`;
 };
-renderPage();render();
-const profiles={nour:{focus:'Ball control',level:'Beginner to intermediate',area:'Smouha'},omar:{focus:'Match preparation',level:'Intermediate to advanced',area:'Flexible'}};
-const layouts={smouha:[1,2,1,1],gleem:[1,2,3,1],montaza:[1,4,3,3]};
-let browsing=true,onlySaved=false,pendingQuery='',pendingSaved=false;
-let hearts=[];try{const v=JSON.parse(localStorage.getItem('sport.football.hearts')||'[]');if(Array.isArray(v))hearts=v;}catch{}
-function node(tag,txt,cls){const e=document.createElement(tag);if(txt)e.textContent=txt;if(cls)e.className=cls;return e;}
-function diagram(key){
-  const art=node('div',null,'field '+key);art.setAttribute('aria-hidden','true');
-  const field=node('div',null,'markings');art.append(field);
-  const rows=layouts[key];rows.forEach((n,i)=>{for(let j=0;j<n;j++){const dot=node('i');dot.style.left=(8+84*i/(rows.length-1))+'%';dot.style.top=(100*(j+1)/(n+1))+'%';field.append(dot);}});
+
+function renderGyms() {
+  const q = $('gym-search').value.toLowerCase().trim(), area = $('gym-area').value, billing = $('gym-billing').value || 'Monthly', facility = $('gym-facility').value, sort = $('gym-sort').value;
+  let list = gymsData.filter(g => (!area || g.area === area) && (!facility || g.facilities.includes(facility)) && (!q || [g.name, g.area, g.note, ...g.facilities].join(' ').toLowerCase().includes(q)));
+  if (sort === 'price') list.sort((a, b) => a.plans[billing] - b.plans[billing]);
+  $('gym-count').textContent = `${list.length} gyms found · ${t('bill_' + billing.toLowerCase())}`;
+  const container = $('gym-list'); container.replaceChildren();
+  for (const gym of list) {
+    const card = node('article', null, 'dir-card'), top = node('div'), head = node('div', null, 'dir-head');
+    head.append(node('span', gym.area + ' · Alexandria', 'dir-badge'), node('small', gym.hours, 'eyeline'));
+    top.append(head, node('h2', gym.name), node('p', gym.note, 'description'));
+    const tags = node('div', null, 'tag-row'); gym.facilities.forEach(f => tags.append(node('span', f, 'tag'))); top.append(tags);
+    const bottom = node('div'), priceStrip = node('div', null, 'price-strip');
+    priceStrip.append(node('span', t('bill_' + billing.toLowerCase()), 'eyeline'), node('strong', money(gym.plans[billing])));
+    const actions = node('div', null, 'card-actions'), isSelected = selectedGymsCompare.includes(gym.id);
+    const cmpBtn = node('button', isSelected ? t('btn_compare_added') : t('btn_compare_add')); cmpBtn.type = 'button'; cmpBtn.setAttribute('aria-pressed', String(isSelected));
+    cmpBtn.onclick = () => { selectedGymsCompare = isSelected ? selectedGymsCompare.filter(id => id !== gym.id) : (selectedGymsCompare.length < 3 ? [...selectedGymsCompare, gym.id] : selectedGymsCompare); renderGyms(); };
+    const enqBtn = node('button', t('btn_enquire'), 'cta'); enqBtn.type = 'button'; enqBtn.onclick = () => openEnquiryModal('gym', gym);
+    actions.append(cmpBtn, enqBtn); bottom.append(priceStrip, actions); card.append(top, bottom); container.append(card);
+  }
+  $('gym-compare-bar').hidden = selectedGymsCompare.length === 0;
+  $('gym-compare-label').textContent = `${selectedGymsCompare.length} of 3 gyms selected`;
+}
+$('gym-clear-compare').onclick = () => { selectedGymsCompare = []; renderGyms(); };
+$('gym-open-compare').onclick = () => {
+  const items = gymsData.filter(g => selectedGymsCompare.includes(g.id));
+  if (!items.length) return;
+  const table = document.createElement('table'); table.className = 'compare-table';
+  [[lang === 'ar' ? 'النادي' : 'Gym', ...items.map(g => g.name)], ['Area', ...items.map(g => g.area)], ['Monthly', ...items.map(g => money(g.plans.Monthly))], ['Quarterly', ...items.map(g => money(g.plans.Quarterly))], ['Annual', ...items.map(g => money(g.plans.Annual))], ['Facilities', ...items.map(g => g.facilities.join(', '))], ['Trial', ...items.map(g => g.trial)]].forEach((r, idx) => {
+    const tr = table.insertRow(); r.forEach((cell, cIdx) => { const el = document.createElement(idx === 0 || cIdx === 0 ? 'th' : 'td'); el.textContent = cell; tr.append(el); });
+  });
+  $('compare-body').replaceChildren(table); $('compare-dialog').showModal();
+};
+$('close-compare').onclick = () => $('compare-dialog').close();
+['gym-search', 'gym-area', 'gym-billing', 'gym-facility', 'gym-sort'].forEach(id => $(id).addEventListener(id === 'gym-search' ? 'input' : 'change', renderGyms));
+
+function renderAcademies() {
+  const q = $('acad-search').value.toLowerCase().trim(), sport = $('acad-sport').value, area = $('acad-area').value, age = $('acad-age').value, level = $('acad-level').value;
+  const list = academiesData.filter(a => (!sport || a.sport === sport) && (!area || a.area === area) && (!age || a.ages.includes(age)) && (!level || a.levels.includes(level)) && (!q || [a.name, a.sport, a.area, a.summary, a.coachLead].join(' ').toLowerCase().includes(q)));
+  $('acad-count').textContent = `${list.length} academies found`;
+  const container = $('acad-list'); container.replaceChildren();
+  for (const acad of list) {
+    const card = node('article', null, 'dir-card'), top = node('div'), head = node('div', null, 'dir-head');
+    head.append(node('span', `${acad.sport} · ${acad.area}`, 'dir-badge'), node('small', acad.billing, 'eyeline'));
+    top.append(head, node('h2', acad.name), node('p', acad.summary, 'description'), node('p', `🗓 ${acad.schedule}`, 'eyeline'));
+    const tags = node('div', null, 'tag-row'); [...acad.ages, ...acad.levels].forEach(v => tags.append(node('span', v, 'tag'))); top.append(tags);
+    const bottom = node('div'), priceStrip = node('div', null, 'price-strip');
+    priceStrip.append(node('span', acad.coachLead, 'eyeline'), node('strong', money(acad.price)));
+    const actions = node('div', null, 'card-actions'), enqBtn = node('button', lang === 'ar' ? 'طلب انضمام' : 'Enquire / Join Program', 'cta');
+    enqBtn.type = 'button'; enqBtn.onclick = () => openEnquiryModal('academy', acad);
+    actions.append(enqBtn); bottom.append(priceStrip, actions); card.append(top, bottom); container.append(card);
+  }
+}
+['acad-search', 'acad-sport', 'acad-area', 'acad-age', 'acad-level'].forEach(id => $(id).addEventListener(id === 'acad-search' ? 'input' : 'change', renderAcademies));
+
+const profiles = { 'padel-coach': { focus: 'Padel tactics & bandeja', level: 'All levels', area: 'Smouha' }, nour: { focus: 'Ball control', level: 'Beginner to intermediate', area: 'Smouha' }, omar: { focus: 'Match preparation', level: 'Intermediate to advanced', area: 'Flexible' } };
+const layouts = { smouha: [1, 2, 1, 1], gleem: [1, 2, 3, 1], montaza: [1, 4, 3, 3] };
+let browsing = true, onlySaved = false, pendingQuery = '', pendingSaved = false;
+function node(tag, txt, cls) { const e = document.createElement(tag); if (txt) e.textContent = txt; if (cls) e.className = cls; return e; }
+function diagram(key) {
+  const art = node('div', null, 'field ' + key), field = node('div', null, 'markings'); art.append(field);
+  (layouts[key] || [1, 2, 1]).forEach((n, i, arr) => { for (let j = 0; j < n; j++) { const dot = node('i'); dot.style.left = (8 + 84 * i / (arr.length - 1)) + '%'; dot.style.top = (100 * (j + 1) / (n + 1)) + '%'; field.append(dot); } });
   return art;
 }
-function viewDetail(key,pickedHour){
-  const isCoach=page==='coaches';selection[isCoach?'coach':'court']=key;hour=pickedHour;
-  $('add-court').checked=false;$('own-location').value='';$('format').value='';for(const b of $('court').children)b.hidden=false;
-  browsing=false;$('discover').hidden=true;document.querySelector('.layout').hidden=false;$('return-results').hidden=false;
-  render();$('coach').hidden=true;$('coach-label').hidden=true;
-  $('court').hidden=!isCoach;$('court-label').hidden=!isCoach;document.querySelector('.format').hidden=!isCoach||coachSport[0]!=='football';
-  $('page-title').textContent=isCoach?coaches[key].name:courts[key].name;
-  $('page-description').textContent=isCoach?profiles[key].focus+' · '+profiles[key].level:[courts[key].area,courts[key].format,courts[key].surface].join(' · ');
-  $('page-title').focus();window.scrollTo(0,0);
+function viewDetail(key, pickedHour) {
+  const isCoach = page === 'coaches'; selection[isCoach ? 'coach' : 'court'] = key; hour = pickedHour;
+  $('add-court').checked = false; $('own-location').value = ''; $('format').value = '';
+  for (const b of $('court').children) b.hidden = false;
+  browsing = false; $('discover').hidden = true; document.querySelector('.layout').hidden = false; $('return-results').hidden = false;
+  render(); $('coach').hidden = true; $('coach-label').hidden = true;
+  $('court').hidden = !isCoach; $('court-label').hidden = !isCoach; document.querySelector('.format').hidden = !isCoach || coachSport[0] !== 'football';
+  $('page-title').textContent = isCoach ? coaches[key].name : courts[key].name;
+  $('page-description').textContent = isCoach ? profiles[key].focus + ' · ' + profiles[key].level : [courts[key].area, courts[key].format, courts[key].surface].join(' · ');
 }
-function drawResults(){
- const isCoach=page==='coaches', list=$('listings');list.replaceChildren();
- let records=(isCoach?coachEntries():Object.entries(courts)).filter(([key,item])=>isCoach
- ?(!$('kind').value||$('kind').value===(item.location?'Fixed venue':'Flexible venue'))&&(!$('area').value||!item.location||profiles[key].area===$('area').value)
- :(!$('area').value||item.area===$('area').value)&&(!$('kind').value||item.format===$('kind').value));
- const q=$('search').value.toLowerCase().trim();
- records=records.filter(([k,v])=>(!onlySaved||hearts.includes(page+k))&&[v.name,v.location,v.area,profiles[k]?.focus,profiles[k]?.area].join(' ').toLowerCase().includes(q));
- const first=([k,v])=>slots({day:selection.day,coach:isCoach?v:null,court:isCoach?null:v},k,k)[0]??99;
- if($('sort').value==='price')records.sort((a,b)=>a[1].price-b[1].price);
- if($('sort').value==='early')records.sort((a,b)=>first(a)-first(b));
- $('likes').setAttribute('aria-pressed',String(onlySaved));Array.from($('week').children).forEach((v,i)=>v.setAttribute('aria-pressed',String(i===selection.day)));
- $('count').textContent=records.length+' '+(isCoach?'coach'+(records.length===1?'':'es'):'pitch'+(records.length===1?'':'es'))+' · '+dayLabel(selection.day);
- for(const [key,item] of records){
-  const panel=node('article',null,'listing'),body=node('div',null,'listing-body');
-  if(isCoach){const head=node('div',null,'coach-art');head.append(node('span',item.name.split(' ').map(w=>w[0]).join('')),node('b',profiles[key].focus));panel.append(head);}else panel.append(diagram(key));
-  body.append(node('p',isCoach?profiles[key].level:item.area+' · Alexandria','eyeline'),node('h2',item.name),node('p',isCoach?(item.location||(coachSport[0]==='football'?'Your venue or an added pitch':'Your training venue')):item.format+' · '+item.surface,'description'),node('strong',money(item.price)+' / hour','listing-price'));
-  const times=slots({day:selection.day,coach:isCoach?item:null,court:isCoach?null:item},key,key);
-  const strip=node('div',null,'quick-times');for(const h of times){const chip=node('button',timeLabel(h));chip.setAttribute('aria-label',item.name+' at '+timeLabel(h));chip.onclick=()=>viewDetail(key,h);strip.append(chip);}
-  if(!times.length)strip.textContent='Fully booked on this date';
-  const open=node('button',isCoach?'View coach & sessions':'View pitch & times','open-listing');open.onclick=()=>viewDetail(key,null);open.textContent=item.name;body.querySelector('h2').replaceChildren(open);
- const fav=node('button',hearts.includes(page+key)?'♥':'♡','heart');fav.setAttribute('aria-label','Favorite '+item.name);fav.setAttribute('aria-pressed',String(hearts.includes(page+key)));fav.onclick=()=>{const id=page+key;hearts=hearts.includes(id)?hearts.filter(h=>h!==id):[...hearts,id];try{localStorage.setItem('sport.football.hearts',JSON.stringify(hearts));}catch{}drawResults();};
- panel.append(body,fav,strip);list.append(panel);
- }
- if(!records.length){const reset=node('button','Clear filters','back');reset.onclick=()=>{onlySaved=false;$('search').value='';$('area').value='';$('kind').value='';drawResults();};list.append(node('p','No matches for these filters.'),reset);}
+function drawResults() {
+  const isCoach = page === 'coaches', list = $('listings'); list.replaceChildren();
+  let records = (isCoach ? coachEntries() : Object.entries(courts)).filter(([key, item]) => isCoach
+    ? (!$('kind').value || $('kind').value === (item.location ? 'Fixed venue' : 'Flexible venue')) && (!$('area').value || !item.location || profiles[key].area === $('area').value)
+    : (!$('area').value || item.area === $('area').value) && (!$('kind').value || item.format === $('kind').value));
+  const q = $('search').value.toLowerCase().trim();
+  records = records.filter(([k, v]) => (!onlySaved || hearts.includes(page + k)) && [v.name, v.location, v.area, profiles[k]?.focus, profiles[k]?.area].join(' ').toLowerCase().includes(q));
+  if ($('sort').value === 'price') records.sort((a, b) => a[1].price - b[1].price);
+  $('likes').setAttribute('aria-pressed', String(onlySaved));
+  Array.from($('week').children).forEach((v, i) => v.setAttribute('aria-pressed', String(i === selection.day)));
+  $('count').textContent = `${records.length} ${isCoach ? 'coaches' : 'pitches'} · ${dayLabel(selection.day)}`;
+  for (const [key, item] of records) {
+    const panel = node('article', null, 'listing'), body = node('div', null, 'listing-body');
+    if (isCoach) { const head = node('div', null, 'coach-art'); head.append(node('span', item.name.split(' ').map(w => w[0]).slice(0, 2).join(''))); panel.append(head); } else panel.append(diagram(key));
+    body.append(node('p', isCoach ? profiles[key].level : item.area + ' · Alexandria', 'eyeline'), node('h2', item.name), node('p', isCoach ? (item.location || 'Your venue or an added pitch') : item.format + ' · ' + item.surface, 'description'), node('strong', money(item.price) + ' / hour', 'listing-price'));
+    const times = slots({ day: selection.day, coach: isCoach ? item : null, court: isCoach ? null : item }, key, key), strip = node('div', null, 'quick-times');
+    for (const h of times) { const chip = node('button', timeLabel(h)); chip.onclick = () => viewDetail(key, h); strip.append(chip); }
+    const open = node('button', item.name, 'open-listing'); open.onclick = () => viewDetail(key, null); body.querySelector('h2').replaceChildren(open);
+    const fav = node('button', hearts.includes(page + key) ? '♥' : '♡', 'heart');
+    fav.onclick = () => { const id = page + key; hearts = hearts.includes(id) ? hearts.filter(h => h !== id) : [...hearts, id]; try { localStorage.setItem('sport.football.hearts', JSON.stringify(hearts)); } catch {} drawResults(); };
+    panel.append(body, fav, strip); list.append(panel);
+  }
 }
-function openResults(reset){
- const isCoach=page==='coaches';browsing=true;$('discover').hidden=false;document.querySelector('.layout').hidden=true;$('return-results').hidden=true;
- $('coach-sports').hidden=!isCoach;
- $('page-title').textContent=isCoach?'Find a '+coachSport[1].toLowerCase()+' coach.':'Find your pitch.';
- $('page-description').textContent=isCoach?'Explore training focuses, locations and session times.':'Compare pitches and choose a kickoff time in Alexandria.';
- if(reset){$('area').value='';$('type-title').textContent=isCoach?'Training venue':'Match format';$('kind').replaceChildren(...(isCoach?['','Fixed venue','Flexible venue']:['','5-a-side','7-a-side','11-a-side']).map(v=>new Option(v||(isCoach?'All venues':'All formats'),v)));}
- $('browse-date').value=String(selection.day);drawResults();
+function openResults(reset) {
+  const isCoach = page === 'coaches'; browsing = true; $('discover').hidden = false; document.querySelector('.layout').hidden = true; $('return-results').hidden = true; $('coach-sports').hidden = !isCoach;
+  renderPage();
+  if (reset) { $('area').value = ''; $('type-title').textContent = isCoach ? 'Training venue' : t('match_format'); $('kind').replaceChildren(...(isCoach ? ['', 'Fixed venue', 'Flexible venue'] : ['', '5-a-side', '7-a-side', '11-a-side']).map(v => new Option(v || 'All', v))); }
+  $('browse-date').value = String(selection.day); drawResults();
 }
-$('browse-date').append(...days.map((_,i)=>new Option(dayLabel(i),String(i))));
-$('browse-date').onchange=()=>{selection.day=Number($('browse-date').value);drawResults();};
-$('area').onchange=drawResults;$('kind').onchange=drawResults;
-$('return-results').onclick=()=>{openResults(false);$('page-title').focus();};
-window.addEventListener('hashchange',route);
-$('again').addEventListener('click',()=>openResults(false));
-$('history').addEventListener('close',()=>{if(!$('market').hidden)showMarket();else if(browsing&&!$('discover').hidden)drawResults();});
-function route(){
- const [,zone,sportId]=location.hash.split('/');
- coachSport=zone==='coaches'?catalog.find(sport=>sport[0]===sportId):null;
- page=coachSport?'coaches':'courts';
- if(coachSport)selection.coach=coachEntries()[0][0];
- hour=null;
- $('add-court').checked=false;
- showStage('pick');
- if(showMarket())return;
- const home=!location.hash||location.hash==='#/home';$('home').hidden=!home;document.querySelector('.intro').hidden=home;document.body.classList.toggle('at-home',home);
- if(home){$('discover').hidden=true;document.querySelector('.layout').hidden=true;$('return-results').hidden=true;document.title='Athlete home | SPORT';return;}
- renderPage();$('search').value=pendingQuery;pendingQuery='';onlySaved=pendingSaved;pendingSaved=false;$('sort').value='';document.querySelector('.filters').hidden=true;$('refine').setAttribute('aria-expanded','false');openResults(true);
+
+const catalog = [['padel', 'Padel', 'Court', '🎾', 520], ['football', 'Football', 'Pitch', '⚽', 500], ['padbol', 'Padbol', 'Court', '🥅', 400], ['pickleball', 'Pickleball', 'Court', '🏓', 320], ['tennis', 'Tennis', 'Court', '🎾', 450], ['basketball', 'Basketball', 'Court', '🏀', 600], ['squash', 'Squash', 'Court', '🎾', 300], ['handball', 'Handball', 'Court', '🤾', 350], ['volleyball', 'Volleyball', 'Court', '🏐', 350]];
+for (const [id, name] of catalog) { if (id !== 'football' && id !== 'padel') { coaches[id + '-coach'] = { name: name + ' Coach', price: 350, location: null, hours: [9, 11, 16, 18] }; profiles[id + '-coach'] = { focus: name + ' fundamentals', level: 'Beginner to intermediate', area: 'Flexible' }; } }
+const coachEntries = () => coachSport[0] === 'football' ? ['nour', 'omar'].map(k => [k, coaches[k]]) : [[coachSport[0] + '-coach', coaches[coachSport[0] + '-coach']]];
+const clubs = [{ id: 'coastal', name: 'Coastal Sports Club', branches: [['Gleem', 3], ['Smouha', 2]], color: '#37578e' }, { id: 'east', name: 'Eastside Sports Centre', branches: [['Montaza', 2], ['Sidi Bishr', 3]], color: '#347366' }, { id: 'city', name: 'City Sports Grounds', branches: [['Sporting', 3], ['Roushdy', 2]], color: '#675a86' }];
+let marketQuery = '', dayIndex = 0, venueSearch = '', sortBy = 'default', favOnly = false, activeSport = '', chosen = null;
+const market = $('market'), marketTimes = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+const el = (tag, text, cls) => node(tag, text, cls);
+const link = (label, href, cls) => { const a = el('a', label, cls); a.href = href; return a; };
+const act = (label, fn, cls) => { const b = el('button', label, cls); b.type = 'button'; b.onclick = fn; return b; };
+const keyFor = (s, c, b, n) => [s[0], c.id, b, n].join('/');
+const available = (s, c, b, n, h) => (h + n + dayIndex + b + clubs.indexOf(c)) % 5 !== 0 && !bookings.some(x => x.resource === keyFor(s, c, b, n) && x.day === days[dayIndex].toISOString() && x.hour === h);
+const fee = (s, c, b) => s[4] + clubs.indexOf(c) * 50 + b * 25;
+function dateBar(refresh) {
+  const strip = el('div', null, 'mstrip');
+  days.forEach((d, i) => { const b = act('', () => { dayIndex = i; chosen = null; refresh(); }); b.setAttribute('aria-pressed', String(i === dayIndex)); b.append(el('small', new Intl.DateTimeFormat(localeCode(), { weekday: 'short', timeZone: 'Africa/Cairo' }).format(d)), el('strong', String(d.getUTCDate()))); strip.append(b); });
+  return strip;
 }
-$('booked').onclick=()=>$('history-link').click();$('liked').onclick=()=>{pendingSaved=true;location.hash='/courts';};
-$('search-home').onsubmit=e=>{e.preventDefault();marketQuery=$('home-text').value;location.hash='/sports';};
-$('likes').onclick=()=>{onlySaved=!onlySaved;drawResults();};$('refine').onclick=()=>{const f=document.querySelector('.filters');f.hidden=!f.hidden;$('refine').setAttribute('aria-expanded',String(!f.hidden));};
-$('sort').onchange=drawResults;$('search').oninput=drawResults;
-days.forEach((date,i)=>{const b=node('button');b.append(node('small',new Intl.DateTimeFormat('en',{weekday:'short',timeZone:'Africa/Cairo'}).format(date)),node('b',String(date.getUTCDate())));b.setAttribute('aria-label',dayLabel(i));b.onclick=()=>{selection.day=i;$('browse-date').value=String(i);drawResults();};$('week').append(b);});
-for(const [key,item] of Object.entries(courts)){const a=node('a');a.href='#/courts';a.append(diagram(key),node('strong',item.name),node('small',item.area+' · '+item.format));a.onclick=()=>{pendingQuery=item.name;};$('local-picks').append(a);}
-const catalog=[
- ['padel','Padel','Court','🎾',520],['football','Football','Pitch','⚽',500],['padbol','Padbol','Court','🥅',400],['pickleball','Pickleball','Court','🏓',320],['tennis','Tennis','Court','🎾',450],['basketball','Basketball','Court','🏀',600],['squash','Squash','Court','🎾',300],['handball','Handball','Court','🤾',350],['volleyball','Volleyball','Court','🏐',350]
-];
-for(const [id,name] of catalog){
- if(id==='football')continue;
- const key=id+'-coach';
- coaches[key]={name:name+' Coach',price:350,location:null,hours:[9,11,16,18]};
- profiles[key]={focus:name+' fundamentals',level:'Beginner to intermediate',area:'Flexible'};
+function heading(back, href, title) { market.append(link('‹ ' + back, href, 'mback'), el('h1', title)); }
+function showMarket() {
+  const [, zone, sid, cid, rawBranch] = location.hash.split('/'), coachPicker = zone === 'coaches' && !coachSport, on = zone === 'sports' || coachPicker;
+  market.hidden = !on; document.body.classList.toggle('in-market', on);
+  if (!on) return false;
+  $('home').hidden = true; $('discover').hidden = true; $('gyms-view').hidden = true; $('academies-view').hidden = true; $('return-results').hidden = true; document.querySelector('.intro').hidden = true; document.querySelector('.layout').hidden = true; document.body.classList.remove('at-home');
+  market.replaceChildren(); document.querySelector('.top').dataset.page = coachPicker ? 'coaches' : 'courts';
+  const sport = catalog.find(x => x[0] === sid), club = clubs.find(x => x.id === cid);
+  if (coachPicker || !sport) {
+    heading(lang === 'ar' ? 'الرئيسية' : 'Home', '#/home', lang === 'ar' ? 'اختر الرياضة' : 'Choose your sport');
+    const grid = el('div', null, 'sportgrid'); catalog.forEach(s => { const a = link('', '#/' + (coachPicker ? 'coaches' : 'sports') + '/' + s[0]); a.append(el('span', s[3]), el('strong', s[1])); grid.append(a); }); market.append(grid);
+  } else {
+    if (activeSport !== sid || marketQuery) { activeSport = sid; venueSearch = marketQuery; marketQuery = ''; favOnly = false; sortBy = 'default'; chosen = null; }
+    if (club) showVenue(sport, club, club.branches[Number(rawBranch) || 0] ? (Number(rawBranch) || 0) : 0);
+    else showClubs(sport);
+  }
+  return true;
 }
-function coachEntries(){
- return (coachSport[0]==='football'?['nour','omar']:[coachSport[0]+'-coach']).map(key=>[key,coaches[key]]);
+function showClubs(s) {
+  heading(lang === 'ar' ? 'الرياضات' : 'Sports', '#/sports', lang === 'ar' ? 'ملاعب ' + s[1] : (s[2] === 'Pitch' ? 'Find a pitch' : 'Find a court'));
+  const base = '#/sports/' + s[0], sports = el('nav', null, 'sporttabs');
+  catalog.forEach(x => { const a = link(x[1], '#/sports/' + x[0]); if (x === s) a.setAttribute('aria-current', 'page'); sports.append(a); }); market.append(sports);
+  const bar = el('div', null, 'mtools'), input = el('input'); input.type = 'search'; input.placeholder = t('search_home_ph'); input.value = venueSearch;
+  bar.append(input); market.append(bar, dateBar(showMarket));
+  const list = el('div', null, 'venues'); market.append(list);
+  function draw() {
+    list.replaceChildren();
+    const q = venueSearch.trim().toLowerCase();
+    for (const c of clubs.filter(c => [c.name, ...c.branches.map(x => x[0])].join(' ').toLowerCase().includes(q))) {
+      const b = Math.max(0, c.branches.findIndex(x => q && x[0].toLowerCase().includes(q))), url = base + '/' + c.id + '/' + b, card = el('article', null, 'venuecard'), head = link('', url, 'venuehead'), art = el('span', s[3], 'sportart'); art.style.backgroundColor = c.color;
+      const words = el('div'); words.append(el('h2', c.name), el('small', c.branches.map(x => x[0]).join(' · ')), el('strong', `from ${money(fee(s, c, 0))}/hr`)); head.append(art, words);
+      const times = el('div', null, 'vslots');
+      for (const h of marketTimes.filter(h => Array.from({ length: c.branches[b][1] }, (_, n) => available(s, c, b, n + 1, h)).some(Boolean))) { const a = link(timeLabel(h), url); a.onclick = () => { chosen = { hour: h, branch: b, club: c.id, sport: s[0], date: dayIndex }; }; times.append(a); }
+      card.append(head, times); list.append(card);
+    }
+  }
+  input.oninput = () => { venueSearch = input.value; draw(); }; draw();
 }
-const clubs=[
- {id:'coastal',name:'Coastal Sports Club',branches:[['Gleem',3],['Smouha',2]],color:'#37578e'},
- {id:'east',name:'Eastside Sports Centre',branches:[['Montaza',2],['Sidi Bishr',3]],color:'#347366'},
- {id:'city',name:'City Sports Grounds',branches:[['Sporting',3],['Roushdy',2]],color:'#675a86'}
-];
-let marketQuery='',dayIndex=0,venueSearch='',sortBy='default',favOnly=false,activeSport='',chosen=null;
-const market=$('market'), marketTimes=[8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-function el(tag,text,cls){return node(tag,text,cls);}
-function link(label,href,cls){const a=el('a',label,cls);a.href=href;return a;}
-function act(label,fn,cls){const b=el('button',label,cls);b.type='button';b.onclick=fn;return b;}
-function keyFor(s,c,b,n){return [s[0],c.id,b,n].join('/');}
-function available(s,c,b,n,h){
- const key=keyFor(s,c,b,n),date=days[dayIndex].toISOString();
- return (h+n+dayIndex+b+clubs.indexOf(c))%5!==0&&!bookings.some(x=>x.resource===key&&x.day===date&&x.hour===h);
+function showVenue(s, c, b) {
+  const base = '#/sports/' + s[0], branch = c.branches[b]; heading(s[1], base, c.name);
+  const banner = el('div', `${s[3]}   ${s[1]}  /  ${branch[0]}`, 'vbanner'); banner.style.backgroundColor = c.color; market.insertBefore(banner, market.querySelector('h1'));
+  const branches = el('div', null, 'branches'); c.branches.forEach(([name, size], i) => { const a = link('', base + '/' + c.id + '/' + i); a.append(el('strong', name), el('small', `${size} ${s[2]}`)); if (i === b) a.setAttribute('aria-current', 'page'); branches.append(a); });
+  market.append(branches, dateBar(showMarket));
+  const scroll = el('div', null, 'gridslide'), table = el('table'), header = table.createTHead().insertRow();
+  for (let n = 1; n <= branch[1]; n++) header.append(el('th', `${s[2]} ${n}`));
+  const body = table.createTBody(), review = el('dialog'); review.setAttribute('aria-labelledby', 'market-review-title'); let previous; review.addEventListener('close', () => { if (previous?.isConnected) previous.focus(); });
+  for (const h of marketTimes) {
+    const row = body.insertRow();
+    for (let n = 1; n <= branch[1]; n++) {
+      const button = act(timeLabel(h), () => {
+        previous = document.activeElement; const rt = el('h2', t('review_session')); rt.id = 'market-review-title'; rt.tabIndex = -1; review.replaceChildren(rt, el('p', `${c.name} · ${branch[0]} · ${s[2]} ${n}`), el('strong', money(fee(s, c, b))));
+        const confirm = act(t('confirm_booking'), async () => {
+          let res; try { res = await ApiClient.createBooking({ day: days[dayIndex].toISOString(), hour: h, resource: keyFor(s, c, b, n) }); } catch (err) { review.append(el('p', err.message, 'notice')); return; }
+          bookings.push({ id: res.id, day: days[dayIndex].toISOString(), hour: h, resource: keyFor(s, c, b, n), details: [s[1], c.name, branch[0], `${s[2]} ${n}`, dayLabel(dayIndex), timeLabel(h)].join(' · '), total: money(fee(s, c, b)) });
+          persist(); previous = null; review.close(); showMarket();
+        }, 'primary');
+        review.append(confirm, act(t('edit_selection'), () => review.close(), 'back')); review.showModal(); rt.focus();
+      });
+      button.disabled = !available(s, c, b, n, h); row.insertCell().append(button);
+    }
+  }
+  scroll.append(table); market.append(scroll, review);
 }
-function fee(s,c,b){return s[4]+clubs.indexOf(c)*50+b*25;}
-function dateBar(refresh){
- const strip=el('div',null,'mstrip');
- days.forEach((d,i)=>{const b=act('',()=>{dayIndex=i;chosen=null;refresh();});b.setAttribute('aria-pressed',String(i===dayIndex));b.setAttribute('aria-label',dayLabel(i));b.append(el('small',new Intl.DateTimeFormat('en',{weekday:'short',timeZone:'Africa/Cairo'}).format(d)),el('strong',String(d.getUTCDate())));strip.append(b);});return strip;
+function route() {
+  const [, zone, sportId] = location.hash.split('/');
+  coachSport = zone === 'coaches' ? catalog.find(sport => sport[0] === sportId) : null;
+  page = zone === 'gyms' ? 'gyms' : zone === 'academies' ? 'academies' : coachSport ? 'coaches' : 'courts';
+  if (coachSport) selection.coach = coachEntries()[0][0];
+  hour = null; $('add-court').checked = false; showStage('pick');
+  if (showMarket()) return;
+  const home = !location.hash || location.hash === '#/home';
+  $('home').hidden = !home; document.querySelector('.intro').hidden = home; document.body.classList.toggle('at-home', home);
+  $('discover').hidden = true; $('gyms-view').hidden = true; $('academies-view').hidden = true; document.querySelector('.layout').hidden = true; $('return-results').hidden = true;
+  if (home) return;
+  renderPage();
+  if (page === 'gyms') { $('gyms-view').hidden = false; renderGyms(); return; }
+  if (page === 'academies') { $('academies-view').hidden = false; renderAcademies(); return; }
+  $('search').value = pendingQuery; pendingQuery = ''; openResults(true);
 }
-function heading(back,href,title){market.append(link('‹ '+back,href,'mback'),el('h1',title));document.title=title+' | SPORT';}
-function showMarket(){
- const [,zone,sid,cid,rawBranch]=location.hash.split('/');
- const coachPicker=zone==='coaches'&&!coachSport;
- const on=zone==='sports'||coachPicker;market.hidden=!on;document.body.classList.toggle('in-market',on);
- if(!on)return false;
- $('home').hidden=true;$('discover').hidden=true;$('return-results').hidden=true;document.querySelector('.intro').hidden=true;document.querySelector('.layout').hidden=true;document.body.classList.remove('at-home');market.replaceChildren();
- document.querySelector('.top').dataset.page=coachPicker?'coaches':'courts';
- $('coaches-link').removeAttribute('aria-current');
- $('courts-link').removeAttribute('aria-current');
- $(coachPicker?'coaches-link':'courts-link').setAttribute('aria-current','page');
- const sport=catalog.find(x=>x[0]===sid),club=clubs.find(x=>x.id===cid);
- if(coachPicker||!sport){heading('Home','#/home','Choose your sport');const grid=el('div',null,'sportgrid');catalog.forEach(s=>{const a=link('','#/'+(coachPicker?'coaches':'sports')+'/'+s[0]);a.append(el('span',s[3]),el('strong',s[1]));grid.append(a);});market.append(grid);}
- else{
- if(activeSport!==sid||marketQuery){activeSport=sid;venueSearch=marketQuery;marketQuery='';favOnly=false;sortBy='default';chosen=null;}
- if(club){const b=Number(rawBranch)||0;showVenue(sport,club,club.branches[b]?b:0);}
- else showClubs(sport);
- }
- if(!coachPicker)market.append(el('p','Demo venues, prices and availability · Alexandria','sample'));return true;
-}
-function showClubs(s){
- heading('Sports','#/sports','Find '+(s[2]==='Pitch'?'a pitch':'a court'));const base='#/sports/'+s[0];
- const sports=el('nav',null,'sporttabs');catalog.forEach(x=>{const a=link(x[1],'#/sports/'+x[0]);if(x===s)a.setAttribute('aria-current','page');sports.append(a);});market.append(sports);
- const bar=el('div',null,'mtools'),input=el('input');input.type='search';input.placeholder='Search venue or neighborhood';input.setAttribute('aria-label',input.placeholder);input.value=venueSearch;
- const fav=act('♡',()=>{favOnly=!favOnly;showMarket();});fav.setAttribute('aria-label','Show saved venues');fav.setAttribute('aria-pressed',String(favOnly));bar.append(input,fav);market.append(bar,dateBar(showMarket));
- const line=el('div',null,'counts'),count=el('p'),sort=el('select');sort.setAttribute('aria-label','Sort venues');sort.append(new Option('Recommended','default'),new Option('Lowest price','price'),new Option('Name A–Z','name'));sort.value=sortBy;line.append(count,sort);const list=el('div',null,'venues');market.append(line,list);
- function draw(){list.replaceChildren();const q=venueSearch.trim().toLowerCase();let items=clubs.filter(c=>(!favOnly||hearts.includes(base+c.id))&&[c.name,...c.branches.map(x=>x[0])].join(' ').toLowerCase().includes(q));if(sortBy==='name')items.sort((a,b)=>a.name.localeCompare(b.name));if(sortBy==='price')items.sort((a,b)=>fee(s,a,0)-fee(s,b,0));count.textContent=items.length+' venues found';
- for(const c of items){const b=Math.max(0,c.branches.findIndex(x=>q&&x[0].toLowerCase().includes(q))),url=base+'/'+c.id+'/'+b,card=el('article',null,'venuecard'),head=link('',url,'venuehead'),art=el('span',s[3],'sportart');art.style.backgroundColor=c.color;
- const words=el('div');words.append(el('h2',c.name),el('small',c.branches.map(x=>x[0]).join(' · ')),el('strong',c.branches.length+' locations · from '+money(fee(s,c,0))+'/hr'));head.append(art,words);const heart=act(hearts.includes(base+c.id)?'♥':'♡',()=>{const id=base+c.id;hearts=hearts.includes(id)?hearts.filter(x=>x!==id):[...hearts,id];try{localStorage.setItem('sport.football.hearts',JSON.stringify(hearts));}catch{}draw();},'heart');heart.setAttribute('aria-label','Save '+c.name);const times=el('div',null,'vslots');
- for(const h of marketTimes.filter(h=>Array.from({length:c.branches[b][1]},(_,n)=>available(s,c,b,n+1,h)).some(Boolean))){const a=link(timeLabel(h),url);a.onclick=()=>{chosen={hour:h,branch:b,club:c.id,sport:s[0],date:dayIndex};};times.append(a);}head.onclick=()=>{chosen=null;};card.append(head,heart,times);list.append(card);}
- if(!items.length)list.append(el('p','No venues match. Try another area or turn off saved venues.'));}input.oninput=()=>{venueSearch=input.value;draw();};sort.onchange=()=>{sortBy=sort.value;draw();};draw();
-}
-function showVenue(s,c,b){
- const base='#/sports/'+s[0],branch=c.branches[b];heading(s[1]+' venues',base,c.name);
- const banner=el('div',s[3]+'   '+s[1]+'  /  '+branch[0],'vbanner');banner.style.backgroundColor=c.color;market.insertBefore(banner,market.querySelector('h1'));
- market.append(el('p',branch[0]+' · Alexandria · '+money(fee(s,c,b))+' per hour','description'),el('h2','Choose location'));
- const branches=el('div',null,'branches');c.branches.forEach(([name,size],i)=>{const a=link('',base+'/'+c.id+'/'+i);a.append(el('strong',name),el('small',size+' '+s[2].toLowerCase()+(s[2]==='Pitch'?'es':'s')));if(i===b)a.setAttribute('aria-current','page');a.onclick=()=>{chosen=null;};branches.append(a);});market.append(branches,el('h2','Pick a date'),dateBar(showMarket));
- const scroll=el('div',null,'gridslide'),table=el('table');table.setAttribute('aria-label',branch[0]+' availability, '+dayLabel(dayIndex));const header=table.createTHead().insertRow();for(let n=1;n<=branch[1];n++){const th=el('th',s[2]+' '+n);th.scope='col';header.append(th);}const body=table.createTBody(),review=el('dialog','','sheet');review.setAttribute('aria-labelledby','market-review-title');review.addEventListener('close',()=>{if(previous?.isConnected)previous.focus();});let previous;
- for(const h of marketTimes){const row=body.insertRow();for(let n=1;n<=branch[1];n++){const button=act(timeLabel(h),()=>{previous=button;const t=el('h2','Review booking');t.id='market-review-title';t.tabIndex=-1;review.replaceChildren(t,el('p',c.name+' · '+branch[0]+' · '+s[2]+' '+n),el('p',dayLabel(dayIndex)+' · '+timeLabel(h)+'–'+timeLabel(h+1)),el('strong','Total · '+money(fee(s,c,b))));const confirm=act('Confirm demo booking',()=>{if(!available(s,c,b,n,h)){review.close();showMarket();return;}bookings.push({id:Date.now().toString(36),day:days[dayIndex].toISOString(),hour:h,resource:keyFor(s,c,b,n),details:[s[1],c.name,branch[0],s[2]+' '+n,dayLabel(dayIndex),timeLabel(h)].join(' · '),total:'Total · '+money(fee(s,c,b))});persist();const d=el('h2','Demo booking confirmed');d.id='market-review-title';d.tabIndex=-1;review.replaceChildren(d,el('p',branch[0]+' · '+s[2]+' '+n+' · '+dayLabel(dayIndex)+' · '+timeLabel(h)),el('p','No payment was taken.','notice'),act('Done',()=>{previous=null;review.close();showMarket();},'primary'));d.focus();},'primary');review.append(confirm,act('Edit selection',()=>{review.close();previous.focus();},'back'));review.showModal();t.focus();});
- button.disabled=!available(s,c,b,n,h);button.setAttribute('aria-label',s[2]+' '+n+' at '+timeLabel(h));if(chosen?.hour===h&&chosen.branch===b&&chosen.club===c.id&&chosen.sport===s[0]&&chosen.date===dayIndex)button.className='hint';row.insertCell().append(button);}}
- scroll.append(table);market.append(scroll,review);
-}
-window.addEventListener('hashchange',()=>window.scrollTo(0,0));
-route();
+$('lang-toggle').onclick = () => { lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('sport.lang', lang); applyLanguage(); route(); };
+$('browse-date').append(...days.map((_, i) => new Option(dayLabel(i), String(i))));
+$('browse-date').onchange = () => { selection.day = Number($('browse-date').value); drawResults(); };
+$('area').onchange = drawResults; $('kind').onchange = drawResults;
+$('return-results').onclick = () => openResults(false);
+$('booked').onclick = () => $('history-link').click();
+$('liked').onclick = () => { pendingSaved = true; location.hash = '/courts'; };
+$('search-home').onsubmit = e => { e.preventDefault(); marketQuery = $('home-text').value; location.hash = '/sports'; };
+$('likes').onclick = () => { onlySaved = !onlySaved; drawResults(); };
+$('refine').onclick = () => { const f = document.querySelector('.filters'); f.hidden = !f.hidden; };
+$('sort').onchange = drawResults; $('search').oninput = drawResults;
+days.forEach((date, i) => { const b = node('button'); b.append(node('small', new Intl.DateTimeFormat(localeCode(), { weekday: 'short', timeZone: 'Africa/Cairo' }).format(date)), node('b', String(date.getUTCDate()))); b.onclick = () => { selection.day = i; drawResults(); }; $('week').append(b); });
+for (const [key, item] of Object.entries(courts)) { const a = node('a'); a.href = '#/courts'; a.append(diagram(key), node('strong', item.name), node('small', item.area + ' · ' + item.format)); a.onclick = () => { pendingQuery = item.name; }; $('local-picks').append(a); }
+window.addEventListener('hashchange', () => { window.scrollTo(0, 0); route(); });
+applyLanguage(); route(); ApiClient.probe();
 </script>
 </body>
 </html>
