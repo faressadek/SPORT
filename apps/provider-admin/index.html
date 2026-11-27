@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Provider & Admin Portal | SPORT</title>
+<style>
+:root{--ink:#17201b;--muted:#56615a;--brand:#174a37;--paper:#f4f6f1;--white:#ffffff;--line:#dde3d8;font:15px/1.5 'Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}
+.shell{width:min(1040px,calc(100% - 32px));margin:auto;padding-block:20px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:14px;flex-wrap:wrap}
+.brand{font-size:1.5rem;font-weight:900;font-style:italic}
+.controls{display:flex;gap:8px;align-items:center}
+select,button{min-height:40px;padding:6px 12px;border-radius:10px;border:1px solid var(--line);background:var(--white);font:inherit;font-weight:650}
+button.primary{background:var(--brand);color:white;border-color:var(--brand)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:18px}
+.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px}
+.card h2{margin:0 0 10px;font-size:1.15rem}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.75rem;font-weight:700;background:#e8f3d8;color:var(--brand)}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div><span class="brand">SPORT.</span> <span class="badge" id="role-badge">Provider / Admin</span></div>
+    <div class="controls">
+      <label>Role token:
+        <select id="token-select">
+          <option value="admin-sport">Platform Admin (admin-sport)</option>
+          <option value="coach-fares">Coach / Academy (coach-fares)</option>
+          <option value="venue-coastal">Venue Operator (venue-coastal)</option>
+          <option value="gym-apex">Gym Operator (gym-apex)</option>
+          <option value="academy-alex-youth">Academy Operator (academy-alex-youth)</option>
+        </select>
+      </label>
+      <button type="button" class="primary" id="refresh-btn">Refresh Data</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Active Bookings & Holds</h2>
+      <div id="bookings-box">Loading...</div>
+    </section>
+    <section class="card">
+      <h2>Gym & Academy Listings</h2>
+      <div id="listings-box">Loading...</div>
+    </section>
+    <section class="card">
+      <h2>Gym & Academy Enquiries</h2>
+      <div id="enquiries-box">Loading...</div>
+    </section>
+    <section class="card" id="admin-card">
+      <h2>Listing Moderation & Payment Outbox (Admin)</h2>
+      <div id="admin-box">Loading...</div>
+    </section>
+  </div>
+</div>
+<script>
+const API_BASE = new URLSearchParams(location.search).get('api') || 'http://127.0.0.1:3000';
+const $ = id => document.getElementById(id);
+// Enquiries are submitted by the public: escape everything before it goes into the page.
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+async function loadPortal() {
+  const token = $('token-select').value;
+  const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+  try {
+    const [ovRes, catRes] = await Promise.all([
+      fetch(`${API_BASE}/api/provider/overview`, { headers }),
+      fetch(`${API_BASE}/api/catalog`)
+    ]);
+    const ov = await ovRes.json();
+    const cat = await catRes.json();
+    if (!ovRes.ok) throw new Error(ov.error);
+    $('role-badge').textContent = ov.role.toUpperCase();
+
+    $('bookings-box').innerHTML = ov.bookings.length
+      ? `<table><tr><th>ID</th><th>Day</th><th>Hour</th><th>Status</th></tr>${ov.bookings.map(b => `<tr><td>${esc(b.id)}</td><td>${esc(String(b.day).slice(0,10))}</td><td>${esc(b.hour)}:00</td><td><span class="badge">${esc(b.status)}</span></td></tr>`).join('')}</table>`
+      : '<p>No bookings visible for this role.</p>';
+
+    const isAdmin = ov.role === 'admin';
+    const listings = ov.listings || [];
+    $('listings-box').innerHTML = listings.length
+      ? `<table><tr><th>Listing</th><th>Type</th><th>Area</th><th>Status</th>${isAdmin ? '<th></th>' : ''}</tr>${listings.map(l => `<tr><td>${esc(l.name)}</td><td>${esc(l.kind)}</td><td>${esc(l.area)}</td><td><span class="badge">${l.published ? 'Published' : 'Hidden'}</span></td>${isAdmin ? `<td><button type="button" data-listing="${esc(l.id)}" data-publish="${!l.published}">${l.published ? 'Unpublish' : 'Publish'}</button></td>` : ''}</tr>`).join('')}</table>`
+      : '<p>No gym or academy listings for this role.</p>';
+    for (const btn of $('listings-box').querySelectorAll('button[data-listing]')) btn.onclick = async () => {
+      await fetch(`${API_BASE}/api/admin/listings/${encodeURIComponent(btn.dataset.listing)}`, { method: 'PATCH', headers, body: JSON.stringify({ published: btn.dataset.publish === 'true' }) });
+      loadPortal();
+    };
+
+    $('enquiries-box').innerHTML = ov.enquiries.length
+      ? `<table><tr><th>Ref</th><th>Target</th><th>Athlete</th><th>Phone</th></tr>${ov.enquiries.map(e => `<tr><td>${esc(e.id)}</td><td>${esc(e.targetName)}</td><td>${esc(e.name)}</td><td>${esc(e.phone)}</td></tr>`).join('')}</table>`
+      : '<p>No direct enquiries yet.</p>';
+
+    $('admin-card').hidden = ov.role !== 'admin';
+    if (ov.role === 'admin') {
+      $('admin-box').innerHTML = `
+        <p><strong>Outbox / Refund Exceptions:</strong> ${esc(ov.outbox.length)}</p>
+        <table><tr><th>Resource</th><th>Sport</th><th>Price</th></tr>${(cat.resources || []).map(r => `<tr><td>${esc(r.name)}</td><td>${esc(r.sport)}</td><td>${esc(r.price)} EGP</td></tr>`).join('')}</table>
+      `;
+    }
+  } catch (err) {
+    $('bookings-box').textContent = 'Start the API server (node apps/api/src/server.mjs) to inspect live records.';
+  }
+}
+$('refresh-btn').onclick = loadPortal;
+$('token-select').onchange = loadPortal;
+loadPortal();
+</script>
+</body>
+</html>
