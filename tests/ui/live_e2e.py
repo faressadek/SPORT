@@ -87,3 +87,5 @@ with sync_playwright() as p:
     b.close()
 for n, ok, d in res: print(("PASS " if ok else "FAIL ") + n + ("" if ok else f"  [{d}]"))
 print(f"{sum(r[1] for r in res)}/{len(res)} passed")
+if not res or any(not passed for _, passed, _ in res):
+    raise SystemExit(1)
