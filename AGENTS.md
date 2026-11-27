@@ -19,8 +19,8 @@ This file is shared by ChatGPT/Codex, Gemini and Claude. Keep project rules here
 ## Repo layout
 - `apps/athlete-preview/index.html`: athlete app. No build step. Runs offline or against the API with `?api=http://127.0.0.1:3000`.
 - `apps/provider-admin/index.html`: provider/admin portal.
-- `apps/api/src/`: booking API (in-memory store for now). `db/schema.sql`: PostgreSQL schema.
-- Tests: `npm test` (API; DB with `DATABASE_URL`), `python -m pytest tests/ui/test_preview.py`, `python tests/ui/smoke.py apps/athlete-preview/index.html shots`, `python tests/ui/live_e2e.py . http://127.0.0.1:3000`.
+- `apps/api/src/`: booking API. `pg-store.mjs` (PostgreSQL, used when `DATABASE_URL` is set) and `memory-store.mjs` implement one interface. Put booking rules in `rules.mjs` and sample data in `catalog.mjs`, never in one store only. `db/schema.sql`: PostgreSQL schema.
+- Tests: `npm test` (every API test runs on both stores when `DATABASE_URL` is set), `python -m pytest tests/ui/test_preview.py`, `python tests/ui/smoke.py apps/athlete-preview/index.html shots`, `python tests/ui/live_e2e.py . http://127.0.0.1:3000`.
 - `docs/`: handoff, decisions, verification log.
 
 ## Booking-engine rules the code must keep
@@ -29,6 +29,8 @@ This file is shared by ChatGPT/Codex, Gemini and Claude. Keep project rules here
 - Every payment that cannot confirm a booking records exactly one refund request. A newer booking is never disturbed.
 - Prices come from the server, never from the client.
 - Anything a member of the public submits is shown as text, never as HTML.
+- In PostgreSQL, take the per-slot advisory locks (`lockSlots`) before inserting or reactivating allocations. Retry deadlocks and serialization failures (`40P01`, `40001`).
+- More than one API server may run against the same database. Don't keep booking state in process memory.
 
 ## How to work so the other agents can follow
 - Work on a branch named after your tool: `chatgpt/<topic>`, `gemini/<topic>` or `claude/<topic>`. Open a pull request. Don't push straight to `main` unless the owner says so.

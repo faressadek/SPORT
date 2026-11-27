@@ -1,5 +1,42 @@
 # SPORT verification log
 
+## 28 Nov 2026 · Claude · API connected to PostgreSQL (branch `claude/postgres-store`)
+
+The API now keeps its data in PostgreSQL when `DATABASE_URL` is set. Without it, it uses the in-memory store for demos. Both stores share one interface, the booking rules (`rules.mjs`) and the sample catalog (`catalog.mjs`). Every API test runs against both.
+
+### Results (PostgreSQL 16, Node 22)
+
+| Check | Result |
+|---|---|
+| `npm test` with `DATABASE_URL`: API tests on both stores plus schema tests | **45 / 45**, stable across 6 repeated runs |
+| `npm test` without a database | 19 / 19 (memory); PostgreSQL runs skip |
+| App and portal against the API on PostgreSQL (`tests/ui/live_e2e.py`) | **13 / 13** |
+| API restarted: bookings and enquiries still there | passed (before: everything lost) |
+| Two API servers on one database, 320 requests racing for one coach (8 rounds × 40) | exactly 1 booking per hour, 319 clean "taken" replies, **0 errors** |
+| PostgreSQL restarted under a running API | API stayed up and kept answering |
+
+New automated tests: late capture that still fits (confirms), bookings list/availability/cancel, server-side facility prices and owner visibility, admin unpublish, 12-way race for one court, 5 simultaneous duplicate captures (one confirmation, no refund), Cairo-hour mapping and back-to-back hours, and the two-server race (PostgreSQL only).
+
+### Problems found and fixed while connecting the database
+1. **Deadlocks under contention.** When two bookings collide at the same instant, PostgreSQL's overlap check can make each transaction wait for the other. In the first two-server race, 8 of 20 requests failed with a server error. Fixed: bookings for the same resource and hour now queue behind a short transaction lock, allocations are inserted in a fixed order, and a deadlock is retried. The overlap constraint is still the final guard.
+2. **Two servers starting together crashed one of them** (both tried to create the schema). Fixed with a database lock around setup.
+3. **A dropped database connection would crash the API.** Fixed with a connection-error handler. PostgreSQL restart tested.
+4. Labels and resource order now match between stores (court first, then coach).
+
+### How the database decides
+- A hold is one transaction: queue on the slot, expire due holds, insert the booking and one allocation per resource. An overlap anywhere rolls the whole hold back (409).
+- A payment capture locks the booking row, then checks the idempotency key. A late capture tries to re-reserve the slot: it confirms if the slot is free, and otherwise records one refund while the newer booking stays.
+- Expired holds are released on every request and by a background sweep every 30 s.
+
+### Still open
+- Sign-in is still demo tokens (user IDs). Production authentication is next.
+- Gym and academy listings live in the athlete app, not yet in the database (`directory_listings` exists).
+- Paymob/Kashier sandbox: checkout expiry, signed callbacks, refunds, reconciliation.
+- Provider schedules and closures. Opening hours are still fixed lists in `catalog.mjs`.
+- CI has not run on GitHub yet.
+
+---
+
 ## 27 Nov 2026 (evening) · Claude · review of the `SPORT-full-stack` bundle
 
 The bundle added an API, a PostgreSQL schema, a provider/admin portal, Gyms and Academies, and Arabic (RTL) to the athlete app.

@@ -18,23 +18,39 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+      - run: npm ci
       - run: sudo apt-get install -y postgresql-client
-      - run: node --test "tests/api/*.test.mjs" "tests/db/*.test.mjs"
+      # Every API test runs against the in-memory store and against PostgreSQL.
+      - run: npm test
   ui:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: sport
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+      - run: npm ci
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install playwright pytest && python -m playwright install --with-deps chromium
       - run: python -m pytest tests/ui/test_preview.py -q
       - run: python tests/ui/smoke.py apps/athlete-preview/index.html shots
-      - name: Live API end-to-end
+      - name: Athlete app and portal against the API on PostgreSQL
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/sport
         run: |
           node apps/api/src/server.mjs &
-          sleep 1
+          for i in $(seq 1 20); do curl -sf http://127.0.0.1:3000/api/health && break; sleep 1; done
           python tests/ui/live_e2e.py . http://127.0.0.1:3000

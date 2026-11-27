@@ -8,7 +8,9 @@ Egyptian sports marketplace for athletes and parents: book courts, find coaches,
 |---|---|
 | `apps/athlete-preview/index.html` | Athlete app: Courts, Coaches (with the court add-on for coaches without a venue), Gyms, Academies, My bookings, English/Arabic. Works offline with sample data, or against the API. |
 | `apps/provider-admin/index.html` | Provider and admin portal: bookings, enquiries, refund queue. |
-| `apps/api/src/server.mjs` | Booking API (Node, no dependencies). **Keeps data in memory for now.** |
+| `apps/api/src/server.mjs` | Booking API (Node 22). Uses PostgreSQL when `DATABASE_URL` is set, otherwise an in-memory store for demos. |
+| `apps/api/src/pg-store.mjs`, `memory-store.mjs` | The two stores. Same interface, same tests. |
+| `apps/api/src/rules.mjs`, `catalog.mjs` | Booking rules and the sample catalog, shared by both stores. |
 | `apps/api/src/access.mjs` | Role rules for athletes, providers and admins. |
 | `db/schema.sql` | PostgreSQL schema. Overlap protection, half-open time ranges, payment attempts, outbox, gyms and academies. |
 | `tests/api/` | API checks: booking flows, late or duplicate payments, validation, the add-on rule, enquiry privacy. |
@@ -20,7 +22,10 @@ Egyptian sports marketplace for athletes and parents: book courts, find coaches,
 ## Run it
 
 ```sh
-npm run start:api                      # API on http://127.0.0.1:3000
+npm install
+npm run start:api                      # API on http://127.0.0.1:3000, in-memory (data lost on restart)
+# or, with PostgreSQL: cp .env.example .env, edit DATABASE_URL, then
+npm run start:api:db                   # creates the schema on first start and keeps data
 # open apps/athlete-preview/index.html  → header shows "API connected"
 # open apps/provider-admin/index.html
 ```
@@ -28,8 +33,8 @@ npm run start:api                      # API on http://127.0.0.1:3000
 ## Test it
 
 ```sh
-npm test                                # API checks; DB checks skip without DATABASE_URL
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres npm test   # needs psql
+npm test                                # API checks on the in-memory store; PostgreSQL runs skip without DATABASE_URL
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres npm test   # every API test also on PostgreSQL (needs psql)
 pip install playwright pytest && python -m playwright install chromium
 python -m pytest tests/ui/test_preview.py
 python tests/ui/smoke.py apps/athlete-preview/index.html shots

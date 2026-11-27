@@ -68,6 +68,7 @@ CREATE TABLE booking_allocations (
 
 CREATE INDEX idx_allocations_booking ON booking_allocations(booking_id);
 CREATE INDEX idx_bookings_athlete ON bookings(athlete_id, created_at DESC);
+CREATE INDEX idx_bookings_holds ON bookings(hold_expires_at) WHERE status = 'HOLD';
 
 -- Idempotent Payment Attempts & Charges (Paymob / Kashier)
 CREATE TABLE payment_attempts (
@@ -76,7 +77,7 @@ CREATE TABLE payment_attempts (
     provider            TEXT NOT NULL CHECK (provider IN ('paymob', 'kashier', 'simulator')),
     idempotency_key     TEXT NOT NULL UNIQUE,
     amount_egp_minor    BIGINT NOT NULL,
-    status              TEXT NOT NULL CHECK (status IN ('PENDING', 'CAPTURED', 'FAILED', 'LATE_REFUND_QUEUED')),
+    status              TEXT NOT NULL CHECK (status IN ('PENDING', 'CAPTURED', 'FAILED', 'REFUND_QUEUED')),
     provider_tx_id      TEXT UNIQUE,
     raw_payload         JSONB NOT NULL DEFAULT '{}'::jsonb,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -113,6 +114,7 @@ CREATE TABLE directory_listings (
 CREATE TABLE enquiries (
     id              TEXT PRIMARY KEY,
     listing_id      TEXT NOT NULL,
+    target_name     TEXT,
     kind            TEXT NOT NULL CHECK (kind IN ('gym', 'academy')),
     athlete_id      TEXT REFERENCES users(id),
     full_name       TEXT NOT NULL,

@@ -16,5 +16,6 @@ Newest first. Only the owner makes decisions. Agents record them here.
 - Cancellation window, fees and refund rules before live checkout.
 
 ## Activity
+- 2026-11-28 · Claude: connected the API to PostgreSQL (bookings now survive restarts). Every API test runs on both stores. Fixed a deadlock under contention and a crash when two servers start together. Open: real sign-in, Paymob sandbox, gyms/academies data in the database.
 - 2026-11-27 · Claude: reviewed the SPORT-full-stack bundle and fixed 15 defects (see verification log). Added API edge-case, PostgreSQL and live end-to-end tests, plus CI. Open: the API still keeps data in memory, not PostgreSQL.
 - 2026-11-27 · Claude: added the athlete preview, UI checks and verification log. Set up shared agent instructions. Open: the backend prototype is not in the repo yet.

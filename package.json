@@ -1,12 +1,17 @@
 {
   "name": "sport-marketplace",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
+  "engines": { "node": ">=22" },
   "type": "module",
   "scripts": {
     "start:api": "node apps/api/src/server.mjs",
+    "start:api:db": "node --env-file=.env apps/api/src/server.mjs",
     "test:api": "node --test \"tests/api/*.test.mjs\"",
     "test:db": "node --test \"tests/db/*.test.mjs\"",
     "test": "node --test \"tests/api/*.test.mjs\" \"tests/db/*.test.mjs\""
+  },
+  "dependencies": {
+    "pg": "^8.23.1"
   }
 }
