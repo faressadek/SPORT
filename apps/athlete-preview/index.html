@@ -633,6 +633,17 @@ const ApiClient = {
     });
     return { id: hold.bookingId, status: confirmed.status || 'CONFIRMED', holdRef: hold.bookingId };
   },
+  // Fetches open/busy hours for resources not yet loaded for that day, then redraws.
+  async loadAvailability(d, ids, redraw) {
+    if (!this.live) return;
+    const day = days[d].toISOString(), missing = ids.filter(id => !serverAvail[day + '|' + id]);
+    if (!missing.length) return;
+    try {
+      const out = await this.request(`/api/availability?day=${encodeURIComponent(day)}&resources=${missing.map(encodeURIComponent).join(',')}`);
+      for (const [id, a] of Object.entries(out.resources || {})) serverAvail[day + '|' + id] = a;
+      redraw();
+    } catch {}
+  },
   async cancelBooking(id) {
     if (this.live) await this.request(`/api/bookings/${encodeURIComponent(id)}/cancel`, { method: 'POST' });
   },
@@ -654,7 +665,10 @@ const sportBase = { padel: 520, football: 500, padbol: 400, pickleball: 320, ten
 const pitchFee = (sportId, ci, b) => sportBase[sportId] + ci * 50 + b * 25;
 const pitchKey = (sportId, clubId, b, n) => [sportId, clubId, b, n].join('/');
 // Sample availability: a few slots are taken by others; plus anything booked in this browser.
-const pitchFree = (sportId, ci, b, n, h, d) => (h + n + d + b + ci) % 5 !== 0
+// With the API running, provider opening hours, closures and other athletes' bookings come from the server.
+const serverAvail = {}; // `${day}|${resourceId}` -> { openHours, busyHours }
+const serverOk = (id, h, d) => { const a = serverAvail[days[d].toISOString() + '|' + id]; return !a || (a.openHours.includes(h) && !a.busyHours.includes(h)); };
+const pitchFree = (sportId, ci, b, n, h, d) => (ApiClient.live ? serverOk(pitchKey(sportId, clubs[ci].id, b, n), h, d) : (h + n + d + b + ci) % 5 !== 0)
   && !bookings.some(x => x.resource === pitchKey(sportId, clubs[ci].id, b, n) && x.day === days[d].toISOString() && x.hour === h);
 // "Add a pitch" for a flexible football coach: one choice per club branch; the first free pitch there is booked.
 const courts = Object.fromEntries(clubs.flatMap((c, ci) => c.branches.map(([area, units], b) => [`${c.id}/${b}`,
@@ -731,7 +745,8 @@ function selected() {
 // Coach hours on that day; with an added pitch, only hours when the coach is free AND the branch has a free pitch.
 function slots({ coach, court, day }, coachKey = selection.coach) {
   const forDay = hours => hours.filter((_, i) => day !== 1 || i !== 0).filter((_, i) => day !== 2 || i < 2);
-  return forDay(coach.hours)
+  const hours = ApiClient.live && serverAvail[days[day].toISOString() + '|' + coachKey] ? serverAvail[days[day].toISOString() + '|' + coachKey].openHours.filter(h => !serverAvail[days[day].toISOString() + '|' + coachKey].busyHours.includes(h)) : forDay(coach.hours);
+  return hours
     .filter(h => !bookings.some(b => b.day === days[day].toISOString() && b.hour === h && b.coach === coachKey))
     .filter(h => !court || freeUnit(court, h, day));
 }
@@ -753,6 +768,7 @@ function renderPage() {
 function render() {
   const choice = selected();
   if (!choice.coach) return; // Courts book in the club grid; Gyms and Academies have no booking summary
+  ApiClient.loadAvailability(choice.day, [selection.coach, ...(choice.court ? Array.from({ length: choice.court.units }, (_, i) => pitchKey('football', clubs[choice.court.ci].id, choice.court.b, i + 1)) : [])], render);
   const available = slots(choice);
   if (!available.includes(hour)) hour = null;
   for (const group of ['coach', 'court', 'day']) {
@@ -807,6 +823,7 @@ $('confirm').addEventListener('click', async () => {
     const pitchName = unitKey ? `${choice.court.name} · Pitch ${unitKey.split('/').pop()}` : null;
     const details = [pitchName ?? choice.coach.name, ...(pitchName ? [choice.coach.name] : [])].join(' + ') + ' · ' + $('summary-time').textContent;
     const session = { id: res.id, day: days[choice.day].toISOString(), hour, resource: unitKey, coach: selection.coach, details, total: $('review-total').textContent };
+    for (const k in serverAvail) delete serverAvail[k];
     bookings.push(session); persist(); showStage('done');
     $('confirmation').textContent = session.details + ' · ' + session.total;
     $('hold-ref').textContent = (lang === 'ar' ? 'رقم المرجع: ' : 'Reference: ') + res.holdRef;
@@ -1020,6 +1037,7 @@ function showClubs(s) {
 }
 function showVenue(s, c, b) {
   const base = '#/sports/' + s[0], branch = c.branches[b]; heading(s[1], base, c.name);
+  ApiClient.loadAvailability(dayIndex, Array.from({ length: branch[1] }, (_, i) => keyFor(s, c, b, i + 1)), showMarket);
   const banner = el('div', `${s[3]}   ${s[1]}  /  ${branch[0]}`, 'vbanner'); banner.style.backgroundColor = c.color; market.insertBefore(banner, market.querySelector('h1'));
   const branches = el('div', null, 'branches'); c.branches.forEach(([name, size], i) => { const a = link('', base + '/' + c.id + '/' + i); a.append(el('strong', name), el('small', `${size} ${s[2]}`)); if (i === b) a.setAttribute('aria-current', 'page'); branches.append(a); });
   market.append(branches, dateBar(showMarket));
@@ -1034,6 +1052,7 @@ function showVenue(s, c, b) {
         const confirm = act(t('confirm_booking'), async () => {
           let res; try { res = await ApiClient.createBooking({ day: days[dayIndex].toISOString(), hour: h, resource: keyFor(s, c, b, n) }); } catch (err) { review.append(el('p', err.message, 'notice')); return; }
           bookings.push({ id: res.id, day: days[dayIndex].toISOString(), hour: h, resource: keyFor(s, c, b, n), details: [s[1], c.name, branch[0], `${s[2]} ${n}`, dayLabel(dayIndex), timeLabel(h)].join(' · '), total: money(fee(s, c, b)) });
+          for (const k in serverAvail) delete serverAvail[k];
           persist(); previous = null; review.close(); showMarket();
         }, 'primary');
         review.append(confirm, act(t('edit_selection'), () => review.close(), 'back')); review.showModal(); rt.focus();

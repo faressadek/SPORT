@@ -16,6 +16,7 @@ Newest first. Only the owner makes decisions. Agents record them here.
 - Cancellation window, fees and refund rules before live checkout.
 
 ## Activity
+- 2026-11-28 · Claude: provider schedules (weekly hours, closures) in API, PostgreSQL, portal and athlete app. Open: athlete notifications for closures, real sign-in, Paymob sandbox.
 - 2026-11-28 · Claude: applied the pitch-inventory and colour decisions (club branches everywhere, dark green and lime). Open: real sign-in, Paymob sandbox, provider schedules.
 - 2026-11-28 · Claude: added `docs/claude-toolkit.md` and `.claude/settings.json` (plugins: frontend-design, superpowers, code-review, security-guidance). Reviewed the gyms/academies branch and fixed 5 findings.
 - 2026-11-28 · Claude: gyms and academies now live in the shared catalog and in PostgreSQL. New public search routes (`GET /api/gyms`, `GET /api/academies`), admin moderation (`PATCH /api/admin/listings/:id`), and enquiries must target a real, published listing. The athlete app loads listings from the API; the portal shows listings per owner. Recorded the pitch-inventory and colour decisions. Open: apply those two decisions in the app, real sign-in, Paymob sandbox, provider schedules.

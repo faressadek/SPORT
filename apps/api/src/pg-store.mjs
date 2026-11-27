@@ -23,6 +23,25 @@ const BOOKING_SELECT = `
          bool_or(a.active) AS active
     FROM sport.bookings b JOIN sport.booking_allocations a ON a.booking_id = b.id`;
 
+// Tables added after the first schema: created on startup so existing databases get them too.
+const MIGRATIONS = `CREATE TABLE IF NOT EXISTS sport.resource_schedules (
+    target      TEXT PRIMARY KEY,           -- coach resource id, or 'club:<id>' for every court at a club
+    weekly      JSONB NOT NULL,             -- {"0": [hours], ... "6": [hours]}, Cairo local hours, 0 = Sunday
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS sport.resource_closures (
+    id          TEXT PRIMARY KEY,
+    target      TEXT NOT NULL,
+    day         DATE NOT NULL,              -- Cairo date
+    hours       INT[],                      -- NULL = closed all day
+    reason      TEXT NOT NULL DEFAULT '',
+    created_by  TEXT REFERENCES sport.users(id),
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS resource_closures_day ON sport.resource_closures (day);`;
+
+const CLOSURE_SELECT = `SELECT id, target, to_char(day, 'YYYY-MM-DD') AS day, hours, reason, created_by, created_at FROM sport.resource_closures`;
+const toClosure = r => r && ({ id: r.id, target: r.target, day: r.day, hours: r.hours, reason: r.reason, createdBy: r.created_by, createdAt: r.created_at.toISOString() });
 const LISTING_SELECT = `SELECT id, kind, name, sport, area, owner_user_id, published, details FROM sport.directory_listings`;
 const toListing = r => r && ({ id: r.id, kind: r.kind, name: r.name, ...(r.sport ? { sport: r.sport } : {}), area: r.area,
   ...r.details, ownerId: r.owner_user_id, published: r.published });
@@ -94,6 +113,7 @@ export async function createPgStore(connectionString, { setup = true } = {}) {
         await c.query(`SELECT pg_advisory_lock(hashtext('sport.schema'))`);
         const exists = (await c.query(`SELECT to_regclass('sport.bookings') AS t`)).rows[0].t;
         if (!exists) await c.query(await readFile(SCHEMA_FILE, 'utf8'));
+        await c.query(MIGRATIONS);
       } finally {
         await c.query(`SELECT pg_advisory_unlock(hashtext('sport.schema'))`).catch(() => {});
         c.release();
@@ -240,6 +260,28 @@ export async function createPgStore(connectionString, { setup = true } = {}) {
         await c.query('UPDATE sport.booking_allocations SET active = false WHERE booking_id = $1', [bookingId]);
         return { httpStatus: 200, result: { bookingId, status: 'CANCELLED' } };
       });
+    },
+
+    // Schedules and closures are read on every call, so every API server sees a provider's change at once.
+    async getSchedules() {
+      return new Map((await pool.query('SELECT target, weekly FROM sport.resource_schedules')).rows.map(r => [r.target, r.weekly]));
+    },
+    async setWeekly(target, weekly) {
+      if (weekly === null) await pool.query('DELETE FROM sport.resource_schedules WHERE target = $1', [target]);
+      else await pool.query(`INSERT INTO sport.resource_schedules (target, weekly) VALUES ($1, $2)
+        ON CONFLICT (target) DO UPDATE SET weekly = EXCLUDED.weekly, updated_at = now()`, [target, weekly]);
+    },
+    async listClosures() {
+      return (await pool.query(`${CLOSURE_SELECT} ORDER BY day, created_at`)).rows.map(toClosure);
+    },
+    async addClosure(c) {
+      return toClosure((await pool.query(`INSERT INTO sport.resource_closures (id, target, day, hours, reason, created_by)
+        VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, target, to_char(day, 'YYYY-MM-DD') AS day, hours, reason, created_by, created_at`,
+        [newId('CLS', crypto), c.target, c.day, c.hours, c.reason, c.createdBy])).rows[0]);
+    },
+    async deleteClosure(id) {
+      return toClosure((await pool.query(`DELETE FROM sport.resource_closures WHERE id = $1
+        RETURNING id, target, to_char(day, 'YYYY-MM-DD') AS day, hours, reason, created_by, created_at`, [id])).rows[0]);
     },
 
     // Listings are read from the database on every call, so a listing unpublished on one API server is hidden on all of them.

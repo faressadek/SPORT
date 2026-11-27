@@ -26,7 +26,6 @@ export function validateHold(body, lookup) {
     throw new HttpError(400, 'This coach trains at a listed venue; a court can be added only for coaches without one.');
   }
   if (coach && court && court.sport !== coach.sport) throw new HttpError(400, 'The added court must be for the coach\'s sport.');
-  if (items.some(r => !r.hours.includes(hour))) throw new HttpError(409, 'Not available at this hour.');
   return {
     day: new Date(day).toISOString(),
     hour,
@@ -39,6 +38,53 @@ export function validateHold(body, lookup) {
     customVenue: coach && !coach.fixedVenue && !court ? String(customVenue || '').slice(0, 120) || null : null,
   };
 }
+
+// ---- Provider schedules -------------------------------------------------------------------------
+// A schedule target is a coach (its resource id) or a whole club ("club:<id>", every court of every sport there).
+// weekly: { "0": [hours], ..., "6": [hours] } with 0 = Sunday, Cairo local hours. A missing weekday means closed that day.
+// No weekly schedule = the resource's catalog hours every day. Closures remove hours on one Cairo date (hours null = all day).
+
+export const clubOf = resourceId => (String(resourceId).includes('/') ? String(resourceId).split('/')[1] : null);
+export const targetsFor = resourceId => [String(resourceId), ...(clubOf(resourceId) ? ['club:' + clubOf(resourceId)] : [])];
+
+const isHour = h => Number.isInteger(h) && h >= 0 && h <= 23;
+const cleanHours = (list, what) => {
+  if (!Array.isArray(list) || !list.every(isHour)) throw new HttpError(400, `${what} must be a list of whole hours from 0 to 23`);
+  return [...new Set(list)].sort((a, b) => a - b);
+};
+export function validateWeekly(weekly) {
+  if (weekly === null) return null; // back to catalog hours
+  if (typeof weekly !== 'object' || Array.isArray(weekly)) throw new HttpError(400, 'weekly must be an object keyed by weekday 0-6, or null');
+  const out = {};
+  for (const [k, v] of Object.entries(weekly)) {
+    if (!/^[0-6]$/.test(k)) throw new HttpError(400, 'Weekdays are 0 (Sunday) to 6 (Saturday)');
+    out[k] = cleanHours(v, `Hours for weekday ${k}`);
+  }
+  return out;
+}
+export function validateClosure(body) {
+  const { day, hours = null, reason = '' } = body || {};
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(day)) || Number.isNaN(Date.parse(day))) throw new HttpError(400, 'day must be a date like 2026-12-05');
+  return { day: String(day), hours: hours === null ? null : cleanHours(hours, 'Closed hours'), reason: String(reason).slice(0, 120) };
+}
+// The Cairo date of a booking day (the app sends noon UTC on the Cairo date).
+export const cairoDate = day => new Date(day).toISOString().slice(0, 10);
+
+// Open hours for one resource on one Cairo date. schedules: Map target -> weekly; closures: [{target, day, hours}].
+export function openHours(resource, day, schedules, closures) {
+  const date = cairoDate(day), weekday = String(new Date(date + 'T12:00:00Z').getUTCDay());
+  const targets = targetsFor(resource.id);
+  const weekly = targets.map(t => schedules.get(t)).find(Boolean);
+  let hours = weekly ? (weekly[weekday] || []) : resource.hours;
+  for (const c of closures) {
+    if (c.day !== date || !targets.includes(c.target)) continue;
+    hours = c.hours === null ? [] : hours.filter(h => !c.hours.includes(h));
+  }
+  return hours;
+}
+// True when a booking falls inside a closure.
+export const bookingInClosure = (b, c) => cairoDate(b.day) === c.day && (c.hours === null || c.hours.includes(b.hour))
+  && b.resourceIds.some(id => targetsFor(id).includes(c.target));
 
 // What a payment capture should do, given the booking's status after expired holds are swept.
 //   confirm → HOLD becomes CONFIRMED

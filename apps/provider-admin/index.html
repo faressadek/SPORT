@@ -45,6 +45,10 @@ th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left}
       <div id="bookings-box">Loading...</div>
     </section>
     <section class="card">
+      <h2>Opening Hours & Closures</h2>
+      <div id="schedule-box">Loading...</div>
+    </section>
+    <section class="card">
       <h2>Gym & Academy Listings</h2>
       <div id="listings-box">Loading...</div>
     </section>
@@ -81,6 +85,7 @@ async function loadPortal() {
       ? `<table><tr><th>ID</th><th>Day</th><th>Hour</th><th>Status</th></tr>${ov.bookings.map(b => `<tr><td>${esc(b.id)}</td><td>${esc(String(b.day).slice(0,10))}</td><td>${esc(b.hour)}:00</td><td><span class="badge">${esc(b.status)}</span></td></tr>`).join('')}</table>`
       : '<p>No bookings visible for this role.</p>';
 
+    loadSchedule(headers);
     const isAdmin = ov.role === 'admin';
     const listings = ov.listings || [];
     $('listings-box').innerHTML = listings.length
@@ -105,6 +110,37 @@ async function loadPortal() {
   } catch (err) {
     $('bookings-box').textContent = 'Start the API server (node apps/api/src/server.mjs) to inspect live records.';
   }
+}
+// Hours as text: "8-12, 16-21" means 8:00 to 12:00 and 16:00 to 21:00 (start hours 8..11 and 16..20).
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const toText = hours => { const out = []; let a = null, b = null; for (const h of [...hours].sort((x, y) => x - y)) { if (a !== null && h === b + 1) b = h; else { if (a !== null) out.push(`${a}-${b + 1}`); a = b = h; } } if (a !== null) out.push(`${a}-${b + 1}`); return out.join(', '); };
+const toHours = text => text.split(',').map(x => x.trim()).filter(Boolean).flatMap(r => { const [a, b] = r.split('-').map(Number); return Array.from({ length: Math.max(0, (b ?? a + 1) - a) }, (_, i) => a + i); });
+async function loadSchedule(headers) {
+  const box = $('schedule-box');
+  const res = await fetch(`${API_BASE}/api/provider/schedule`, { headers }); const data = await res.json();
+  if (!res.ok || !data.targets.length) { box.innerHTML = '<p>No coaches or clubs to manage for this role.</p>'; return; }
+  const opts = data.targets.map(t => `<option value="${esc(t.target)}">${esc(t.name)}</option>`).join('');
+  box.innerHTML = data.targets.map(t => `<form class="weekly" data-target="${esc(t.target)}"><h3>${esc(t.name)}</h3>
+      <table><tr>${DAYS.map(d => `<th>${d}</th>`).join('')}</tr><tr>${DAYS.map((_, i) => `<td><input name="d${i}" size="9" aria-label="${esc(t.name)} ${DAYS[i]} hours" value="${esc(toText(t.weekly ? (t.weekly[i] || []) : t.defaultHours))}"></td>`).join('')}</tr></table>
+      <button type="submit">Save hours</button> <button type="button" class="reset">Use default hours</button> <small>${t.weekly ? 'Custom hours' : 'Default hours'} · e.g. 8-12, 16-21 · empty = closed</small></form>`).join('')
+    + `<h3>Closures</h3><form id="closure-form"><select name="target">${opts}</select> <input type="date" name="day" required>
+      <input name="hours" size="8" placeholder="all day" aria-label="Closed hours, e.g. 9-12"> <input name="reason" maxlength="120" placeholder="Reason"> <button type="submit">Add closure</button></form>
+      <p id="closure-msg" role="status"></p>
+      ${data.closures.length ? `<table><tr><th>Date</th><th>Where</th><th>Hours</th><th>Reason</th><th></th></tr>${data.closures.map(c => `<tr><td>${esc(c.day)}</td><td>${esc(data.targets.find(t => t.target === c.target)?.name)}</td><td>${c.hours ? esc(toText(c.hours)) : 'All day'}</td><td>${esc(c.reason)}</td><td><button type="button" data-closure="${esc(c.id)}">Remove</button></td></tr>`).join('')}</table>` : '<p>No closures.</p>'}`;
+  const put = (target, weekly) => fetch(`${API_BASE}/api/provider/schedule/${encodeURIComponent(target)}`, { method: 'PUT', headers, body: JSON.stringify({ weekly }) });
+  for (const f of box.querySelectorAll('form.weekly')) {
+    f.onsubmit = async e => { e.preventDefault(); await put(f.dataset.target, Object.fromEntries(DAYS.map((_, i) => [i, toHours(f[`d${i}`].value)]))); loadSchedule(headers); };
+    f.querySelector('.reset').onclick = async () => { await put(f.dataset.target, null); loadSchedule(headers); };
+  }
+  $('closure-form').onsubmit = async e => {
+    e.preventDefault(); const f = e.target;
+    const r = await fetch(`${API_BASE}/api/provider/closures`, { method: 'POST', headers, body: JSON.stringify({ target: f.target.value, day: f.day.value, hours: f.hours.value.trim() ? toHours(f.hours.value) : null, reason: f.reason.value }) });
+    const out = await r.json();
+    if (!r.ok) { $('closure-msg').textContent = out.error; return; }
+    await loadSchedule(headers);
+    $('closure-msg').textContent = out.affectedBookings.length ? `Closure added. ${out.affectedBookings.length} existing booking(s) fall inside it and were kept: ${out.affectedBookings.map(b => b.id).join(', ')}. Contact those athletes.` : 'Closure added.';
+  };
+  for (const b of box.querySelectorAll('button[data-closure]')) b.onclick = async () => { await fetch(`${API_BASE}/api/provider/closures/${encodeURIComponent(b.dataset.closure)}`, { method: 'DELETE', headers }); loadSchedule(headers); };
 }
 $('refresh-btn').onclick = loadPortal;
 $('token-select').onchange = loadPortal;
