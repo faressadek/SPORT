@@ -4,7 +4,7 @@ This is the Claude Code counterpart of `docs/codex-toolkit.md`. Keep it short: e
 
 ## Enabled for this repo
 
-`.claude/settings.json` lists these plugins under `enabledPlugins`. Claude Code offers to install them when it opens the repo. On claude.ai (web or cloud sessions), add them from the plugin catalog instead.
+`.claude/settings.json` lists these plugins under `enabledPlugins` and registers their marketplace (`anthropics/claude-plugins-official`) under `extraKnownMarketplaces`, because some environments, such as Claude Code cloud containers, don't register it on their own. Claude Code offers to install them when it opens the repo. On claude.ai (web or cloud sessions), add them from the plugin catalog instead.
 
 | Plugin | Why SPORT uses it | SPORT check it supports |
 |---|---|---|
@@ -16,6 +16,7 @@ This is the Claude Code counterpart of `docs/codex-toolkit.md`. Keep it short: e
 Install by hand in the Claude Code terminal:
 
 ```
+/plugin marketplace add anthropics/claude-plugins-official
 /plugin install frontend-design@claude-plugins-official
 /plugin install superpowers@claude-plugins-official
 /plugin install code-review@claude-plugins-official

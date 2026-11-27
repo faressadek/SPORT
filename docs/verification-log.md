@@ -1,5 +1,10 @@
 # SPORT verification log
 
+## 28 Nov 2026 · Claude · Plugins installed (Claude Code 2.1.332)
+
+`claude plugin install <name>@claude-plugins-official --scope project` failed at first: "not found in marketplace". The official marketplace was not registered in the cloud container. After `claude plugin marketplace add anthropics/claude-plugins-official`, all four installed and show as enabled in `claude plugin list`: code-review 1.0.1, frontend-design 1.1.1, security-guidance 2.0.21, superpowers 7.0.2. `.claude/settings.json` now registers that marketplace, so new sessions can find it.
+
+
 ## 28 Nov 2026 · Claude · One pitch inventory and one colour system (owner decisions)
 
 **Pitches.** Clubs and branches are now the only pitch source.
