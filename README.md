@@ -9,6 +9,8 @@ Egyptian sports marketplace for athletes and parents: book courts, find coaches,
 | `apps/athlete-preview/index.html` | Standalone athlete preview with sample data: home, sports, clubs and branches, availability grid, pitch listings, and coaches. Open it in a browser. |
 | `tests/ui/test_preview.py` | Browser checks for the preview at phone and desktop sizes. |
 | `docs/handoff.md` | Project handoff: vision, decisions, architecture, and next steps. |
+| `AGENTS.md` | Shared rules read by ChatGPT/Codex, Gemini and Claude. |
+| `docs/decisions.md` | Owner decisions, open questions, and a log of what each AI did. |
 | `docs/verification-log.md` | What has been tested, what passed, and what is still open. |
 
 ## Booking rules
