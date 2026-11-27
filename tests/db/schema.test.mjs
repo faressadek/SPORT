@@ -31,15 +31,15 @@ test('DB: schema loads and enforces one booking per resource per hour', { skip: 
   execFileSync('psql', [dbUrl, '-v', 'ON_ERROR_STOP=1', '-q', '-f', schema]);
 
   await t.test('combined coach + court hold succeeds', () => {
-    assert.ok(tryPsql(dbUrl, hold('B1', 10, ['omar', 'smouha'])).ok);
+    assert.ok(tryPsql(dbUrl, hold('B1', 10, ['omar', 'football/coastal/0/1'])).ok);
   });
   await t.test('back-to-back hour on the same coach is allowed (half-open ranges)', () => {
     assert.ok(tryPsql(dbUrl, hold('B2', 11, ['omar'])).ok);
   });
   await t.test('a request sharing only the coach fails and leaves its court free', () => {
-    const r = tryPsql(dbUrl, hold('B3', 10, ['gleem', 'omar']));
+    const r = tryPsql(dbUrl, hold('B3', 10, ['football/coastal/1/1', 'omar']));
     assert.ok(!r.ok && /exclusion constraint/.test(r.err));
-    assert.equal(psql(dbUrl, `SELECT count(*) FROM sport.booking_allocations WHERE resource_id = 'gleem'`), '0');
+    assert.equal(psql(dbUrl, `SELECT count(*) FROM sport.booking_allocations WHERE resource_id = 'football/coastal/1/1'`), '0');
     assert.equal(psql(dbUrl, `SELECT count(*) FROM sport.bookings WHERE id = 'B3'`), '0');
   });
   await t.test('two simultaneous transactions for the same coach: exactly one commits', async () => {
@@ -47,12 +47,12 @@ test('DB: schema loads and enforces one booking per resource per hour', { skip: 
       const p = spawn('psql', [dbUrl, '-v', 'ON_ERROR_STOP=1', '-qtAX', '-c', hold(id, 17, ['omar', court])]);
       p.on('close', code => resolve(code));
     });
-    const codes = await Promise.all([run('R1', 'smouha'), run('R2', 'gleem')]);
+    const codes = await Promise.all([run('R1', 'football/coastal/0/1'), run('R2', 'football/coastal/1/1')]);
     assert.deepEqual(codes.sort(), [0, 1]);
     assert.equal(psql(dbUrl, `SELECT count(*) FROM sport.booking_allocations WHERE resource_id = 'omar' AND slot_range && ${slot(17)}`), '1');
   });
   await t.test('releasing an allocation frees the slot for a new hold', () => {
     psql(dbUrl, `UPDATE sport.booking_allocations SET active = false WHERE booking_id = 'B1'`);
-    assert.ok(tryPsql(dbUrl, hold('B4', 10, ['smouha'])).ok);
+    assert.ok(tryPsql(dbUrl, hold('B4', 10, ['football/coastal/0/1'])).ok);
   });
 });

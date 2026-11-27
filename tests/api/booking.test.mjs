@@ -2,16 +2,18 @@ import assert from 'node:assert/strict';
 import { storeTest } from './harness.mjs';
 
 const A = 'demo-athlete-marwan';
+// Club branch pitches (catalog.mjs CLUBS): Coastal Gleem 1 (500 EGP), Coastal Smouha 1 (525), Eastside Montaza 1 (550).
+const PITCH_A = 'football/coastal/0/1', PITCH_B = 'football/coastal/1/1', PITCH_C = 'football/east/0/1';
 
 storeTest('BOOK-01 flexible coach + court reserved together; the court alone is then taken; capture replays', async ({ call }) => {
   const day = '2026-12-01T12:00:00.000Z';
-  const holdRes = await call('POST', '/api/holds', A, { day, hour: 10, coachId: 'omar', pitchId: 'smouha' });
+  const holdRes = await call('POST', '/api/holds', A, { day, hour: 10, coachId: 'omar', pitchId: PITCH_A });
   assert.equal(holdRes.status, 201);
   const hold = await holdRes.json();
-  assert.equal(hold.total, 900); // 400 Omar + 500 North Pitch
-  assert.equal(hold.label, 'North Pitch + Omar Adel');
+  assert.equal(hold.total, 900); // 400 Omar + 500 Coastal Gleem Pitch 1
+  assert.equal(hold.label, 'Coastal Sports Club · Gleem · Pitch 1 + Omar Adel');
 
-  assert.equal((await call('POST', '/api/holds', A, { day, hour: 10, pitchId: 'smouha' })).status, 409);
+  assert.equal((await call('POST', '/api/holds', A, { day, hour: 10, pitchId: PITCH_A })).status, 409);
 
   const cap1 = await call('POST', '/api/checkout/capture', A, { bookingId: hold.bookingId, idempotencyKey: 'key-123' });
   const cap2 = await call('POST', '/api/checkout/capture', A, { bookingId: hold.bookingId, idempotencyKey: 'key-123' });
@@ -22,9 +24,9 @@ storeTest('BOOK-01 flexible coach + court reserved together; the court alone is 
 
 storeTest('BOOK-02 expired hold is reallocated; the late capture is refunded and the new booking kept', async ({ call, store }) => {
   const day = '2026-12-02T12:00:00.000Z';
-  const b1 = await (await call('POST', '/api/holds', A, { day, hour: 16, pitchId: 'gleem' })).json();
+  const b1 = await (await call('POST', '/api/holds', A, { day, hour: 16, pitchId: PITCH_B })).json();
   await store.testing.expireHold(b1.bookingId);
-  const r2 = await call('POST', '/api/holds', A, { day, hour: 16, pitchId: 'gleem' });
+  const r2 = await call('POST', '/api/holds', A, { day, hour: 16, pitchId: PITCH_B });
   assert.equal(r2.status, 201);
   const b2 = await r2.json();
 
@@ -37,12 +39,12 @@ storeTest('BOOK-02 expired hold is reallocated; the late capture is refunded and
 
 storeTest('BOOK-03 late capture confirms when the slot is still free', async ({ call, store }) => {
   const day = '2026-12-02T12:00:00.000Z';
-  const b = await (await call('POST', '/api/holds', A, { day, hour: 17, pitchId: 'gleem' })).json();
+  const b = await (await call('POST', '/api/holds', A, { day, hour: 17, pitchId: PITCH_B })).json();
   await store.testing.expireHold(b.bookingId);
   const late = await call('POST', '/api/checkout/capture', A, { bookingId: b.bookingId, idempotencyKey: 'k' });
   assert.equal(late.status, 200);
   assert.equal((await late.json()).late, true);
-  assert.equal((await call('POST', '/api/holds', A, { day, hour: 17, pitchId: 'gleem' })).status, 409);
+  assert.equal((await call('POST', '/api/holds', A, { day, hour: 17, pitchId: PITCH_B })).status, 409);
 });
 
 storeTest('BOOK-04 bookings list, availability, and cancel', async ({ call }) => {
@@ -76,9 +78,9 @@ storeTest('RBAC-01 roles enforced; public enquiry accepted', async ({ call }) =>
 });
 
 storeTest('ADMIN-01 unpublishing removes a resource from booking and the catalog', async ({ call }) => {
-  assert.equal((await call('PATCH', '/api/admin/resources/gleem', 'venue-coastal', { published: false })).status, 403);
-  assert.equal((await call('PATCH', '/api/admin/resources/gleem', 'admin-sport', { published: false })).status, 200);
+  assert.equal((await call('PATCH', `/api/admin/resources/${encodeURIComponent(PITCH_B)}`, 'venue-coastal', { published: false })).status, 403);
+  assert.equal((await call('PATCH', `/api/admin/resources/${encodeURIComponent(PITCH_B)}`, 'admin-sport', { published: false })).status, 200);
   const cat = await (await call('GET', '/api/catalog')).json();
-  assert.ok(!cat.resources.some(r => r.id === 'gleem'));
-  assert.equal((await call('POST', '/api/holds', A, { day: '2026-12-03T12:00:00.000Z', hour: 10, pitchId: 'gleem' })).status, 400);
+  assert.ok(!cat.resources.some(r => r.id === PITCH_B));
+  assert.equal((await call('POST', '/api/holds', A, { day: '2026-12-03T12:00:00.000Z', hour: 10, pitchId: PITCH_B })).status, 400);
 });

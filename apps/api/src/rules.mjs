@@ -25,14 +25,15 @@ export function validateHold(body, lookup) {
   if (coach && coach.fixedVenue && court) {
     throw new HttpError(400, 'This coach trains at a listed venue; a court can be added only for coaches without one.');
   }
+  if (coach && court && court.sport !== coach.sport) throw new HttpError(400, 'The added court must be for the coach\'s sport.');
   if (items.some(r => !r.hours.includes(hour))) throw new HttpError(409, 'Not available at this hour.');
   return {
     day: new Date(day).toISOString(),
     hour,
     resourceIds,
-    pitch: pitchId || null,
+    pitch: null, // legacy field: every court is now a club branch pitch, reported in resource
     coach: coachId || null,
-    resource: resource || null,
+    resource: court ? court.id : null,
     label: items.map(r => r.name).join(' + '),
     total: items.reduce((sum, r) => sum + r.price, 0),
     customVenue: coach && !coach.fixedVenue && !court ? String(customVenue || '').slice(0, 120) || null : null,

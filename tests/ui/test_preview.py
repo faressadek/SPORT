@@ -23,6 +23,18 @@ def test_athlete_journeys_and_rtl():
         assert page.is_visible("#venue-options")
         page.check("#add-court")
         assert page.is_visible("#court-field")
+        # One pitch inventory: the add-on offers club branches only (no separate pitch list)
+        branches = page.locator("#court button strong").all_text_contents()
+        assert branches[0] == "Coastal Sports Club · Gleem" and len(branches) == 6, branches
+        assert "North Pitch" not in page.content()
+        page.locator("#times button").first.click()
+        prices = page.locator("#prices").inner_text()
+        assert "400 EGP" in prices and "500 EGP" in prices and "900 EGP" in prices, prices
+
+        # The old pitch list route opens the football clubs
+        page.goto(f"{HTML_URI}#/courts")
+        page.wait_for_function("location.hash === '#/sports/football'")
+        assert page.locator("#market .venuecard").count() == 3
 
         # 3. Verify Gyms comparison
         page.goto(f"{HTML_URI}#/gyms")

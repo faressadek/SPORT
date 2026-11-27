@@ -136,10 +136,8 @@ INSERT INTO users (id, role, full_name, email, preferred_lang) VALUES
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO resources (id, kind, sport, name, area, fixed_venue, hourly_egp_minor, owner_user_id) VALUES
-    ('smouha', 'court', 'football', 'North Pitch', 'Smouha', 'Smouha', 50000, 'venue-coastal'),
-    ('gleem', 'court', 'football', 'Seafront Pitch', 'Gleem', 'Gleem', 70000, 'venue-coastal'),
-    ('montaza', 'court', 'football', 'East Ground', 'Montaza', 'Montaza', 110000, 'venue-coastal'),
-    ('padel-smouha-1', 'court', 'padel', 'Kick Smash Court 1', 'Smouha', 'Smouha', 52000, 'coach-fares'),
+    ('football/coastal/0/1', 'court', 'football', 'Coastal Sports Club · Gleem · Pitch 1', 'Gleem', 'Gleem', 50000, 'venue-coastal'),
+    ('football/coastal/1/1', 'court', 'football', 'Coastal Sports Club · Smouha · Pitch 1', 'Smouha', 'Smouha', 52500, 'venue-coastal'),
     ('padel-coach', 'coach', 'padel', 'Karim El-Masry (Padel)', 'Smouha', 'Smouha Padel Club', 45000, 'coach-fares'),
     ('nour', 'coach', 'football', 'Nour Amin', 'Smouha', 'Smouha training ground', 35000, 'coach-nour'),
     ('omar', 'coach', 'football', 'Omar Adel', 'Alexandria', NULL, 40000, 'coach-omar')

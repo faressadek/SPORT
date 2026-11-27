@@ -1,5 +1,30 @@
 # SPORT verification log
 
+## 28 Nov 2026 · Claude · One pitch inventory and one colour system (owner decisions)
+
+**Pitches.** Clubs and branches are now the only pitch source.
+- The separate list (North Pitch, Seafront Pitch, East Ground) is gone from the app, the API catalog and the schema seed.
+- `#/courts` opens the football clubs.
+- The home "Featured" row links to club branches.
+- A flexible coach's "Add a pitch" offers the 6 football club branches. Shared times are the hours when the coach is free **and** the branch has a free pitch. The booking takes the first free pitch and tries the next one if the API says it was taken.
+- Prices come from one formula, the same in the app and `catalog.mjs`.
+- New API rule: an added court must be for the coach's sport. A padel court with a football coach returns 400.
+- Every court booking now reports its pitch in `resource`, in both stores. `pitch` is always null.
+- "Saved listings" opens saved coaches.
+
+**Colours.** Dark green and lime across the athlete app and the portal. The blue tokens were replaced with green tokens (`--brand #174a37`, `--green #1f5a43`, tints `#e8f3d8`/`#f0f7e6`, focus ring `#2f6b4f`). The lime primary buttons are unchanged.
+
+| Check | Result |
+|---|---|
+| `npm test` with PostgreSQL (tests moved from the old pitch IDs to club pitches; new sport-mismatch check) | **56 / 56** |
+| `tests/ui/test_preview.py` (new: add-on shows 6 branches, no old pitches, 400 + 500 = 900 EGP, `#/courts` opens the clubs) | passed |
+| `tests/ui/smoke.py`, phone and desktop, all routes | no JS errors, no sideways scroll |
+| `tests/ui/live_e2e.py` against the API on PostgreSQL | **18 / 18** |
+| Before/after screenshots at 390×844 and 1280×860 | reviewed: home, club grid, coach add-on |
+
+Still open: "No shared times" now appears only when the coach's hours and every pitch at that branch are taken. No automated check covers it yet. The four home tiles use three close greens plus orange; tune them if they look too alike.
+
+
 ## 28 Nov 2026 · Claude · Gyms and academies in PostgreSQL (branch `claude/compassionate-fermi-jamfj9`, stacked on `claude/postgres-store`)
 
 Gym and academy listings used to exist only inside the athlete app's HTML. Enquiries were stored, but the API accepted any `targetId`, and took the listing name and kind from the browser. Now:

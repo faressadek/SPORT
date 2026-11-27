@@ -12,12 +12,10 @@ export const SEED_USERS = [
   { id: 'admin-sport', role: 'admin', name: 'SPORT Ops Admin' },
 ];
 
-// Pitches on the Courts page and coaches on the Coaches page.
+// Coaches on the Coaches page. Every court and pitch comes from CLUBS below (owner decision, 28 Nov 2026):
+// the Courts page and a flexible coach's "Add a pitch" both book club branch pitches.
 // fixedVenue = null means the coach has no listed venue, which unlocks the court add-on.
 export const SEED_RESOURCES = [
-  { id: 'smouha', kind: 'court', sport: 'football', name: 'North Pitch', area: 'Smouha', price: 500, hours: [9, 10, 11, 18], ownerId: 'venue-coastal' },
-  { id: 'gleem', kind: 'court', sport: 'football', name: 'Seafront Pitch', area: 'Gleem', price: 700, hours: [10, 11, 16, 17], ownerId: 'venue-coastal' },
-  { id: 'montaza', kind: 'court', sport: 'football', name: 'East Ground', area: 'Montaza', price: 1100, hours: [9, 12, 15, 20], ownerId: 'venue-coastal' },
   { id: 'padel-coach', kind: 'coach', sport: 'padel', name: 'Karim El-Masry (Padel)', area: 'Smouha', fixedVenue: 'Smouha Padel Club', price: 450, hours: [9, 11, 17, 19], ownerId: 'coach-fares' },
   { id: 'nour', kind: 'coach', sport: 'football', name: 'Nour Amin', area: 'Smouha', fixedVenue: 'Smouha training ground', price: 350, hours: [9, 11, 16, 18], ownerId: 'coach-nour' },
   { id: 'omar', kind: 'coach', sport: 'football', name: 'Omar Adel', area: 'Alexandria', fixedVenue: null, price: 400, hours: [10, 11, 17, 18], ownerId: 'coach-omar' },

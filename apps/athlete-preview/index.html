@@ -7,8 +7,10 @@
 <style>
 :root{
   color-scheme:light;
-  --ink:#181b28;--muted:#555c70;--green:#3555bd;--brand:#4265df;--brand-dark:#2949ba;
-  --accent:#ab461e;--teal:#174a37;--paper:#f5f6fa;--white:#ffffff;--line:#dfe2ec;--lime:#ddfa93;
+  /* One colour system across the app: dark green and lime (owner decision, 28 Nov 2026). */
+  --ink:#17201b;--muted:#56615a;--green:#1f5a43;--brand:#174a37;--brand-dark:#0f3326;
+  --accent:#ab461e;--teal:#174a37;--paper:#f4f6f1;--white:#ffffff;--line:#dde3d8;--lime:#ddfa93;
+  --tint:#e8f3d8;--tint-soft:#f0f7e6;--focus:#2f6b4f;
   font:16px/1.5 'Segoe UI',system-ui,-apple-system,sans-serif;
 }
 *{box-sizing:border-box}
@@ -18,7 +20,7 @@ h1,h2,h3,p{margin:0}
 button,select,input,textarea{font:inherit}
 button,select{min-height:44px}
 button{cursor:pointer}
-button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #4265df;outline-offset:3px}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 [hidden]{display:none!important}
 
 .shell{width:min(1100px,calc(100% - 32px));margin-inline:auto}
@@ -26,14 +28,14 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
 .brand{font-size:1.65rem;letter-spacing:-.09em;font-weight:900;font-style:italic;text-decoration:none;color:inherit}
 [dir="rtl"] .brand{font-style:normal;letter-spacing:0}
 .top-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.api-badge{font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;background:#eef1f8;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.api-badge{font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;background:#eaefe6;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
 .api-badge i{width:7px;height:7px;border-radius:50%;background:#d97706;display:inline-block}
 .api-badge[data-live="true"] i{background:#16a34a}
 .lang-toggle,.history-link{background:var(--white);border:1px solid var(--line);color:var(--green);font-weight:700;padding:6px 12px;border-radius:10px;min-height:40px}
 .history-link{border:0;background:none;text-decoration:underline;text-underline-offset:4px}
 
 .top nav{display:grid;grid-template-columns:repeat(4,1fr);position:relative;padding:4px;background:#e6ece3;border-radius:100px;isolation:isolate}
-.top nav:before{content:'';position:absolute;inset-block:4px;inset-inline-start:4px;width:calc((100% - 8px)/4);border-radius:100px;background:var(--white);box-shadow:0 1px 3px #15203530;z-index:-1;transition:transform 280ms cubic-bezier(.32,.72,0,1)}
+.top nav:before{content:'';position:absolute;inset-block:4px;inset-inline-start:4px;width:calc((100% - 8px)/4);border-radius:100px;background:var(--white);box-shadow:0 1px 3px #0f332630;z-index:-1;transition:transform 280ms cubic-bezier(.32,.72,0,1)}
 .top[data-page=courts] nav:before{transform:translateX(0%)}
 .top[data-page=coaches] nav:before{transform:translateX(100%)}
 .top[data-page=gyms] nav:before{transform:translateX(200%)}
@@ -51,12 +53,12 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
 .welcome>b{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
 #search-home,.toolbar,.counts,.shortcuts{display:flex;align-items:center;gap:8px}
 input[type=search]{font:inherit;background:white;border:1px solid var(--line);border-radius:11px;padding:11px 14px;min-width:0;flex:1;color:var(--ink)}
-#search-home button,.toolbar button,.shortcuts button{border:1px solid var(--line);background:white;color:#253c88;border-radius:10px;font-weight:700;padding:8px 14px}
+#search-home button,.toolbar button,.shortcuts button{border:1px solid var(--line);background:white;color:var(--green);border-radius:10px;font-weight:700;padding:8px 14px}
 .actions{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:16px 0}
 .actions a{display:grid;gap:4px;background:var(--brand-dark);color:white;text-decoration:none;padding:18px;border-radius:14px}
 .actions a:nth-child(2){background:var(--accent)}
 .actions a:nth-child(3){background:#165b49}
-.actions a:nth-child(4){background:#5a3e8c}
+.actions a:nth-child(4){background:#2d4a22}
 .actions span{font-size:1.45rem}
 .actions strong{font-size:1.15rem}
 .actions small{opacity:.9;font-size:.86rem}
@@ -91,8 +93,6 @@ input[type=search]{font:inherit;background:white;border:1px solid var(--line);bo
 .listing{display:grid;grid-template-columns:100px 1fr 44px;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);background:white;border-radius:15px}
 .listing>.field,.listing>.coach-art{height:82px;border-radius:10px;overflow:hidden}
 .field,.coach-art{background:#18513b;display:grid;place-items:center}
-.field.gleem{background:#244d4b}
-.field.montaza{background:#4c5930}
 .markings{width:84%;height:auto;aspect-ratio:1.55;border:1px solid #b2c9a6;position:relative;background:radial-gradient(circle at center,transparent 0 11%,#a4ba99 11% 12%,transparent 12.5%),linear-gradient(90deg,transparent 49.6%,#afbea4 49.6% 50.3%,transparent 50.3%)}
 .markings i{position:absolute;width:8px;height:8px;border:2px solid #e5f3d2;border-radius:50%;transform:translate(-50%,-50%);background:#d0e88e}
 .coach-art{background:#263e35;color:#eef5e8;gap:6px;align-content:center}
@@ -101,12 +101,12 @@ input[type=search]{font:inherit;background:white;border:1px solid var(--line);bo
 .eyeline{font-size:.82rem;font-weight:700;color:var(--muted)}
 .description{color:var(--muted);font-size:.9rem;margin:2px 0 6px}
 .listing-price{font-size:1rem;color:var(--ink)}
-.heart{border:0;background:#f5f6fa;color:#a4284e;font-size:1.35rem;border-radius:50%;align-self:start;width:40px;height:40px}
+.heart{border:0;background:#f1f4ee;color:#a4284e;font-size:1.35rem;border-radius:50%;align-self:start;width:40px;height:40px}
 .listing .quick-times{grid-column:1/-1;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;border-top:1px solid var(--line);padding-top:10px}
 .quick-times button{min-height:38px;background:white;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:4px 10px;font-weight:650;min-width:66px}
 
 .layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,350px);gap:18px;align-items:start;padding-bottom:52px;max-width:860px;margin-inline:auto}
-.card{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--white);box-shadow:0 10px 28px #15203508}
+.card{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--white);box-shadow:0 10px 28px #0f332608}
 fieldset{border:0;padding:0;margin:0 0 18px;min-width:0}
 legend{font-weight:750;margin-bottom:9px}
 .times{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -142,16 +142,16 @@ legend{font-weight:750;margin-bottom:9px}
 #return-results{max-width:860px;margin:0 auto 14px;display:block}
 
 #market{max-width:860px;margin:18px auto 50px}
-#market h1{font-size:clamp(1.9rem,5vw,3.2rem);letter-spacing:-.05em;margin:14px 0;color:#344fb6}
+#market h1{font-size:clamp(1.9rem,5vw,3.2rem);letter-spacing:-.05em;margin:14px 0;color:var(--brand)}
 #market h2{font-size:1.15rem;margin:20px 0 10px}
 #market a{text-decoration:none;color:inherit}
-.mback{display:inline-flex;align-items:center;min-height:44px;color:#3854ad!important;font-weight:700}
+.mback{display:inline-flex;align-items:center;min-height:44px;color:var(--green)!important;font-weight:700}
 .sportgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
 .sportgrid a,.branches a{border:1px solid var(--line);border-radius:14px;padding:16px;background:white}
 .sportgrid span{display:block;font-size:2rem;margin-bottom:8px}
 .sporttabs,.mstrip,.branches,.vslots{display:flex;gap:8px;overflow-x:auto;padding:5px 0}
 .sporttabs a,.vslots a,.mtools button,.mstrip button{padding:10px 12px;border:1px solid var(--line);background:white;border-radius:11px;font-weight:650;white-space:nowrap}
-.sporttabs [aria-current],.branches [aria-current],.mstrip [aria-pressed=true],.mtools [aria-pressed=true]{background:#e8eefe;color:#254ca9!important;border-color:#4263d5}
+.sporttabs [aria-current],.branches [aria-current],.mstrip [aria-pressed=true],.mtools [aria-pressed=true]{background:var(--tint);color:var(--brand)!important;border-color:var(--focus)}
 .mtools{display:flex;gap:8px;margin:12px 0}
 .mstrip button{flex:1;min-width:48px}
 .mstrip small,.mstrip strong,.branches small{display:block}
@@ -169,33 +169,33 @@ legend{font-weight:750;margin-bottom:9px}
 .gridslide{overflow:auto;margin-top:15px}
 #market table{width:100%;border-spacing:6px}
 #market td{min-width:106px}
-#market td button{width:100%;border:1px solid var(--line);background:white;color:#243e86;border-radius:9px;font-weight:700}
-#market td button:disabled{color:#979ca7;background:#eaecf1;text-decoration:line-through}
-#market td .hint:enabled{border-color:#4263d5;background:#edf0ff}
+#market td button{width:100%;border:1px solid var(--line);background:white;color:var(--green);border-radius:9px;font-weight:700}
+#market td button:disabled{color:#8f988f;background:#e9ece6;text-decoration:line-through}
+#market td .hint:enabled{border-color:var(--focus);background:var(--tint-soft)}
 #market th{padding:8px 0}
 
 .directory-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr));gap:14px;margin-top:12px}
 .dir-card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px}
 .dir-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.dir-badge{display:inline-block;font-size:.76rem;font-weight:750;padding:3px 9px;border-radius:999px;background:#eef2ff;color:var(--green)}
+.dir-badge{display:inline-block;font-size:.76rem;font-weight:750;padding:3px 9px;border-radius:999px;background:var(--tint);color:var(--green)}
 .dir-card h2{font-size:1.25rem;letter-spacing:-.03em;margin-top:4px}
 .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.tag{font-size:.78rem;padding:3px 8px;border-radius:6px;background:#f2f4f8;color:var(--ink);font-weight:600}
+.tag{font-size:.78rem;padding:3px 8px;border-radius:6px;background:#eef2ea;color:var(--ink);font-weight:600}
 .price-strip{border-top:1px solid var(--line);padding-top:10px;display:flex;justify-content:space-between;align-items:baseline}
 .price-strip strong{font-size:1.15rem;color:var(--teal)}
 .card-actions{display:flex;gap:8px;margin-top:6px}
 .card-actions button{flex:1;padding:9px 12px;border-radius:10px;font-weight:700;font-size:.88rem;border:1px solid var(--line);background:var(--white);color:var(--ink)}
 .card-actions button.cta{background:var(--brand);color:white;border-color:var(--brand)}
-.card-actions button[aria-pressed="true"]{background:#e8eefe;border-color:var(--brand);color:var(--brand-dark)}
+.card-actions button[aria-pressed="true"]{background:var(--tint);border-color:var(--brand);color:var(--brand-dark)}
 
-.compare-bar{position:sticky;bottom:14px;background:#181b28;color:white;padding:12px 18px;border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;box-shadow:0 12px 32px #00000033;z-index:10}
+.compare-bar{position:sticky;bottom:14px;background:var(--brand-dark);color:white;padding:12px 18px;border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;box-shadow:0 12px 32px #00000033;z-index:10}
 .compare-bar button{background:var(--lime);color:#142921;border:0;padding:8px 16px;border-radius:9px;font-weight:800}
 .compare-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.9rem}
 .compare-table th,.compare-table td{border:1px solid var(--line);padding:10px;text-align:start;vertical-align:top}
-.compare-table th{background:#f5f6fa;font-weight:750;width:28%}
+.compare-table th{background:#f1f4ee;font-weight:750;width:28%}
 
-dialog{border:0;border-radius:20px;padding:24px;color:var(--ink);background:var(--white);width:min(540px,calc(100% - 28px));max-height:86dvh;overflow-y:auto;box-shadow:0 30px 90px #101a3277}
-dialog::backdrop{background:#101a3288;backdrop-filter:blur(3px)}
+dialog{border:0;border-radius:20px;padding:24px;color:var(--ink);background:var(--white);width:min(540px,calc(100% - 28px));max-height:86dvh;overflow-y:auto;box-shadow:0 30px 90px #0f332677}
+dialog::backdrop{background:#0f332688;backdrop-filter:blur(3px)}
 dialog h2{font-size:1.5rem;letter-spacing:-.04em;margin-bottom:8px}
 .review-total{font-weight:800;margin-top:10px}
 .notice{color:var(--muted);margin-top:6px}
@@ -409,14 +409,6 @@ dialog h2{font-size:1.5rem;letter-spacing:-.04em;margin-bottom:8px}
           </div>
           <div id="court-field">
             <p id="court-label"><strong data-i18n="choose_court">Choose a court / pitch</strong></p>
-            <label class="format"><span data-i18n="match_format">Match format</span>
-              <select id="format">
-                <option value="" data-i18n="all_formats">All formats</option>
-                <option value="5-a-side">5-a-side</option>
-                <option value="7-a-side">7-a-side</option>
-                <option value="11-a-side">11-a-side</option>
-              </select>
-            </label>
             <div class="catalog" id="court" role="group"></div>
           </div>
         </div>
@@ -655,11 +647,19 @@ const coaches = {
   nour: { name: 'Nour Amin', price: 350, location: 'Smouha training ground', hours: [9, 11, 16, 18] },
   omar: { name: 'Omar Adel', price: 400, location: null, hours: [10, 11, 17, 18] }
 };
-const courts = {
-  smouha: { name: 'North Pitch', area: 'Smouha', format: '5-a-side', surface: 'Artificial turf', price: 500, hours: [9, 10, 11, 18] },
-  gleem: { name: 'Seafront Pitch', area: 'Gleem', format: '7-a-side', surface: 'Artificial turf', price: 700, hours: [10, 11, 16, 17] },
-  montaza: { name: 'East Ground', area: 'Montaza', format: '11-a-side', surface: 'Natural grass', price: 1100, hours: [9, 12, 15, 20] }
-};
+// Clubs and branches are the only pitch source (owner decision, 28 Nov 2026). Must match CLUBS in apps/api/src/catalog.mjs.
+const clubs = [{ id: 'coastal', name: 'Coastal Sports Club', branches: [['Gleem', 3], ['Smouha', 2]], color: '#2f5a44' }, { id: 'east', name: 'Eastside Sports Centre', branches: [['Montaza', 2], ['Sidi Bishr', 3]], color: '#3f6b2f' }, { id: 'city', name: 'City Sports Grounds', branches: [['Sporting', 3], ['Roushdy', 2]], color: '#25483f' }];
+const marketTimes = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+const sportBase = { padel: 520, football: 500, padbol: 400, pickleball: 320, tennis: 450, basketball: 600, squash: 300, handball: 350, volleyball: 350 };
+const pitchFee = (sportId, ci, b) => sportBase[sportId] + ci * 50 + b * 25;
+const pitchKey = (sportId, clubId, b, n) => [sportId, clubId, b, n].join('/');
+// Sample availability: a few slots are taken by others; plus anything booked in this browser.
+const pitchFree = (sportId, ci, b, n, h, d) => (h + n + d + b + ci) % 5 !== 0
+  && !bookings.some(x => x.resource === pitchKey(sportId, clubs[ci].id, b, n) && x.day === days[d].toISOString() && x.hour === h);
+// "Add a pitch" for a flexible football coach: one choice per club branch; the first free pitch there is booked.
+const courts = Object.fromEntries(clubs.flatMap((c, ci) => c.branches.map(([area, units], b) => [`${c.id}/${b}`,
+  { name: `${c.name} · ${area}`, area, detail: `${units} pitches`, price: pitchFee('football', ci, b), hours: marketTimes, ci, b, units }])));
+const freeUnit = (court, h, d) => Array.from({ length: court.units }, (_, i) => i + 1).find(n => pitchFree('football', court.ci, court.b, n, h, d));
 // Offline copy of the API catalog (apps/api/src/catalog.mjs). Replaced by the API's list when the API is running.
 let gymsData = [
   { id: 'gold-smouha', name: 'Apex Athletic Club', area: 'Smouha', plans: { Monthly: 1450, Quarterly: 3800, Annual: 12500 }, facilities: ['Pool', 'Sauna', 'CrossFit Zone', 'Padel Access'], hours: '06:00 – 00:00', trial: 'Free 1-day guest pass', note: 'Olympic indoor lap pool + direct member discount on Smouha padel courts.' },
@@ -686,7 +686,7 @@ const timeLabel = h => new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-GB'
 const money = n => new Intl.NumberFormat(localeCode(), { maximumFractionDigits: 0 }).format(n) + (lang === 'ar' ? ' ج.م' : ' EGP');
 
 let page = 'courts', coachSport = null, hour = null, stage = 'pick';
-const selection = { coach: 'nour', court: 'smouha', day: 0 };
+const selection = { coach: 'nour', court: 'coastal/0', day: 0 };
 let selectedGymsCompare = [];
 let bookings = [], enquiries = [], hearts = [];
 try { bookings = JSON.parse(localStorage.getItem('sport.athlete.bookings.v2') || '[]'); } catch {}
@@ -713,7 +713,7 @@ function catalogCard(button, item) {
   const name = document.createElement('strong'), rate = document.createElement('span');
   name.textContent = item.name; rate.className = 'rate'; rate.textContent = money(item.price) + (lang === 'ar' ? ' / ساعة' : ' / hour');
   button.append(name);
-  if (item.format) { const d = document.createElement('small'); d.textContent = [item.area, item.format, item.surface].join(' · '); button.append(d); }
+  if (item.detail) { const d = document.createElement('small'); d.textContent = item.detail; button.append(d); }
   if (Object.hasOwn(item, 'location')) { const v = document.createElement('small'); v.textContent = item.location ?? (lang === 'ar' ? 'موقع مرن' : 'Flexible location'); button.append(v); }
   button.append(rate);
 }
@@ -724,15 +724,16 @@ addOptions('day', days.map((_, i) => [i, dayLabel(i)]), (button, label) => { but
 function selected() {
   const coach = page === 'coaches' ? coaches[selection.coach] : null;
   const flexible = Boolean(coach && !coach.location);
-  const court = page === 'courts' || (flexible && coachSport?.[0] === 'football' && $('add-court').checked) ? courts[selection.court] : null;
+  const court = flexible && coachSport?.[0] === 'football' && $('add-court').checked ? courts[selection.court] : null;
   const venue = court?.name ?? coach?.location ?? $('own-location').value.trim();
   return { coach, court, flexible, venue, day: selection.day };
 }
-function slots({ coach, court, day }, courtKey = selection.court, coachKey = selection.coach) {
-  const forDay = resource => resource.hours.filter((_, i) => day !== 1 || i !== 0).filter((_, i) => day !== 2 || i < 2);
-  const available = (coach ? forDay(coach) : forDay(court));
-  const possible = court && coach ? available.filter(h => forDay(court).includes(h)) : available;
-  return possible.filter(h => !bookings.some(b => b.day === days[day].toISOString() && b.hour === h && ((court && b.pitch === courtKey) || (coach && b.coach === coachKey))));
+// Coach hours on that day; with an added pitch, only hours when the coach is free AND the branch has a free pitch.
+function slots({ coach, court, day }, coachKey = selection.coach) {
+  const forDay = hours => hours.filter((_, i) => day !== 1 || i !== 0).filter((_, i) => day !== 2 || i < 2);
+  return forDay(coach.hours)
+    .filter(h => !bookings.some(b => b.day === days[day].toISOString() && b.hour === h && b.coach === coachKey))
+    .filter(h => !court || freeUnit(court, h, day));
 }
 function showStage(next) {
   stage = next; const dialog = $('checkout');
@@ -751,7 +752,7 @@ function renderPage() {
 }
 function render() {
   const choice = selected();
-  if (!choice.coach && !choice.court) return; // Gyms, Academies: no booking summary
+  if (!choice.coach) return; // Courts book in the club grid; Gyms and Academies have no booking summary
   const available = slots(choice);
   if (!available.includes(hour)) hour = null;
   for (const group of ['coach', 'court', 'day']) {
@@ -792,8 +793,20 @@ $('confirm').addEventListener('click', async () => {
   if (!slots(choice).includes(hour)) { showStage('pick'); return; }
   const btn = $('confirm'); btn.disabled = true;
   try {
-    const res = await ApiClient.createBooking({ day: days[choice.day].toISOString(), hour, pitchId: choice.court ? selection.court : null, coachId: choice.coach ? selection.coach : null, customVenue: choice.venue });
-    const session = { id: res.id, day: days[choice.day].toISOString(), hour, pitch: choice.court ? selection.court : null, coach: choice.coach ? selection.coach : null, details: $('review-details').textContent, total: $('review-total').textContent };
+    const base = { day: days[choice.day].toISOString(), hour, coachId: selection.coach, customVenue: choice.venue };
+    let res, unitKey = null;
+    if (!choice.court) res = await ApiClient.createBooking(base);
+    else {
+      const units = Array.from({ length: choice.court.units }, (_, i) => i + 1).filter(n => pitchFree('football', choice.court.ci, choice.court.b, n, hour, choice.day));
+      for (const n of units) {
+        unitKey = pitchKey('football', clubs[choice.court.ci].id, choice.court.b, n);
+        try { res = await ApiClient.createBooking({ ...base, pitchId: unitKey }); break; }
+        catch (err) { if (n === units[units.length - 1]) throw err; } // taken meanwhile: try the next pitch
+      }
+    }
+    const pitchName = unitKey ? `${choice.court.name} · Pitch ${unitKey.split('/').pop()}` : null;
+    const details = [pitchName ?? choice.coach.name, ...(pitchName ? [choice.coach.name] : [])].join(' + ') + ' · ' + $('summary-time').textContent;
+    const session = { id: res.id, day: days[choice.day].toISOString(), hour, resource: unitKey, coach: selection.coach, details, total: $('review-total').textContent };
     bookings.push(session); persist(); showStage('done');
     $('confirmation').textContent = session.details + ' · ' + session.total;
     $('hold-ref').textContent = (lang === 'ar' ? 'رقم المرجع: ' : 'Reference: ') + res.holdRef;
@@ -905,29 +918,27 @@ function renderAcademies() {
 ['acad-search', 'acad-sport', 'acad-area', 'acad-age', 'acad-level'].forEach(id => $(id).addEventListener(id === 'acad-search' ? 'input' : 'change', renderAcademies));
 
 const profiles = { 'padel-coach': { focus: 'Padel tactics & bandeja', level: 'All levels', area: 'Smouha' }, nour: { focus: 'Ball control', level: 'Beginner to intermediate', area: 'Smouha' }, omar: { focus: 'Match preparation', level: 'Intermediate to advanced', area: 'Flexible' } };
-const layouts = { smouha: [1, 2, 1, 1], gleem: [1, 2, 3, 1], montaza: [1, 4, 3, 3] };
 let browsing = true, onlySaved = false, pendingQuery = '', pendingSaved = false;
 function node(tag, txt, cls) { const e = document.createElement(tag); if (txt) e.textContent = txt; if (cls) e.className = cls; return e; }
 function diagram(key) {
-  const art = node('div', null, 'field ' + key), field = node('div', null, 'markings'); art.append(field);
-  (layouts[key] || [1, 2, 1]).forEach((n, i, arr) => { for (let j = 0; j < n; j++) { const dot = node('i'); dot.style.left = (8 + 84 * i / (arr.length - 1)) + '%'; dot.style.top = (100 * (j + 1) / (n + 1)) + '%'; field.append(dot); } });
+  const art = node('div', null, 'field'), field = node('div', null, 'markings'); art.append(field);
+  [1, 2, 1].forEach((n, i, arr) => { for (let j = 0; j < n; j++) { const dot = node('i'); dot.style.left = (8 + 84 * i / (arr.length - 1)) + '%'; dot.style.top = (100 * (j + 1) / (n + 1)) + '%'; field.append(dot); } });
   return art;
 }
 function viewDetail(key, pickedHour) {
-  const isCoach = page === 'coaches'; selection[isCoach ? 'coach' : 'court'] = key; hour = pickedHour;
-  $('add-court').checked = false; $('own-location').value = ''; $('format').value = '';
+  selection.coach = key; hour = pickedHour;
+  $('add-court').checked = false; $('own-location').value = '';
   for (const b of $('court').children) b.hidden = false;
   browsing = false; $('discover').hidden = true; document.querySelector('.layout').hidden = false; $('return-results').hidden = false;
   render(); $('coach').hidden = true; $('coach-label').hidden = true;
-  $('court').hidden = !isCoach; $('court-label').hidden = !isCoach; document.querySelector('.format').hidden = !isCoach || coachSport[0] !== 'football';
-  $('page-title').textContent = isCoach ? coaches[key].name : courts[key].name;
-  $('page-description').textContent = isCoach ? profiles[key].focus + ' · ' + profiles[key].level : [courts[key].area, courts[key].format, courts[key].surface].join(' · ');
+  $('court').hidden = false; $('court-label').hidden = false;
+  $('page-title').textContent = coaches[key].name;
+  $('page-description').textContent = profiles[key].focus + ' · ' + profiles[key].level;
 }
 function drawResults() {
-  const isCoach = page === 'coaches', list = $('listings'); list.replaceChildren();
-  let records = (isCoach ? coachEntries() : Object.entries(courts)).filter(([key, item]) => isCoach
-    ? (!$('kind').value || $('kind').value === (item.location ? 'Fixed venue' : 'Flexible venue')) && (!$('area').value || !item.location || profiles[key].area === $('area').value)
-    : (!$('area').value || item.area === $('area').value) && (!$('kind').value || item.format === $('kind').value));
+  const isCoach = true, list = $('listings'); list.replaceChildren();
+  let records = coachEntries().filter(([key, item]) =>
+    (!$('kind').value || $('kind').value === (item.location ? 'Fixed venue' : 'Flexible venue')) && (!$('area').value || !item.location || profiles[key].area === $('area').value));
   const q = $('search').value.toLowerCase().trim();
   records = records.filter(([k, v]) => (!onlySaved || hearts.includes(page + k)) && [v.name, v.location, v.area, profiles[k]?.focus, profiles[k]?.area].join(' ').toLowerCase().includes(q));
   if ($('sort').value === 'price') records.sort((a, b) => a[1].price - b[1].price);
@@ -938,7 +949,7 @@ function drawResults() {
     const panel = node('article', null, 'listing'), body = node('div', null, 'listing-body');
     if (isCoach) { const head = node('div', null, 'coach-art'); head.append(node('span', item.name.split(' ').map(w => w[0]).slice(0, 2).join(''))); panel.append(head); } else panel.append(diagram(key));
     body.append(node('p', isCoach ? profiles[key].level : item.area + ' · Alexandria', 'eyeline'), node('h2', item.name), node('p', isCoach ? (item.location || 'Your venue or an added pitch') : item.format + ' · ' + item.surface, 'description'), node('strong', money(item.price) + ' / hour', 'listing-price'));
-    const times = slots({ day: selection.day, coach: isCoach ? item : null, court: isCoach ? null : item }, key, key), strip = node('div', null, 'quick-times');
+    const times = slots({ day: selection.day, coach: item, court: null }, key), strip = node('div', null, 'quick-times');
     for (const h of times) { const chip = node('button', timeLabel(h)); chip.onclick = () => viewDetail(key, h); strip.append(chip); }
     const open = node('button', item.name, 'open-listing'); open.onclick = () => viewDetail(key, null); body.querySelector('h2').replaceChildren(open);
     const fav = node('button', hearts.includes(page + key) ? '♥' : '♡', 'heart');
@@ -949,22 +960,21 @@ function drawResults() {
 function openResults(reset) {
   const isCoach = page === 'coaches'; browsing = true; $('discover').hidden = false; document.querySelector('.layout').hidden = true; $('return-results').hidden = true; $('coach-sports').hidden = !isCoach;
   renderPage();
-  if (reset) { $('area').value = ''; $('type-title').textContent = isCoach ? 'Training venue' : t('match_format'); $('kind').replaceChildren(...(isCoach ? ['', 'Fixed venue', 'Flexible venue'] : ['', '5-a-side', '7-a-side', '11-a-side']).map(v => new Option(v || 'All', v))); }
+  if (reset) { $('area').value = ''; $('type-title').textContent = 'Training venue'; $('kind').replaceChildren(...['', 'Fixed venue', 'Flexible venue'].map(v => new Option(v || 'All', v))); }
   $('browse-date').value = String(selection.day); drawResults();
 }
 
 const catalog = [['padel', 'Padel', 'Court', '🎾', 520], ['football', 'Football', 'Pitch', '⚽', 500], ['padbol', 'Padbol', 'Court', '🥅', 400], ['pickleball', 'Pickleball', 'Court', '🏓', 320], ['tennis', 'Tennis', 'Court', '🎾', 450], ['basketball', 'Basketball', 'Court', '🏀', 600], ['squash', 'Squash', 'Court', '🎾', 300], ['handball', 'Handball', 'Court', '🤾', 350], ['volleyball', 'Volleyball', 'Court', '🏐', 350]];
 for (const [id, name] of catalog) { if (id !== 'football' && id !== 'padel') { coaches[id + '-coach'] = { name: name + ' Coach', price: 350, location: null, hours: [9, 11, 16, 18] }; profiles[id + '-coach'] = { focus: name + ' fundamentals', level: 'Beginner to intermediate', area: 'Flexible' }; } }
 const coachEntries = () => coachSport[0] === 'football' ? ['nour', 'omar'].map(k => [k, coaches[k]]) : [[coachSport[0] + '-coach', coaches[coachSport[0] + '-coach']]];
-const clubs = [{ id: 'coastal', name: 'Coastal Sports Club', branches: [['Gleem', 3], ['Smouha', 2]], color: '#37578e' }, { id: 'east', name: 'Eastside Sports Centre', branches: [['Montaza', 2], ['Sidi Bishr', 3]], color: '#347366' }, { id: 'city', name: 'City Sports Grounds', branches: [['Sporting', 3], ['Roushdy', 2]], color: '#675a86' }];
 let marketQuery = '', dayIndex = 0, venueSearch = '', sortBy = 'default', favOnly = false, activeSport = '', chosen = null;
-const market = $('market'), marketTimes = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+const market = $('market');
 const el = (tag, text, cls) => node(tag, text, cls);
 const link = (label, href, cls) => { const a = el('a', label, cls); a.href = href; return a; };
 const act = (label, fn, cls) => { const b = el('button', label, cls); b.type = 'button'; b.onclick = fn; return b; };
-const keyFor = (s, c, b, n) => [s[0], c.id, b, n].join('/');
-const available = (s, c, b, n, h) => (h + n + dayIndex + b + clubs.indexOf(c)) % 5 !== 0 && !bookings.some(x => x.resource === keyFor(s, c, b, n) && x.day === days[dayIndex].toISOString() && x.hour === h);
-const fee = (s, c, b) => s[4] + clubs.indexOf(c) * 50 + b * 25;
+const keyFor = (s, c, b, n) => pitchKey(s[0], c.id, b, n);
+const available = (s, c, b, n, h) => pitchFree(s[0], clubs.indexOf(c), b, n, h, dayIndex);
+const fee = (s, c, b) => pitchFee(s[0], clubs.indexOf(c), b);
 function dateBar(refresh) {
   const strip = el('div', null, 'mstrip');
   days.forEach((d, i) => { const b = act('', () => { dayIndex = i; chosen = null; refresh(); }); b.setAttribute('aria-pressed', String(i === dayIndex)); b.append(el('small', new Intl.DateTimeFormat(localeCode(), { weekday: 'short', timeZone: 'Africa/Cairo' }).format(d)), el('strong', String(d.getUTCDate()))); strip.append(b); });
@@ -1034,6 +1044,7 @@ function showVenue(s, c, b) {
   scroll.append(table); market.append(scroll, review);
 }
 function route() {
+  if (location.hash.startsWith('#/courts')) { location.replace('#/sports/football'); return; }
   const [, zone, sportId] = location.hash.split('/');
   coachSport = zone === 'coaches' ? catalog.find(sport => sport[0] === sportId) : null;
   page = zone === 'gyms' ? 'gyms' : zone === 'academies' ? 'academies' : coachSport ? 'coaches' : 'courts';
@@ -1047,7 +1058,7 @@ function route() {
   renderPage();
   if (page === 'gyms') { $('gyms-view').hidden = false; renderGyms(); return; }
   if (page === 'academies') { $('academies-view').hidden = false; renderAcademies(); return; }
-  $('search').value = pendingQuery; pendingQuery = ''; openResults(true);
+  $('search').value = ''; openResults(true); if (pendingSaved) { pendingSaved = false; onlySaved = true; drawResults(); }
 }
 $('lang-toggle').onclick = () => { lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('sport.lang', lang); applyLanguage(); route(); };
 $('browse-date').append(...days.map((_, i) => new Option(dayLabel(i), String(i))));
@@ -1055,13 +1066,13 @@ $('browse-date').onchange = () => { selection.day = Number($('browse-date').valu
 $('area').onchange = drawResults; $('kind').onchange = drawResults;
 $('return-results').onclick = () => openResults(false);
 $('booked').onclick = () => $('history-link').click();
-$('liked').onclick = () => { pendingSaved = true; location.hash = '/courts'; };
+$('liked').onclick = () => { pendingSaved = true; location.hash = '/coaches/football'; };
 $('search-home').onsubmit = e => { e.preventDefault(); marketQuery = $('home-text').value; location.hash = '/sports'; };
 $('likes').onclick = () => { onlySaved = !onlySaved; drawResults(); };
 $('refine').onclick = () => { const f = document.querySelector('.filters'); f.hidden = !f.hidden; };
 $('sort').onchange = drawResults; $('search').oninput = drawResults;
 days.forEach((date, i) => { const b = node('button'); b.append(node('small', new Intl.DateTimeFormat(localeCode(), { weekday: 'short', timeZone: 'Africa/Cairo' }).format(date)), node('b', String(date.getUTCDate()))); b.onclick = () => { selection.day = i; drawResults(); }; $('week').append(b); });
-for (const [key, item] of Object.entries(courts)) { const a = node('a'); a.href = '#/courts'; a.append(diagram(key), node('strong', item.name), node('small', item.area + ' · ' + item.format)); a.onclick = () => { pendingQuery = item.name; }; $('local-picks').append(a); }
+for (const [key, item] of Object.entries(courts)) { const [cid, b] = key.split('/'); const a = node('a'); a.href = `#/sports/football/${cid}/${b}`; a.append(diagram(key), node('strong', item.name), node('small', `${item.detail} · ${money(item.price)}/hr`)); $('local-picks').append(a); }
 window.addEventListener('hashchange', () => { window.scrollTo(0, 0); route(); });
 applyLanguage(); route(); ApiClient.probe();
 </script>
