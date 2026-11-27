@@ -468,6 +468,7 @@ dialog h2{font-size:1.5rem;letter-spacing:-.04em;margin-bottom:8px}
         <label><span data-i18n="enq_phone">Mobile number (WhatsApp)</span><input id="enq-phone" type="tel" required placeholder="+20 100 000 0000"></label>
         <label id="enq-participant-wrap" hidden><span data-i18n="enq_age">Participant age & experience</span><input id="enq-participant" placeholder="e.g., 11 yrs · Beginner"></label>
         <label><span data-i18n="enq_notes">Preferred start date or questions</span><textarea id="enq-notes" rows="3"></textarea></label>
+        <p class="notice" id="enquiry-error" role="alert" hidden></p>
         <div class="dialog-actions">
           <button type="submit" class="primary" style="margin-top:0" data-i18n="enq_submit">Send direct enquiry</button>
           <button type="button" class="back" style="margin-top:0" id="close-enquiry" data-i18n="btn_cancel">Cancel</button>
@@ -824,7 +825,7 @@ $('history').addEventListener('close', () => { if (!$('market').hidden) showMark
 let activeEnquiryTarget = null;
 function openEnquiryModal(kind, item) {
   activeEnquiryTarget = { kind, item };
-  $('enquiry-form-wrap').hidden = false; $('enquiry-done').hidden = true;
+  $('enquiry-form-wrap').hidden = false; $('enquiry-done').hidden = true; $('enquiry-error').hidden = true;
   $('enquiry-title').textContent = (lang === 'ar' ? 'استفسار: ' : 'Enquire: ') + item.name;
   $('enquiry-subtitle').textContent = kind === 'gym' ? `${item.area} · ${item.trial}` : `${item.sport} · ${item.area} · ${item.schedule}`;
   $('enq-participant-wrap').hidden = kind !== 'academy'; $('enq-notes').value = '';
@@ -835,7 +836,15 @@ $('done-enquiry').onclick = () => $('enquiry-dialog').close();
 $('enquiry-form').onsubmit = async e => {
   e.preventDefault();
   const payload = { kind: activeEnquiryTarget.kind, targetId: activeEnquiryTarget.item.id, targetName: activeEnquiryTarget.item.name, name: $('enq-name').value.trim(), phone: $('enq-phone').value.trim(), participant: $('enq-participant').value.trim(), notes: $('enq-notes').value.trim() };
-  const res = await ApiClient.submitEnquiry(payload);
+  let res;
+  try { res = await ApiClient.submitEnquiry(payload); }
+  catch (err) {
+    // e.g. the listing was hidden by an admin after this page loaded: say so and refresh the list.
+    $('enquiry-error').textContent = lang === 'ar' ? 'تعذّر إرسال الاستفسار. ربما لم يعد هذا الإعلان متاحًا.' : `Couldn't send the enquiry (${err.message}). This listing may no longer be available.`;
+    $('enquiry-error').hidden = false;
+    ApiClient.loadDirectory();
+    return;
+  }
   enquiries.push({ ...payload, ref: res.id }); persistEnquiries();
   $('enquiry-form-wrap').hidden = true; $('enquiry-done').hidden = false;
   $('enquiry-confirm-text').textContent = `Reference: ${res.id}`;

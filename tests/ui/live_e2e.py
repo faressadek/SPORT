@@ -6,6 +6,10 @@ athlete = (root / "apps/athlete-preview/index.html").as_uri() + f"?api={api}"
 portal = (root / "apps/provider-admin/index.html").as_uri() + f"?api={api}"
 res = []
 def check(n, c, d=""): res.append((n, bool(c), d))
+def api_patch(path, token, body):
+    r = urllib.request.Request(api + path, data=json.dumps(body).encode(), method="PATCH",
+                               headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"})
+    return json.load(urllib.request.urlopen(r))
 def api_get(path, token):
     r = urllib.request.Request(api + path, headers={"Authorization": "Bearer " + token})
     return json.load(urllib.request.urlopen(r))
@@ -64,12 +68,20 @@ with sync_playwright() as p:
     check("gym owner sees the enquiry for its gym", "onerror" in p2.text_content("#enquiries-box"))
     check("gym owner sees only its own listing", p2.locator("#listings-box tr").count() == 2, p2.text_content("#listings-box")[:160])
     # Admin hides a gym in the portal; the athlete app no longer lists it
+    api_patch("/api/admin/listings/sporting-iron", "admin-sport", {"published": True})  # known start, so reruns on one database work
     p2.select_option("#token-select", "admin-sport"); p2.wait_for_timeout(800)
     p2.locator("#listings-box button[data-listing='sporting-iron']").click(); p2.wait_for_timeout(800)
     check("admin can hide a gym", "Hidden" in p2.text_content("#listings-box"))
     page.reload(); page.wait_for_timeout(1800); page.evaluate("location.hash='/gyms'"); page.wait_for_timeout(500)
     names = page.locator("#gym-list h2").all_text_contents()
     check("hidden gym gone from athlete app", "Sporting Strength & Conditioning" not in names and len(names) == 3, names)
+    # Enquiry to a gym hidden after the page loaded: the athlete is told, not left waiting
+    api_patch("/api/admin/listings/gleem-bay-fit", "admin-sport", {"published": False})
+    page.locator("#gym-list article", has_text="Bayfront").locator(".cta").click(); page.wait_for_timeout(200)
+    page.fill("#enq-phone", "+20 100 000 0000"); page.locator("#enquiry-form [type=submit]").click(); page.wait_for_timeout(600)
+    check("refused enquiry shows a message", page.is_visible("#enquiry-error") and "no longer" in page.text_content("#enquiry-error"), page.text_content("#enquiry-error"))
+    page.keyboard.press("Escape")
+    for gid in ("sporting-iron", "gleem-bay-fit"): api_patch(f"/api/admin/listings/{gid}", "admin-sport", {"published": True})
     p2.select_option("#token-select", "venue-coastal"); p2.wait_for_timeout(800)
     check("venue sees its own facility booking", "BKG-" in p2.text_content("#bookings-box"), p2.text_content("#bookings-box")[:120])
     b.close()

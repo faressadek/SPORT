@@ -82,8 +82,9 @@ async function loadPortal() {
       : '<p>No bookings visible for this role.</p>';
 
     const isAdmin = ov.role === 'admin';
-    $('listings-box').innerHTML = ov.listings.length
-      ? `<table><tr><th>Listing</th><th>Type</th><th>Area</th><th>Status</th>${isAdmin ? '<th></th>' : ''}</tr>${ov.listings.map(l => `<tr><td>${esc(l.name)}</td><td>${esc(l.kind)}</td><td>${esc(l.area)}</td><td><span class="badge">${l.published ? 'Published' : 'Hidden'}</span></td>${isAdmin ? `<td><button type="button" data-listing="${esc(l.id)}" data-publish="${!l.published}">${l.published ? 'Unpublish' : 'Publish'}</button></td>` : ''}</tr>`).join('')}</table>`
+    const listings = ov.listings || [];
+    $('listings-box').innerHTML = listings.length
+      ? `<table><tr><th>Listing</th><th>Type</th><th>Area</th><th>Status</th>${isAdmin ? '<th></th>' : ''}</tr>${listings.map(l => `<tr><td>${esc(l.name)}</td><td>${esc(l.kind)}</td><td>${esc(l.area)}</td><td><span class="badge">${l.published ? 'Published' : 'Hidden'}</span></td>${isAdmin ? `<td><button type="button" data-listing="${esc(l.id)}" data-publish="${!l.published}">${l.published ? 'Unpublish' : 'Publish'}</button></td>` : ''}</tr>`).join('')}</table>`
       : '<p>No gym or academy listings for this role.</p>';
     for (const btn of $('listings-box').querySelectorAll('button[data-listing]')) btn.onclick = async () => {
       await fetch(`${API_BASE}/api/admin/listings/${encodeURIComponent(btn.dataset.listing)}`, { method: 'PATCH', headers, body: JSON.stringify({ published: btn.dataset.publish === 'true' }) });

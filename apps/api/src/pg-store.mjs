@@ -110,7 +110,9 @@ export async function createPgStore(connectionString, { setup = true } = {}) {
            fixed_venue = EXCLUDED.fixed_venue, hourly_egp_minor = EXCLUDED.hourly_egp_minor, owner_user_id = EXCLUDED.owner_user_id,
            metadata = EXCLUDED.metadata`,
         [r.id, r.kind, r.sport, r.name, r.area, r.fixedVenue ?? null, Math.round(r.price * 100), r.ownerId ?? null, { hours: r.hours }]);
-      // Gyms and academies. The catalog owns the listing content; published is left as the database has it (admin moderation).
+      // Gyms and academies. While listings are sample data, catalog.mjs owns their content and owner: every start resets them,
+      // so edits made in the database are reverted. published is kept (admin moderation). Once providers edit their own
+      // listings, change this to insert missing rows only.
       for (const l of SEED_LISTINGS) {
         const { id, kind, name, sport = null, area, ownerId, ...details } = l;
         const price = kind === 'gym' ? l.plans.Monthly : l.price, billing = kind === 'gym' ? 'Monthly' : l.billing;
