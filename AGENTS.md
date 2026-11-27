@@ -21,7 +21,7 @@ This file is shared by ChatGPT/Codex, Gemini and Claude. Keep project rules here
 - `apps/provider-admin/index.html`: provider/admin portal.
 - `apps/api/src/`: booking API. `pg-store.mjs` (PostgreSQL, used when `DATABASE_URL` is set) and `memory-store.mjs` implement one interface. Put booking rules in `rules.mjs` and sample data in `catalog.mjs`, never in one store only. `db/schema.sql`: PostgreSQL schema.
 - Tests: `npm test` (every API test runs on both stores when `DATABASE_URL` is set), `python -m pytest tests/ui/test_preview.py`, `python tests/ui/smoke.py apps/athlete-preview/index.html shots`, `python tests/ui/live_e2e.py . http://127.0.0.1:3000`.
-- `docs/`: handoff, decisions, verification log.
+- `docs/`: handoff, decisions, verification log. Tool guides: `docs/codex-toolkit.md` (Codex), `docs/claude-toolkit.md` (Claude Code; plugins are listed in `.claude/settings.json`).
 
 ## Booking-engine rules the code must keep
 - One active allocation per resource per time range (PostgreSQL exclusion constraint). Ranges are half-open `[start, end)`.
