@@ -1,5 +1,15 @@
 # SPORT verification log
 
+## 28 Nov 2026 · Claude · Pitch-side redesign of the athlete app (owner chose "Pitch-side")
+
+- **Type:** Big Shoulders Display (stadium signage) for headlines, times and prices. Barlow for reading. Noto Kufi Arabic in Arabic. Fonts load from Google Fonts, with system fallbacks offline.
+- **Colour:** deep pitch green `#0d3a28`, turf `#165c3f`, chalk `#f3f6f1`, lime `#d4f74a`. Lime marks only what you can press or have chosen.
+- **Signature:** home is a pitch, with chalk lines behind the headline and a "next free pitches" scoreboard row. Every bookable time in the app is a scoreboard tile.
+- **Removed:** emoji icons (sports, banner, greeting), the four coloured home tiles (now a line list with simple drawn icons), all-caps labels, and the pill-shaped nav (now tabs with a sliding underline).
+- **Reference patterns kept:** MultiSport Booking System (prices visible on cards), BookingCalendar (date, then times), Motion Primitives (sliding selection indicator, now an underline) and Vaul (bottom sheet on phone). The new type and colour direction came from the frontend-design plugin, not from a cloned repo. The cloned repos were not available in this session.
+- **Tests:** `npm test` 68/68, `tests/ui/test_preview.py` passed, `tests/ui/smoke.py` (phone and desktop, English and Arabic) has no JS errors and no sideways scroll, `tests/ui/live_e2e.py` 22/22. No selectors changed.
+
+
 ## 28 Nov 2026 · Claude · Provider schedules (opening hours and closures)
 
 - **Targets:** each coach, and each club. A club target covers every court of every sport there.

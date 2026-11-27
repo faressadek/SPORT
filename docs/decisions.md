@@ -4,6 +4,7 @@ Newest first. Only the owner makes decisions. Agents record them here.
 
 | Date | Decision |
 |---|---|
+| 2026-11-28 | **Visual direction: Pitch-side.** Scoreboard-style condensed type, chalk pitch lines on deep green, lime only for actions and selections. |
 | 2026-11-28 | **One pitch inventory: clubs and branches** (`#/sports/football`, Coastal/Eastside/City) are the only pitch source, including for a coach's "Add a pitch". The separate North Pitch/Seafront/East Ground list goes away. |
 | 2026-11-28 | **Colour system: dark green and lime** across the whole app. Home and facility screens move off blue. |
 | 2026-11-27 | GitHub repo `faressadek/SPORT` is the single shared home for ChatGPT, Gemini and Claude. `AGENTS.md` holds the shared rules. |
@@ -16,6 +17,7 @@ Newest first. Only the owner makes decisions. Agents record them here.
 - Cancellation window, fees and refund rules before live checkout.
 
 ## Activity
+- 2026-11-28 · Claude: Pitch-side redesign of the athlete app. Open: portal not restyled beyond colours; review on a real phone.
 - 2026-11-28 · Claude: provider schedules (weekly hours, closures) in API, PostgreSQL, portal and athlete app. Open: athlete notifications for closures, real sign-in, Paymob sandbox.
 - 2026-11-28 · Claude: applied the pitch-inventory and colour decisions (club branches everywhere, dark green and lime). Open: real sign-in, Paymob sandbox, provider schedules.
 - 2026-11-28 · Claude: added `docs/claude-toolkit.md` and `.claude/settings.json` (plugins: frontend-design, superpowers, code-review, security-guidance). Reviewed the gyms/academies branch and fixed 5 findings.
