@@ -3,6 +3,7 @@ import { pathToFileURL } from 'node:url';
 import { authenticate, requireRole, canAccessBooking } from './access.mjs';
 import { HttpError, validateHold } from './rules.mjs';
 import { createMemoryStore } from './memory-store.mjs';
+import { filterListings, publicListing } from './catalog.mjs';
 
 export { createMemoryStore as createStore };
 export { SPORTS, CLUBS } from './catalog.mjs';
@@ -94,17 +95,27 @@ export function createApp(store = createMemoryStore()) {
         return sendJson(res, httpStatus, result);
       }
 
-      // Gyms and academies: direct enquiries (no sign-in needed).
+      // Gyms and academies: public search. Filters: gyms area, facility, q, billing, sort=price; academies sport, area, age, level, q.
+      const dirMatch = path.match(/^\/api\/(gyms|academies)$/);
+      if (req.method === 'GET' && dirMatch) {
+        const kind = dirMatch[1] === 'gyms' ? 'gym' : 'academy';
+        const list = filterListings(await store.listListings(), kind, Object.fromEntries(url.searchParams));
+        return sendJson(res, 200, { [dirMatch[1]]: list.map(publicListing) });
+      }
+
+      // Direct enquiries (no sign-in needed). The listing must exist and be published; its kind and name come from the server.
       if (req.method === 'POST' && path === '/api/enquiries') {
         const body = await readBody(req);
         if (!body.targetId || (!body.fullName && !body.name) || !body.phone || !/^\+?[0-9 ()-]{7,20}$/.test(String(body.phone))) {
           throw new HttpError(400, 'Name, phone, and target listing are required');
         }
+        const listing = await store.getListing(String(body.targetId));
+        if (!listing || !listing.published) throw new HttpError(404, 'Gym or academy not found');
         const enquiry = await store.addEnquiry({
           athleteId: user?.id || null,
-          kind: body.kind === 'academy' ? 'academy' : 'gym',
-          targetId: String(body.targetId).slice(0, 120),
-          targetName: String(body.targetName || body.targetId).slice(0, 120),
+          kind: listing.kind,
+          targetId: listing.id,
+          targetName: listing.name,
           name: String(body.name || body.fullName).slice(0, 80),
           phone: String(body.phone),
           participant: body.participant ? String(body.participant).slice(0, 80) : null,
@@ -117,9 +128,11 @@ export function createApp(store = createMemoryStore()) {
         requireRole(user, ['coach', 'venue_operator', 'gym_operator', 'academy_operator', 'admin']);
         const all = await store.listBookings();
         const bookings = user.role === 'admin' ? all : all.filter(b => b.resourceIds.some(id => store.lookup(id)?.ownerId === user.id));
+        const listings = (await store.listListings()).filter(l => user.role === 'admin' || l.ownerId === user.id);
         return sendJson(res, 200, {
           role: user.role,
           bookings,
+          listings,
           enquiries: await store.listEnquiries(user),
           outbox: user.role === 'admin' ? await store.listOutbox() : [],
         });
@@ -132,6 +145,15 @@ export function createApp(store = createMemoryStore()) {
         const resource = await store.setPublished(decodeURIComponent(path.split('/').pop()), body.published);
         if (!resource) throw new HttpError(404, 'Resource not found');
         return sendJson(res, 200, resource);
+      }
+
+      if (req.method === 'PATCH' && path.startsWith('/api/admin/listings/')) {
+        requireRole(user, ['admin']);
+        const body = await readBody(req);
+        if (typeof body.published !== 'boolean') throw new HttpError(400, 'published must be true or false');
+        const listing = await store.setListingPublished(decodeURIComponent(path.split('/').pop()), body.published);
+        if (!listing) throw new HttpError(404, 'Listing not found');
+        return sendJson(res, 200, listing);
       }
 
       return sendJson(res, 404, { error: 'Not found' });

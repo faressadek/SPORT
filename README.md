@@ -7,13 +7,13 @@ Egyptian sports marketplace for athletes and parents: book courts, find coaches,
 | Path | What it is |
 |---|---|
 | `apps/athlete-preview/index.html` | Athlete app: Courts, Coaches (with the court add-on for coaches without a venue), Gyms, Academies, My bookings, English/Arabic. Works offline with sample data, or against the API. |
-| `apps/provider-admin/index.html` | Provider and admin portal: bookings, enquiries, refund queue. |
+| `apps/provider-admin/index.html` | Provider and admin portal: bookings, gym and academy listings (admins can hide or publish them), enquiries, refund queue. |
 | `apps/api/src/server.mjs` | Booking API (Node 22). Uses PostgreSQL when `DATABASE_URL` is set, otherwise an in-memory store for demos. |
 | `apps/api/src/pg-store.mjs`, `memory-store.mjs` | The two stores. Same interface, same tests. |
 | `apps/api/src/rules.mjs`, `catalog.mjs` | Booking rules and the sample catalog, shared by both stores. |
 | `apps/api/src/access.mjs` | Role rules for athletes, providers and admins. |
 | `db/schema.sql` | PostgreSQL schema. Overlap protection, half-open time ranges, payment attempts, outbox, gyms and academies. |
-| `tests/api/` | API checks: booking flows, late or duplicate payments, validation, the add-on rule, enquiry privacy. |
+| `tests/api/` | API checks: booking flows, late or duplicate payments, validation, the add-on rule, enquiry privacy, gym and academy search and moderation. |
 | `tests/db/` | Loads the schema into PostgreSQL and races two bookings for the same coach. |
 | `tests/ui/` | Browser checks: `test_preview.py` (pytest), `smoke.py` (all routes, phone and desktop), `live_e2e.py` (app and portal against the API). |
 | `AGENTS.md` | Shared rules for ChatGPT/Codex, Gemini and Claude. |

@@ -1,5 +1,28 @@
 # SPORT verification log
 
+## 28 Nov 2026 · Claude · Gyms and academies in PostgreSQL (branch `claude/compassionate-fermi-jamfj9`, stacked on `claude/postgres-store`)
+
+Gym and academy listings used to exist only inside the athlete app's HTML. Enquiries were stored, but the API accepted any `targetId`, and took the listing name and kind from the browser. Now:
+- The listings live in `apps/api/src/catalog.mjs` and are written to `sport.directory_listings` at startup. Admin moderation (`published`) is kept by the database and read on every request, so all API servers agree.
+- `GET /api/gyms` (area, facility, q, billing, sort=price) and `GET /api/academies` (sport, area, age, level, q). The filters live in `catalog.mjs` and are shared by both stores. Owner IDs are not exposed.
+- `POST /api/enquiries` returns 404 for an unknown or unpublished listing. Kind and name come from the server. `enquiries.listing_id` is a foreign key in fresh databases.
+- `PATCH /api/admin/listings/:id` (admin only). `GET /api/provider/overview` includes the caller's listings, or all of them for an admin.
+- New demo providers: `gym-apex` (Apex Athletic Club), `academy-alex-youth` (Alexandria Youth Football Academy). `coach-fares` owns Kick Smash Padel Academy.
+- Athlete app: loads gyms and academies from the API when it is running, and keeps its offline copy otherwise. Portal: a listings table per role, with Publish/Unpublish for admins, and gym and academy operator tokens.
+
+### Results (PostgreSQL 16, Node 22)
+
+| Check | Result |
+|---|---|
+| `npm test` with `DATABASE_URL` (both stores plus schema tests) | **55 / 55**, 3 repeated runs |
+| New `tests/api/directory.test.mjs`: listing, filters, enquiry validation, moderation, two servers on one database | passed on both stores |
+| App and portal against the API on PostgreSQL (`tests/ui/live_e2e.py`) | **17 / 17** (4 new: gym owner sees its enquiry and only its listing; admin hides a gym; the athlete app no longer lists it) |
+| API restarted: hidden gym still hidden, gym owner's enquiry still there | passed |
+| Offline athlete app (`tests/ui/test_preview.py`, `tests/ui/smoke.py`) | passed, no JS errors |
+
+The pytest run needed the browser path pointed at this container's Chromium (its Playwright version differed). This was a setup issue only; no test changed.
+
+
 ## 28 Nov 2026 · Claude · API connected to PostgreSQL (branch `claude/postgres-store`)
 
 The API now keeps its data in PostgreSQL when `DATABASE_URL` is set. Without it, it uses the in-memory store for demos. Both stores share one interface, the booking rules (`rules.mjs`) and the sample catalog (`catalog.mjs`). Every API test runs against both.

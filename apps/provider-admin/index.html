@@ -31,6 +31,8 @@ th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left}
           <option value="admin-sport">Platform Admin (admin-sport)</option>
           <option value="coach-fares">Coach / Academy (coach-fares)</option>
           <option value="venue-coastal">Venue Operator (venue-coastal)</option>
+          <option value="gym-apex">Gym Operator (gym-apex)</option>
+          <option value="academy-alex-youth">Academy Operator (academy-alex-youth)</option>
         </select>
       </label>
       <button type="button" class="primary" id="refresh-btn">Refresh Data</button>
@@ -41,6 +43,10 @@ th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left}
     <section class="card">
       <h2>Active Bookings & Holds</h2>
       <div id="bookings-box">Loading...</div>
+    </section>
+    <section class="card">
+      <h2>Gym & Academy Listings</h2>
+      <div id="listings-box">Loading...</div>
     </section>
     <section class="card">
       <h2>Gym & Academy Enquiries</h2>
@@ -74,6 +80,15 @@ async function loadPortal() {
     $('bookings-box').innerHTML = ov.bookings.length
       ? `<table><tr><th>ID</th><th>Day</th><th>Hour</th><th>Status</th></tr>${ov.bookings.map(b => `<tr><td>${esc(b.id)}</td><td>${esc(String(b.day).slice(0,10))}</td><td>${esc(b.hour)}:00</td><td><span class="badge">${esc(b.status)}</span></td></tr>`).join('')}</table>`
       : '<p>No bookings visible for this role.</p>';
+
+    const isAdmin = ov.role === 'admin';
+    $('listings-box').innerHTML = ov.listings.length
+      ? `<table><tr><th>Listing</th><th>Type</th><th>Area</th><th>Status</th>${isAdmin ? '<th></th>' : ''}</tr>${ov.listings.map(l => `<tr><td>${esc(l.name)}</td><td>${esc(l.kind)}</td><td>${esc(l.area)}</td><td><span class="badge">${l.published ? 'Published' : 'Hidden'}</span></td>${isAdmin ? `<td><button type="button" data-listing="${esc(l.id)}" data-publish="${!l.published}">${l.published ? 'Unpublish' : 'Publish'}</button></td>` : ''}</tr>`).join('')}</table>`
+      : '<p>No gym or academy listings for this role.</p>';
+    for (const btn of $('listings-box').querySelectorAll('button[data-listing]')) btn.onclick = async () => {
+      await fetch(`${API_BASE}/api/admin/listings/${encodeURIComponent(btn.dataset.listing)}`, { method: 'PATCH', headers, body: JSON.stringify({ published: btn.dataset.publish === 'true' }) });
+      loadPortal();
+    };
 
     $('enquiries-box').innerHTML = ov.enquiries.length
       ? `<table><tr><th>Ref</th><th>Target</th><th>Athlete</th><th>Phone</th></tr>${ov.enquiries.map(e => `<tr><td>${esc(e.id)}</td><td>${esc(e.targetName)}</td><td>${esc(e.name)}</td><td>${esc(e.phone)}</td></tr>`).join('')}</table>`

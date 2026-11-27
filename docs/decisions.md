@@ -4,6 +4,8 @@ Newest first. Only the owner makes decisions. Agents record them here.
 
 | Date | Decision |
 |---|---|
+| 2026-11-28 | **One pitch inventory: clubs and branches** (`#/sports/football`, Coastal/Eastside/City) are the only pitch source, including for a coach's "Add a pitch". The separate North Pitch/Seafront/East Ground list goes away. |
+| 2026-11-28 | **Colour system: dark green and lime** across the whole app. Home and facility screens move off blue. |
 | 2026-11-27 | GitHub repo `faressadek/SPORT` is the single shared home for ChatGPT, Gemini and Claude. `AGENTS.md` holds the shared rules. |
 | 2026-11 | Courts and Coaches are separate pages. A court add-on appears only for a coach with no listed location. |
 | 2026-11 | UX is built by combining patterns from the cloned reference repos, each one named. |
@@ -11,11 +13,10 @@ Newest first. Only the owner makes decisions. Agents record them here.
 | 2026-11 | Pilot: Alexandria, mobile-friendly web first. |
 
 ## Open questions for the owner
-- One pitch inventory? Should clubs and branches (`#/sports/football`) be the single source, including for a coach's "Add a pitch"? Or keep the separate pitch list?
-- Colour system: keep blue (home and facilities) or dark green and lime (booking and coaches)?
 - Cancellation window, fees and refund rules before live checkout.
 
 ## Activity
+- 2026-11-28 · Claude: gyms and academies now live in the shared catalog and in PostgreSQL. New public search routes (`GET /api/gyms`, `GET /api/academies`), admin moderation (`PATCH /api/admin/listings/:id`), and enquiries must target a real, published listing. The athlete app loads listings from the API; the portal shows listings per owner. Recorded the pitch-inventory and colour decisions. Open: apply those two decisions in the app, real sign-in, Paymob sandbox, provider schedules.
 - 2026-11-28 · Claude: connected the API to PostgreSQL (bookings now survive restarts). Every API test runs on both stores. Fixed a deadlock under contention and a crash when two servers start together. Open: real sign-in, Paymob sandbox, gyms/academies data in the database.
 - 2026-11-27 · Claude: reviewed the SPORT-full-stack bundle and fixed 15 defects (see verification log). Added API edge-case, PostgreSQL and live end-to-end tests, plus CI. Open: the API still keeps data in memory, not PostgreSQL.
 - 2026-11-27 · Claude: added the athlete preview, UI checks and verification log. Set up shared agent instructions. Open: the backend prototype is not in the repo yet.

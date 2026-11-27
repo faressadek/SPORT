@@ -594,7 +594,17 @@ const ApiClient = {
     } catch { this.live = false; }
     $('api-status').dataset.live = String(this.live);
     $('api-status-text').textContent = this.live ? t('live_api') : t('demo_mode');
-    if (this.live) await this.syncRemoteState();
+    if (this.live) await Promise.all([this.syncRemoteState(), this.loadDirectory()]);
+  },
+  // Gyms and academies come from the API (PostgreSQL when configured). Unpublished listings disappear here.
+  async loadDirectory() {
+    try {
+      const [g, a] = await Promise.all([this.request('/api/gyms'), this.request('/api/academies')]);
+      if (Array.isArray(g?.gyms)) { gymsData = g.gyms; selectedGymsCompare = selectedGymsCompare.filter(id => gymsData.some(x => x.id === id)); }
+      if (Array.isArray(a?.academies)) academiesData = a.academies;
+      if (page === 'gyms') renderGyms();
+      if (page === 'academies') renderAcademies();
+    } catch {}
   },
   async request(path, options = {}) {
     if (!this.live) return null;
@@ -649,13 +659,14 @@ const courts = {
   gleem: { name: 'Seafront Pitch', area: 'Gleem', format: '7-a-side', surface: 'Artificial turf', price: 700, hours: [10, 11, 16, 17] },
   montaza: { name: 'East Ground', area: 'Montaza', format: '11-a-side', surface: 'Natural grass', price: 1100, hours: [9, 12, 15, 20] }
 };
-const gymsData = [
+// Offline copy of the API catalog (apps/api/src/catalog.mjs). Replaced by the API's list when the API is running.
+let gymsData = [
   { id: 'gold-smouha', name: 'Apex Athletic Club', area: 'Smouha', plans: { Monthly: 1450, Quarterly: 3800, Annual: 12500 }, facilities: ['Pool', 'Sauna', 'CrossFit Zone', 'Padel Access'], hours: '06:00 – 00:00', trial: 'Free 1-day guest pass', note: 'Olympic indoor lap pool + direct member discount on Smouha padel courts.' },
   { id: 'gleem-bay-fit', name: 'Bayfront Performance Gym', area: 'Gleem', plans: { Monthly: 1800, Quarterly: 4700, Annual: 15200 }, facilities: ['Sauna', 'Women-Only Hours', 'CrossFit Zone'], hours: '06:00 – 23:30', trial: 'Free body composition + trial session', note: 'Seafront cardio deck with dedicated women-only daily window (10:00–14:00).' },
   { id: 'sporting-iron', name: 'Sporting Strength & Conditioning', area: 'Sporting', plans: { Monthly: 950, Quarterly: 2500, Annual: 8400 }, facilities: ['CrossFit Zone'], hours: '07:00 – 23:00', trial: 'Free trial workout', note: 'Athlete-focused turf sprint lane, Olympic lifting platforms, and mobility studio.' },
   { id: 'montaza-wellness', name: 'Royal Gardens Health Club', area: 'Montaza', plans: { Monthly: 1600, Quarterly: 4200, Annual: 13800 }, facilities: ['Pool', 'Sauna', 'Women-Only Hours', 'Padel Access'], hours: '06:30 – 23:30', trial: 'Complimentary weekend day pass', note: 'Full spa recovery suite, heated pool, and 3 panoramic outdoor padel courts.' }
 ];
-const academiesData = [
+let academiesData = [
   { id: 'kick-smash-padel', name: 'Kick Smash Padel Academy', sport: 'Padel', area: 'Smouha', ages: ['U12 (9–12 yrs)', 'U16 (13–16 yrs)', 'Adults (17+)'], levels: ['Beginner', 'Intermediate', 'Competitive'], schedule: 'Sun & Tue · 17:00–18:30 (Youth) / 20:00–21:30 (Adults)', price: 2200, billing: 'Monthly (8 sessions)', coachLead: 'Coach Fares Sadek & Certified Padel Staff', summary: 'Structured technical drills, match-play tactics, and ranked ladder nights.' },
   { id: 'alex-striker-fc', name: 'Alexandria Youth Football Academy', sport: 'Football', area: 'Montaza', ages: ['U8 (5–8 yrs)', 'U12 (9–12 yrs)', 'U16 (13–16 yrs)'], levels: ['Beginner', 'Intermediate', 'Competitive'], schedule: 'Mon, Wed & Fri · 16:30–18:00', price: 1650, billing: 'Monthly (12 sessions)', coachLead: 'CAF-Licensed Youth Coaching Team', summary: 'Age-grouped technical ball mastery, small-sided tactical games, and fitness tracking.' },
   { id: 'gleem-tennis-pro', name: 'Mediterranean Tennis School', sport: 'Tennis', area: 'Gleem', ages: ['U8 (5–8 yrs)', 'U12 (9–12 yrs)', 'Adults (17+)'], levels: ['Beginner', 'Intermediate'], schedule: 'Sat & Thu · 10:00–11:30 or 18:00–19:30', price: 1900, billing: 'Monthly (8 sessions)', coachLead: 'Egyptian Tennis Federation Certified Coaches', summary: 'Red/orange/green ball progression for juniors and evening cardio tennis for adults.' },

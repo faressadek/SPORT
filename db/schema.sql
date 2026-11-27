@@ -113,7 +113,7 @@ CREATE TABLE directory_listings (
 -- Direct Enquiries (Gyms & Academies Pilot Flow)
 CREATE TABLE enquiries (
     id              TEXT PRIMARY KEY,
-    listing_id      TEXT NOT NULL,
+    listing_id      TEXT NOT NULL REFERENCES directory_listings(id),
     target_name     TEXT,
     kind            TEXT NOT NULL CHECK (kind IN ('gym', 'academy')),
     athlete_id      TEXT REFERENCES users(id),

@@ -46,14 +46,17 @@ storeTest('P5 a court can be added only to a coach with no listed venue', async 
   assert.equal((await call('POST', '/api/holds', A, { day, hour: 10, coachId: 'omar', pitchId: 'smouha' })).status, 201);
 });
 
-storeTest('P6 providers see only enquiries for their own listings', async ({ call, store }) => {
-  await call('POST', '/api/enquiries', null, { kind: 'gym', targetId: 'some-gym', name: 'Parent', phone: '+201111111111' });
-  await store.testing.setListingOwner('kick-smash-gym', 'coach-fares');
-  await call('POST', '/api/enquiries', null, { kind: 'gym', targetId: 'kick-smash-gym', name: 'Mona', phone: '+201222222222' });
+storeTest('P6 providers see only enquiries for their own listings', async ({ call }) => {
+  assert.equal((await call('POST', '/api/enquiries', null, { kind: 'gym', targetId: 'gleem-bay-fit', name: 'Parent', phone: '+201111111111' })).status, 201);
+  assert.equal((await call('POST', '/api/enquiries', null, { kind: 'academy', targetId: 'kick-smash-padel', name: 'Mona', phone: '+201222222222' })).status, 201);
   const coach = await (await call('GET', '/api/provider/overview', 'coach-fares')).json();
   assert.deepEqual(coach.enquiries.map(e => e.name), ['Mona']);
+  assert.deepEqual(coach.listings.map(l => l.id), ['kick-smash-padel']);
+  const gym = await (await call('GET', '/api/provider/overview', 'gym-apex')).json();
+  assert.deepEqual(gym.enquiries, []);
   const admin = await (await call('GET', '/api/provider/overview', 'admin-sport')).json();
   assert.equal(admin.enquiries.length, 2);
+  assert.equal(admin.listings.length, 8);
 });
 
 storeTest('P7 idempotency key cannot return another athlete’s payment', async ({ call, store }) => {

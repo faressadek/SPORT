@@ -3,7 +3,7 @@
 import crypto from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import pg from 'pg';
-import { SEED_USERS, SEED_RESOURCES, allMarketResources, createCatalog } from './catalog.mjs';
+import { SEED_USERS, SEED_RESOURCES, SEED_LISTINGS, allMarketResources, createCatalog } from './catalog.mjs';
 import { HOLD_TTL_MS, HttpError, capturePlan, captureResults, refundEvent, newId } from './rules.mjs';
 
 const SCHEMA_FILE = new URL('../../../db/schema.sql', import.meta.url);
@@ -22,6 +22,10 @@ const BOOKING_SELECT = `
          array_agg(a.resource_id ORDER BY a.id) AS resource_ids,
          bool_or(a.active) AS active
     FROM sport.bookings b JOIN sport.booking_allocations a ON a.booking_id = b.id`;
+
+const LISTING_SELECT = `SELECT id, kind, name, sport, area, owner_user_id, published, details FROM sport.directory_listings`;
+const toListing = r => r && ({ id: r.id, kind: r.kind, name: r.name, ...(r.sport ? { sport: r.sport } : {}), area: r.area,
+  ...r.details, ownerId: r.owner_user_id, published: r.published });
 
 export async function createPgStore(connectionString, { setup = true } = {}) {
   const pool = new pg.Pool({ connectionString, max: 10 });
@@ -106,6 +110,18 @@ export async function createPgStore(connectionString, { setup = true } = {}) {
            fixed_venue = EXCLUDED.fixed_venue, hourly_egp_minor = EXCLUDED.hourly_egp_minor, owner_user_id = EXCLUDED.owner_user_id,
            metadata = EXCLUDED.metadata`,
         [r.id, r.kind, r.sport, r.name, r.area, r.fixedVenue ?? null, Math.round(r.price * 100), r.ownerId ?? null, { hours: r.hours }]);
+      // Gyms and academies. The catalog owns the listing content; published is left as the database has it (admin moderation).
+      for (const l of SEED_LISTINGS) {
+        const { id, kind, name, sport = null, area, ownerId, ...details } = l;
+        const price = kind === 'gym' ? l.plans.Monthly : l.price, billing = kind === 'gym' ? 'Monthly' : l.billing;
+        await c.query(
+          `INSERT INTO sport.directory_listings (id, kind, name, sport, area, price_egp_minor, billing_period, owner_user_id, details)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+           ON CONFLICT (id) DO UPDATE SET kind = EXCLUDED.kind, name = EXCLUDED.name, sport = EXCLUDED.sport, area = EXCLUDED.area,
+             price_egp_minor = EXCLUDED.price_egp_minor, billing_period = EXCLUDED.billing_period,
+             owner_user_id = EXCLUDED.owner_user_id, details = EXCLUDED.details`,
+          [id, kind, name, sport, area, Math.round(price * 100), billing, ownerId ?? null, details]);
+      }
     });
     for (const r of (await pool.query(`SELECT id, published FROM sport.resources`)).rows) {
       const item = catalog.lookup(r.id); if (item) item.published = r.published;
@@ -224,6 +240,19 @@ export async function createPgStore(connectionString, { setup = true } = {}) {
       });
     },
 
+    // Listings are read from the database on every call, so a listing unpublished on one API server is hidden on all of them.
+    async listListings() {
+      // Catalog order first (the order the athlete app shows), then anything added later.
+      return (await pool.query(`${LISTING_SELECT} ORDER BY array_position($1::text[], id) NULLS LAST, created_at, id`, [SEED_LISTINGS.map(l => l.id)])).rows.map(toListing);
+    },
+    async getListing(id) {
+      return toListing((await pool.query(`${LISTING_SELECT} WHERE id = $1`, [id])).rows[0]);
+    },
+    async setListingPublished(id, published) {
+      return toListing((await pool.query(`UPDATE sport.directory_listings SET published = $2 WHERE id = $1
+        RETURNING id, kind, name, sport, area, owner_user_id, published, details`, [id, published])).rows[0]);
+    },
+
     async addEnquiry(e) {
       const { rows } = await pool.query(
         `INSERT INTO sport.enquiries (id, listing_id, target_name, kind, athlete_id, full_name, phone, participant, notes)
@@ -247,10 +276,6 @@ export async function createPgStore(connectionString, { setup = true } = {}) {
       async addUser(u) {
         await pool.query(`INSERT INTO sport.users (id, role, full_name) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING`, [u.id, u.role, u.name]);
         users.set(u.id, { ...u });
-      },
-      async setListingOwner(listingId, ownerId) {
-        await pool.query(`INSERT INTO sport.directory_listings (id, kind, name, area, price_egp_minor, billing_period, owner_user_id)
-          VALUES ($1, 'gym', $1, 'Alexandria', 0, 'month', $2) ON CONFLICT (id) DO UPDATE SET owner_user_id = EXCLUDED.owner_user_id`, [listingId, ownerId]);
       },
     },
     async close() { clearInterval(sweeper); await pool.end(); },

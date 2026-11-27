@@ -1,6 +1,6 @@
 // In-memory store: used for tests and for running the demo without a database. Data is lost on restart.
 import crypto from 'node:crypto';
-import { SEED_USERS, createCatalog } from './catalog.mjs';
+import { SEED_USERS, SEED_LISTINGS, createCatalog } from './catalog.mjs';
 import { HOLD_TTL_MS, HttpError, capturePlan, captureResults, refundEvent, newId } from './rules.mjs';
 
 export function createMemoryStore() {
@@ -10,7 +10,7 @@ export function createMemoryStore() {
   const payments = new Map();
   const enquiries = [];
   const outbox = [];
-  const listingOwners = new Map();
+  const listings = new Map(SEED_LISTINGS.map(l => [l.id, { ...structuredClone(l), published: true }]));
 
   function sweep(now = Date.now()) {
     for (const b of bookings.values()) if (b.status === 'HOLD' && b.holdExpiresAt <= now) { b.status = 'EXPIRED'; b.active = false; }
@@ -79,16 +79,21 @@ export function createMemoryStore() {
       return { httpStatus: 200, result: { bookingId, status: 'CANCELLED' } };
     },
 
+    async listListings() { return [...listings.values()].map(l => structuredClone(l)); },
+    async getListing(id) { const l = listings.get(id); return l ? structuredClone(l) : null; },
+    async setListingPublished(id, published) {
+      const l = listings.get(id); if (!l) return null; l.published = published; return structuredClone(l);
+    },
+
     async addEnquiry(e) { const row = { id: newId('ENQ', crypto), status: 'NEW', createdAt: new Date().toISOString(), ...e }; enquiries.push(row); return { ...row }; },
     async listEnquiries(user) {
-      return user.role === 'admin' ? enquiries.map(e => ({ ...e })) : enquiries.filter(e => listingOwners.get(e.targetId) === user.id).map(e => ({ ...e }));
+      return user.role === 'admin' ? enquiries.map(e => ({ ...e })) : enquiries.filter(e => listings.get(e.targetId)?.ownerId === user.id).map(e => ({ ...e }));
     },
     async listOutbox() { return outbox.map(e => ({ ...e })); },
 
     testing: {
       async expireHold(id) { bookings.get(id).holdExpiresAt = Date.now() - 1000; },
       async addUser(u) { users.set(u.id, { ...u }); },
-      async setListingOwner(listingId, ownerId) { listingOwners.set(listingId, ownerId); },
     },
     async close() {},
   };
