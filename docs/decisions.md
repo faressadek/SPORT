@@ -4,6 +4,7 @@ Newest first. Only the owner makes decisions. Agents record them here.
 
 | Date | Decision |
 |---|---|
+| 2026-11-28 | **Entry flow:** the app opens on the athlete side. At the bottom of home, "Are you a coach, venue, gym or academy?" leads to a role picker (Coach, Courts/venue, Gym, Academy). Each role opens its own workspace and landing screen. See `docs/architecture.md`. |
 | 2026-11-28 | **Visual direction: Pitch-side.** Scoreboard-style condensed type, chalk pitch lines on deep green, lime only for actions and selections. |
 | 2026-11-28 | **One pitch inventory: clubs and branches** (`#/sports/football`, Coastal/Eastside/City) are the only pitch source, including for a coach's "Add a pitch". The separate North Pitch/Seafront/East Ground list goes away. |
 | 2026-11-28 | **Colour system: dark green and lime** across the whole app. Home and facility screens move off blue. |
@@ -17,6 +18,7 @@ Newest first. Only the owner makes decisions. Agents record them here.
 - Cancellation window, fees and refund rules before live checkout.
 
 ## Activity
+- 2026-11-28 · Claude: wrote `docs/architecture.md` (target architecture, entry flow, workspace per role, build order).
 - 2026-11-28 · Claude: Pitch-side redesign of the athlete app. Open: portal not restyled beyond colours; review on a real phone.
 - 2026-11-28 · Claude: provider schedules (weekly hours, closures) in API, PostgreSQL, portal and athlete app. Open: athlete notifications for closures, real sign-in, Paymob sandbox.
 - 2026-11-28 · Claude: applied the pitch-inventory and colour decisions (club branches everywhere, dark green and lime). Open: real sign-in, Paymob sandbox, provider schedules.
