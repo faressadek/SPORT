@@ -11,7 +11,7 @@
     "start:api:db": "node --env-file=.env apps/api/src/server.mjs",
     "test:api": "node --test \"tests/api/*.test.mjs\"",
     "test:db": "node --test \"tests/db/*.test.mjs\"",
-    "test": "node --test \"tests/api/*.test.mjs\" \"tests/db/*.test.mjs\" && turbo run test",
+    "test": "npm run test:legacy && turbo run test",
     "dev": "turbo run dev",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
@@ -21,9 +21,15 @@
   "dependencies": {
     "pg": "^8.23.1"
   },
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "pnpm@11.25.0",
   "devDependencies": {
-    "prettier": "^3.6.2",
-    "turbo": "^2.6.0"
+    "@types/node": "22.20.7",
+    "@types/react": "19.3.3",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.4.6",
+    "prettier": "3.10.1",
+    "turbo": "2.11.13",
+    "typescript": "5.9.3"
   }
 }

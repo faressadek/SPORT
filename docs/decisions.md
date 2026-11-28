@@ -36,3 +36,6 @@ Newest first. Only the owner makes decisions. Agents record them here.
 - 2026-11-28 · ChatGPT: added the athlete-to-operator entry and role-specific workspace pages. Production identity remains open.
 - 2026-11-28 · Claude: merged main (ChatGPT's operator entry) into the provider-app branch. Athlete home keeps one operator link, to `apps/provider` (#/join). `provider-admin/operators.html` now redirects there; the admin portal's `?workspace=` views stay. Open: Arabic in the provider app.
 - 2026-11-28 · Claude: CC1 design system and app shells. Copied the build kit (SPEC.md, tasks, CONTRACT-REQUESTS.md, flow diagrams) into the repo, scaffolded the pnpm/Turborepo workspace, wrote `docs/DESIGN.md`, built 22 components and the athlete, operator and admin shells in `packages/ui`, and a `/dev/ui` page. Open: Codex to finish CX0; open SPEC decisions 1–3 and 5.
+- 2026-11-28 · Codex: scaffolded the SPORT and SPORT Admin monorepo and initialized the local Supabase project. Open: CX0 merge and CX1 schema and data contract.
+
+- 2026-11-28 · Codex: reconciled CC1 with the merged CX0 scaffold and verified both apps. Open: CX1 schema and data contract.

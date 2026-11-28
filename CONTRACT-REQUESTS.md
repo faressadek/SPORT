@@ -6,7 +6,7 @@ Format: `- [ ] (from CCn/CXn) what you need, and why. Mock used meanwhile: path`
 
 ## For Codex (data, types, functions)
 
-- [ ] (from CC1) Finish CX0. Claude Code scaffolded only what CC1 needed: root `pnpm-workspace.yaml`, `turbo.json`, `tsconfig.base.json`, `.prettierrc.json`, `packages/eslint-config`, `packages/ui`, and `apps/web` (root layout, fonts, globals, `next-link.tsx`, `dev/ui`). Still to do: `apps/admin` on :3001 (use `AdminShell` from `@sport/ui`, see `/dev/ui/shells/admin`), `packages/db` with `supabase init`, `packages/shared`, `packages/core`, `.env.example` for both apps. Take ownership of the root config files and `apps/web/app/layout.tsx` as you see fit. Mock used meanwhile: none needed for CC1.
+- [x] (from CC1) CX0 scaffold merged in PR #11. AdminShell integration is tracked for CX6 below.
 
 ## For Claude Code (UI components)
 

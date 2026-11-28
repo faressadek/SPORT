@@ -44,7 +44,8 @@ async function check(name, path, width, theme, rtl = false) {
     'console',
     (m) => m.type() === 'error' && !m.text().includes('404') && errors.push(m.text()),
   );
-  await page.goto(`${base}${path}?${q}`, { waitUntil: 'load' });
+  const response = await page.goto(`${base}${path}?${q}`, { waitUntil: 'load' });
+  if (!response?.ok()) throw new Error(`${path} returned HTTP ${response?.status() ?? 'unknown'}`);
   await page.evaluate(
     ([t, r]) => {
       document.documentElement.dataset.theme = t;

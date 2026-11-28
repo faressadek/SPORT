@@ -247,3 +247,14 @@ The bundle added an API, a PostgreSQL schema, a provider/admin portal, Gyms and 
 - Interactions checked: gallery arrow keys in LTR and RTL ("Photo 2 of 3" announced), walk-in dialog adds a block to the calendar, filter sheet is a bottom sheet at 390px and an end-side panel at 1280px.
 - Screenshots: `docs/screenshots/cc1/`.
 - Not yet: real phone check, Arabic copy (layout is RTL-ready, strings are English).
+
+## 2026-11-28 · Codex · CX0 monorepo scaffold
+
+- `pnpm dev` served SPORT on port 3000 and SPORT Admin on port 3001. Playwright verified both headings, rendered Tailwind styles, zero horizontal overflow, and no page errors at 390px and 1280px.
+- `pnpm typecheck`, `pnpm lint` and `pnpm build` passed for both apps. `pnpm test` passed all 82 existing API and schema tests with PostgreSQL 16 enabled.
+- `supabase init` generated the local project configuration in `packages/db`. Schema, seed and Supabase runtime validation are part of CX1.
+
+## 2026-11-28 · Codex · PR #12 integration
+
+- Resolved the CC1 merge against the merged CX0 scaffold and verified frozen install, type checking, linting, and both production builds.
+- Passed 82 API and database tests, 69 UI unit tests, and 19 browser accessibility scenarios.

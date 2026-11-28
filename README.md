@@ -2,6 +2,22 @@
 
 Egyptian sports marketplace for athletes and parents: book courts, find coaches, compare gyms, and search academies. The pilot is a mobile-friendly web app in Alexandria, in English and Arabic.
 
+## Monorepo development
+
+Use Node.js 22.13 or newer and pnpm 11.25.0 from the repository root.
+
+```sh
+pnpm install --frozen-lockfile
+pnpm dev
+pnpm typecheck
+pnpm lint
+pnpm test
+```
+
+The Next.js scaffold serves SPORT on port 3000 and SPORT Admin on port 3001. Run `pnpm build` to build both apps. The existing sample API and static previews are documented below. If you run the sample API alongside the monorepo, use `PORT=3002 npm run start:api` and point the previews at that port.
+
+The local Supabase project is initialized in `packages/db`. For Supabase work, run `pnpm --filter @sport/db exec supabase start` with Docker running. On cloud machines with a read-only home directory, create `.cache/supabase-home` and set `SUPABASE_HOME="$PWD/.cache/supabase-home"` first. Each app has its own `.env.example` for the local Supabase URL and publishable key.
+
 ## What's here
 
 | Path | What it is |

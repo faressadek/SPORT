@@ -159,7 +159,7 @@ shots/
 __pycache__/
 !.env.example
 
-# Next.js / Turborepo workspace
+# Next.js and Turborepo
 .next/
 .turbo/
 next-env.d.ts

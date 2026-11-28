@@ -1,27 +1,12 @@
 import type { Metadata, Viewport } from 'next';
-import { Barlow, Big_Shoulders, Noto_Kufi_Arabic } from 'next/font/google';
 import { ToastProvider } from '@sport/ui';
+import '@fontsource-variable/big-shoulders/standard.css';
+import '@fontsource/barlow/latin-400.css';
+import '@fontsource/barlow/latin-500.css';
+import '@fontsource/barlow/latin-600.css';
+import '@fontsource/barlow/latin-700.css';
+import '@fontsource-variable/noto-kufi-arabic';
 import './globals.css';
-
-const scoreboard = Big_Shoulders({
-  subsets: ['latin'],
-  axes: ['opsz'],
-  variable: '--font-scoreboard',
-  adjustFontFallback: false,
-  display: 'swap',
-});
-const barlow = Barlow({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-barlow',
-  display: 'swap',
-});
-const kufi = Noto_Kufi_Arabic({
-  subsets: ['arabic'],
-  weight: ['400', '600', '800'],
-  variable: '--font-kufi',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: { default: 'SPORT', template: '%s | SPORT' },
@@ -47,7 +32,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       dir="ltr"
       suppressHydrationWarning
-      className={`${scoreboard.variable} ${barlow.variable} ${kufi.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />

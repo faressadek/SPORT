@@ -3,3 +3,9 @@
 
 /* Tailwind must see the class names used inside the shared UI package. */
 @source '../../../packages/ui/src';
+
+:root {
+  --font-scoreboard: 'Big Shoulders Variable';
+  --font-barlow: 'Barlow';
+  --font-kufi: 'Noto Kufi Arabic Variable';
+}
