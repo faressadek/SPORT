@@ -1,6 +1,6 @@
 """Playwright UI smoke tests for SPORT Athlete Preview (Courts, Coaches, Gyms, Academies, RTL)."""
 from pathlib import Path
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
 HTML_URI = (Path(__file__).resolve().parents[2] / "apps" / "athlete-preview" / "index.html").as_uri()
 
@@ -79,9 +79,9 @@ def test_operator_entry_and_workspace_pages():
             assert page.get_by_role("heading", name=role + " dashboard").is_visible()
             assert page.locator(".grid section:visible h2").inner_text() == landing
             page.get_by_role("link", name=detail, exact=True).click()
-            assert page.locator(".grid section:visible h2").inner_text() == detail
+            expect(page.locator(".grid section:visible h2")).to_have_text(detail)
             page.reload()
-            assert page.locator(".grid section:visible h2").inner_text() == detail
+            expect(page.locator(".grid section:visible h2")).to_have_text(detail)
             assert not page.locator("#token-select").is_visible()
             page.click("#change-workspace")
         page.click("#back")
