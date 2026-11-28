@@ -13,7 +13,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm lint
+      - run: pnpm exec turbo run test
+      # ENABLE_DEV_UI serves /dev/ui in the production build for the browser check below.
       - run: pnpm build
+        env:
+          ENABLE_DEV_UI: "true"
       - name: Start both apps
         shell: bash
         run: |
@@ -24,3 +28,18 @@ jobs:
           curl --fail --silent --show-error --retry 20 --retry-all-errors --retry-delay 2 http://127.0.0.1:3001/ -o "$RUNNER_TEMP/sport-admin.html"
           grep -q '<title>SPORT</title>' "$RUNNER_TEMP/sport-web.html"
           grep -q '<title>SPORT Admin</title>' "$RUNNER_TEMP/sport-admin.html"
+      - name: UI kit and shells in a browser (axe, 390px and 1280px, light, dark, RTL)
+        shell: bash
+        run: |
+          pnpm --filter @sport/ui exec playwright install --with-deps chromium
+          ENABLE_DEV_UI=true pnpm --filter @sport/web start > "$RUNNER_TEMP/sport-start.log" 2>&1 &
+          start_pid=$!
+          trap 'kill "$start_pid" 2>/dev/null || true' EXIT
+          curl --fail --silent --retry 20 --retry-all-errors --retry-delay 2 http://127.0.0.1:3000/dev/ui -o /dev/null
+          node packages/ui/scripts/check-pages.mjs http://127.0.0.1:3000 ui-shots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-shots
+          path: ui-shots
+          retention-days: 14

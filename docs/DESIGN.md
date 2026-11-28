@@ -15,7 +15,7 @@ Owner decision (2026-11-28, `docs/decisions.md`): scoreboard-style condensed typ
 
 ## Colour roles
 
-Use the role, not the hex. Utilities: `bg-surface`, `text-ink`, `bg-action`, `border-line` and so on. Values live in `packages/ui/src/styles.css`.
+Use the role, not the hex. Utilities: `bg-surface`, `text-ink`, `bg-action`, `border-line` and so on. Values live in `packages/ui/src/styles/globals.css`.
 
 | Role | Light | Dark | Use |
 |---|---|---|---|
@@ -33,7 +33,7 @@ Use the role, not the hex. Utilities: `bg-surface`, `text-ink`, `bg-action`, `bo
 | `focus` | `#1f7a4f` | `#d4f74a` | Focus ring |
 | `success` · `warning` · `danger` · `info` (+ `-soft`) | | | Status pills, alerts |
 
-**Contrast is tested, not eyeballed.** `packages/ui/test/contrast.test.ts` reads `styles.css` and checks every text pair at 4.5:1 and every boundary at 3:1 in both themes. `scripts/check-pages.mjs` runs axe (WCAG 2.1 AA) on the pages. Add a pair to the test when you add a role.
+**Contrast is tested, not eyeballed.** `packages/ui/test/contrast.test.ts` reads `styles/globals.css` and checks every text pair at 4.5:1 and every boundary at 3:1 in both themes. `scripts/check-pages.mjs` runs axe (WCAG 2.1 AA) on the pages. Add a pair to the test when you add a role.
 
 **Dark mode** follows the system (`prefers-color-scheme`) unless `data-theme="light|dark"` is set on `<html>`. Components never need `dark:` for colour, because the roles switch. `dark:` is used only where the light and dark choices differ in kind (e.g. a lime underline instead of pitch green in dark).
 
@@ -41,9 +41,9 @@ Use the role, not the hex. Utilities: `bg-surface`, `text-ink`, `bg-action`, `bo
 
 | Face | Role |
 |---|---|
-| **Big Shoulders** (Google Fonts, `opsz` axis, weights 800–900) | Display: headings, prices, times, wordmark |
-| **Barlow** 400–700 | Body and UI |
-| **Noto Kufi Arabic** 400–800 | Both roles when `lang="ar"` |
+| **Big Shoulders** (variable, self-hosted via Fontsource, weights 800–900) | Display: headings, prices, times, wordmark |
+| **Barlow** 400–700 (Fontsource) | Body and UI |
+| **Noto Kufi Arabic** variable (Fontsource) | Both roles when `lang="ar"` |
 
 Scale (major third on 16px): `xs 12 · sm 14 · base 16 · lg 20 · xl 25 · 2xl 31 · 3xl 39 · 4xl 49`. Hero headlines may go to 72px on desktop.
 Rules: sentence case everywhere (no all-caps labels); headings are `font-display font-extrabold|black` with tight leading; body text lines stay under ~75 characters (`max-w-prose`/`max-w-md`).

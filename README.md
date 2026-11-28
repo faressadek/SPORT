@@ -50,8 +50,9 @@ npm run start:api:db                   # creates the schema on first start and k
 ## Test it
 
 ```sh
-npm test                                # API checks on the in-memory store; PostgreSQL runs skip without DATABASE_URL
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres npm test   # every API test also on PostgreSQL (needs psql)
+npm run test:legacy                     # API checks on the in-memory store; PostgreSQL runs skip without DATABASE_URL
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres npm run test:legacy   # every API test also on PostgreSQL (needs psql)
+# `pnpm test` runs these and the workspace tests (after pnpm install --frozen-lockfile)
 pip install playwright pytest && python -m playwright install chromium
 python -m pytest tests/ui/test_preview.py
 python tests/ui/smoke.py apps/athlete-preview/index.html shots

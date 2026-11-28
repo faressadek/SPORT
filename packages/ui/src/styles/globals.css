@@ -1,1 +1,289 @@
-@import "tailwindcss";
+/*
+ * SPORT design tokens (see docs/DESIGN.md).
+ * Import after `@import "tailwindcss";` in each app's global stylesheet.
+ *
+ * Every colour is a role, not a hue. Components use the role utilities
+ * (bg-surface, text-ink, bg-action ...) so light, dark and RTL need no
+ * per-component overrides.
+ */
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ---------- Light (default) ---------- */
+:root {
+  color-scheme: light;
+  --c-bg: #f3f6f1; /* chalk */
+  --c-surface: #ffffff;
+  --c-sunken: #e7eee4;
+  --c-ink: #0e1c15;
+  --c-ink-muted: #4a5b51;
+  --c-line: #cfdbd2;
+  --c-line-strong: #748a7c;
+  --c-pitch: #0d3a28; /* deep pitch green: bands, headings, nav */
+  --c-pitch-raised: #165c3f; /* turf */
+  --c-on-pitch: #f3f6f1;
+  --c-on-pitch-muted: #b9cdbf;
+  --c-chalk-line: rgb(243 246 241 / 0.22);
+  --c-action: #d4f74a; /* lime: actions and selections only */
+  --c-action-hover: #c4ec2b;
+  --c-action-press: #b3dc1c;
+  --c-on-action: #0e1c15;
+  --c-link: #135a3b;
+  --c-focus: #1f7a4f;
+  --c-success: #17613c;
+  --c-success-soft: #dbefe1;
+  --c-warning: #7a4f00;
+  --c-warning-soft: #fbefd0;
+  --c-danger: #b42318;
+  --c-danger-soft: #fde4e1;
+  --c-info: #1b5583;
+  --c-info-soft: #e0ecf7;
+  --c-neutral-soft: #e7eee4;
+  --c-scrim: rgb(6 23 15 / 0.55);
+  --shadow-raised: 0 1px 0 rgb(14 28 21 / 0.04), 0 1px 2px rgb(14 28 21 / 0.06);
+  --shadow-overlay: 0 24px 48px -16px rgb(6 23 15 / 0.35), 0 2px 6px rgb(6 23 15 / 0.08);
+}
+
+/* ---------- Dark ---------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --c-bg: #06170f;
+    --c-surface: #0b2419;
+    --c-sunken: #103022;
+    --c-ink: #eef3ec;
+    --c-ink-muted: #a3b6aa;
+    --c-line: #21463a;
+    --c-line-strong: #4b7262;
+    --c-pitch: #0d3a28;
+    --c-pitch-raised: #14523a;
+    --c-on-pitch: #f3f6f1;
+    --c-on-pitch-muted: #b9cdbf;
+    --c-chalk-line: rgb(243 246 241 / 0.18);
+    --c-action: #d4f74a;
+    --c-action-hover: #def96f;
+    --c-action-press: #c4ec2b;
+    --c-on-action: #0e1c15;
+    --c-link: #c7ef3a;
+    --c-focus: #d4f74a;
+    --c-success: #7fd6a1;
+    --c-success-soft: #123522;
+    --c-warning: #f1c35a;
+    --c-warning-soft: #362708;
+    --c-danger: #ff9b90;
+    --c-danger-soft: #3b1511;
+    --c-info: #8fc5f0;
+    --c-info-soft: #0f273b;
+    --c-neutral-soft: #133426;
+    --c-scrim: rgb(0 0 0 / 0.65);
+    --shadow-raised: 0 1px 0 rgb(0 0 0 / 0.3);
+    --shadow-overlay: 0 24px 48px -16px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(243 246 241 / 0.06);
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --c-bg: #06170f;
+  --c-surface: #0b2419;
+  --c-sunken: #103022;
+  --c-ink: #eef3ec;
+  --c-ink-muted: #a3b6aa;
+  --c-line: #21463a;
+  --c-line-strong: #4b7262;
+  --c-pitch: #0d3a28;
+  --c-pitch-raised: #14523a;
+  --c-on-pitch: #f3f6f1;
+  --c-on-pitch-muted: #b9cdbf;
+  --c-chalk-line: rgb(243 246 241 / 0.18);
+  --c-action: #d4f74a;
+  --c-action-hover: #def96f;
+  --c-action-press: #c4ec2b;
+  --c-on-action: #0e1c15;
+  --c-link: #c7ef3a;
+  --c-focus: #d4f74a;
+  --c-success: #7fd6a1;
+  --c-success-soft: #123522;
+  --c-warning: #f1c35a;
+  --c-warning-soft: #362708;
+  --c-danger: #ff9b90;
+  --c-danger-soft: #3b1511;
+  --c-info: #8fc5f0;
+  --c-info-soft: #0f273b;
+  --c-neutral-soft: #133426;
+  --c-scrim: rgb(0 0 0 / 0.65);
+  --shadow-raised: 0 1px 0 rgb(0 0 0 / 0.3);
+  --shadow-overlay: 0 24px 48px -16px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(243 246 241 / 0.06);
+}
+
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-sunken: var(--c-sunken);
+  --color-ink: var(--c-ink);
+  --color-ink-muted: var(--c-ink-muted);
+  --color-line: var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+  --color-pitch: var(--c-pitch);
+  --color-pitch-raised: var(--c-pitch-raised);
+  --color-on-pitch: var(--c-on-pitch);
+  --color-on-pitch-muted: var(--c-on-pitch-muted);
+  --color-chalk-line: var(--c-chalk-line);
+  --color-action: var(--c-action);
+  --color-action-hover: var(--c-action-hover);
+  --color-action-press: var(--c-action-press);
+  --color-on-action: var(--c-on-action);
+  --color-link: var(--c-link);
+  --color-focus: var(--c-focus);
+  --color-success: var(--c-success);
+  --color-success-soft: var(--c-success-soft);
+  --color-warning: var(--c-warning);
+  --color-warning-soft: var(--c-warning-soft);
+  --color-danger: var(--c-danger);
+  --color-danger-soft: var(--c-danger-soft);
+  --color-info: var(--c-info);
+  --color-info-soft: var(--c-info-soft);
+  --color-neutral-soft: var(--c-neutral-soft);
+  --color-scrim: var(--c-scrim);
+
+  --font-display:
+    var(--font-scoreboard), 'Big Shoulders', 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-body: var(--font-barlow), 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-arabic: var(--font-kufi), 'Noto Kufi Arabic', system-ui, sans-serif;
+
+  /* Major-third scale on a 16px body (12 · 14 · 16 · 20 · 25 · 31 · 39 · 49) */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.3rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.5625rem;
+  --text-xl--line-height: 1.9rem;
+  --text-2xl: 1.9375rem;
+  --text-2xl--line-height: 2.2rem;
+  --text-3xl: 2.4375rem;
+  --text-3xl--line-height: 2.6rem;
+  --text-4xl: 3.0625rem;
+  --text-4xl--line-height: 3.1rem;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --shadow-raised: var(--shadow-raised);
+  --shadow-overlay: var(--shadow-overlay);
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.6, 0, 0.3, 1);
+  --duration-press: 120ms;
+  --duration-enter: 200ms;
+  --duration-sheet: 280ms;
+
+  --animate-sheet-up: sheet-up var(--duration-sheet) var(--ease-out);
+  --animate-sheet-in-end: sheet-in-end var(--duration-sheet) var(--ease-out);
+  --animate-fade-in: fade-in var(--duration-enter) var(--ease-out);
+  --animate-pop-in: pop-in var(--duration-enter) var(--ease-out);
+  --animate-shimmer: shimmer 1.4s linear infinite;
+
+  @keyframes sheet-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  @keyframes sheet-in-end {
+    from {
+      transform: translateX(var(--sheet-from, 100%));
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+}
+
+@layer base {
+  html {
+    background: var(--c-bg);
+    color: var(--c-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Arabic: one family for display and body; Kufi has no condensed cut, so
+     display text keeps its weight but drops the tight tracking. */
+  html[lang='ar'] {
+    --font-display: var(--font-arabic);
+    --font-body: var(--font-arabic);
+  }
+  body {
+    min-height: 100dvh;
+    background: var(--c-bg);
+  }
+  :focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+  }
+  [dir='rtl'] .rtl-flip {
+    transform: scaleX(-1);
+  }
+  ::selection {
+    background: var(--c-action);
+    color: var(--c-on-action);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility scoreboard {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings:
+    'tnum' 1,
+    'lnum' 1;
+  letter-spacing: 0.01em;
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

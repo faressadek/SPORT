@@ -269,12 +269,15 @@ function useDocumentSettings() {
 
   useEffect(() => {
     // Read once on mount: the theme script in the root layout may have set it.
-    const t = document.documentElement.dataset.theme;
-    if (t === 'light' || t === 'dark') setTheme(t);
+    // These live in the URL and the DOM, which the server render can't see,
+    // so they are read after hydration.
     const params = new URLSearchParams(window.location.search);
-    const q = params.get('theme');
-    if (q === 'light' || q === 'dark') setTheme(q);
-    if (params.get('dir') === 'rtl') setRtl(true);
+    const q = params.get('theme') ?? document.documentElement.dataset.theme;
+    const initialTheme = q === 'light' || q === 'dark' ? q : null;
+    const initialRtl = params.get('dir') === 'rtl';
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time sync from the URL after hydration
+    if (initialTheme) setTheme(initialTheme);
+    if (initialRtl) setRtl(true);
   }, []);
 
   useEffect(() => {

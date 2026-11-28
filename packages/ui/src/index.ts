@@ -1,4 +1,4 @@
-// SPORT design system. Tokens live in ./styles.css (import '@sport/ui/styles.css').
+// SPORT design system. Tokens live in ./styles/globals.css (import '@sport/ui/styles.css').
 export { cn } from './lib/cn';
 export * from './lib/format';
 export { PlainLink, type LinkComponent } from './lib/link';
