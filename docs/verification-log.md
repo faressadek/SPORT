@@ -1,5 +1,9 @@
 # SPORT verification log
 
+## 28 Nov 2026 · Operator entry
+
+Browser coverage in `test_operator_entry_and_workspace_pages` opens the athlete home on mobile, chooses each operator, checks both pages and reload, and returns to the athlete app. Results are recorded by the PR’s UI job.
+
 ## 28 Nov 2026 · Claude · Provider schedules (opening hours and closures)
 
 - **Targets:** each coach, and each club. A club target covers every court of every sport there.

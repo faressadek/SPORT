@@ -19,7 +19,7 @@ button.primary{background:var(--brand);color:white;border-color:var(--brand)}
 table{width:100%;border-collapse:collapse;font-size:.88rem}
 th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left}
 .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.75rem;font-weight:700;background:#e8f3d8;color:var(--brand)}
-</style>
+#workspace-header{margin-block:24px}#workspace-nav{display:flex;flex-wrap:wrap;gap:8px}#workspace-nav a{color:var(--brand);padding:8px 14px;border:1px solid var(--line);border-radius:9px;text-decoration:none}#workspace-nav a[aria-current=page]{background:var(--brand);color:white}.card{min-width:0;overflow-x:auto}[hidden]{display:none!important}</style>
 </head>
 <body>
 <div class="shell">
@@ -39,6 +39,7 @@ th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left}
     </div>
   </header>
 
+  <section id="workspace-header" hidden><a id="change-workspace">Choose another workspace</a><h1 id="workspace-title"></h1><nav aria-label="Workspace pages" id="workspace-nav"></nav><p id="workspace-status" role="status"></p></section>
   <div class="grid">
     <section class="card">
       <h2>Active Bookings & Holds</h2>
@@ -69,6 +70,7 @@ const $ = id => document.getElementById(id);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 async function loadPortal() {
+  $('workspace-status').textContent = '';
   const token = $('token-select').value;
   const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
   try {
@@ -108,6 +110,7 @@ async function loadPortal() {
       `;
     }
   } catch (err) {
+    if (!$('workspace-header').hidden) $('workspace-status').textContent = 'The booking service is unavailable. Reconnect and select Refresh Data.';
     $('bookings-box').textContent = 'Start the API server (node apps/api/src/server.mjs) to inspect live records.';
   }
 }
@@ -144,7 +147,81 @@ async function loadSchedule(headers) {
 }
 $('refresh-btn').onclick = loadPortal;
 $('token-select').onchange = loadPortal;
-loadPortal();
+const workspaces = {
+  "coach": [
+    "Coach",
+    "coach-fares",
+    {
+      "bookings": "Session roster",
+      "schedule": "Training availability"
+    }
+  ],
+  "venue": [
+    "Court owner",
+    "venue-coastal",
+    {
+      "bookings": "Court bookings",
+      "schedule": "Opening hours & closures"
+    }
+  ],
+  "academy": [
+    "Academy owner",
+    "academy-alex-youth",
+    {
+      "enquiries": "Family enquiries",
+      "listings": "Academy programs"
+    }
+  ],
+  "gym": [
+    "Gym owner",
+    "gym-apex",
+    {
+      "enquiries": "Membership enquiries",
+      "listings": "Gym listings"
+    }
+  ]
+};
+const params = new URLSearchParams(location.search);
+const chosen = params.get('workspace');
+if (chosen && !Object.hasOwn(workspaces, chosen)) {
+  const chooser = new URL('operators.html', location.href);
+  params.delete('workspace');
+  chooser.search = params.toString();
+  location.replace(chooser);
+} else {
+  if (chosen) {
+    const [title, token, pages] = workspaces[chosen];
+    $('token-select').value = token;
+    $('token-select').closest('label').hidden = true;
+    $('workspace-header').hidden = false;
+    $('workspace-title').textContent = title + ' dashboard';
+    $('role-badge').textContent = 'Operator demo';
+    const chooser = new URL('operators.html', location.href);
+    params.delete('workspace');
+    chooser.search = params.toString();
+    $('change-workspace').href = chooser;
+    function showPage() {
+      const requested = location.hash.slice(1);
+      const page = Object.hasOwn(pages, requested) ? requested : Object.keys(pages)[0];
+      document.title = pages[page] + ' · ' + title + ' · SPORT';
+      document.querySelectorAll('.grid > section').forEach(section => section.hidden = true);
+      const card = $(page + '-box').closest('section');
+      card.hidden = false;
+      card.querySelector('h2').textContent = pages[page];
+      $('workspace-nav').replaceChildren();
+      for (const [key, label] of Object.entries(pages)) {
+        const link = document.createElement('a');
+        link.href = '#' + key;
+        link.textContent = label;
+        if (key === page) link.setAttribute('aria-current', 'page');
+        $('workspace-nav').append(link);
+      }
+    }
+    window.addEventListener('hashchange', showPage);
+    showPage();
+  }
+  loadPortal();
+}
 </script>
 </body>
 </html>
