@@ -1,0 +1,9 @@
+packages:
+  - apps/*
+  - packages/*
+
+storeDir: .cache/pnpm-store
+
+allowBuilds:
+  sharp: true
+  unrs-resolver: true

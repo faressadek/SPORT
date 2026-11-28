@@ -239,3 +239,9 @@ The bundle added an API, a PostgreSQL schema, a provider/admin portal, Gyms and 
 ## 2026-11-28 — Merge of ChatGPT operator entry (Claude)
 - Two operator entries existed. Kept the provider app link; `operators.html` redirects old links (with `?workspace=` → that role). `test_operator_entry_and_workspace_pages` updated to the single entry and still covers the admin portal's `?workspace=` views.
 - `npm test` (PostgreSQL) 82/82, `tests/ui/test_preview.py` 2/2, `tests/ui/live_e2e.py` 31/31.
+
+## 2026-11-28 · Codex · CX0 monorepo scaffold
+
+- `pnpm dev` served SPORT on port 3000 and SPORT Admin on port 3001. Playwright verified both headings, rendered Tailwind styles, zero horizontal overflow, and no page errors at 390px and 1280px.
+- `pnpm typecheck`, `pnpm lint` and `pnpm build` passed for both apps. `pnpm test` passed all 82 existing API and schema tests with PostgreSQL 16 enabled.
+- `supabase init` generated the local project configuration in `packages/db`. Schema, seed and Supabase runtime validation are part of CX1.

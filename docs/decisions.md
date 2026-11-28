@@ -32,3 +32,5 @@ Newest first. Only the owner makes decisions. Agents record them here.
 
 - 2026-11-28 · ChatGPT: added the athlete-to-operator entry and role-specific workspace pages. Production identity remains open.
 - 2026-11-28 · Claude: merged main (ChatGPT's operator entry) into the provider-app branch. Athlete home keeps one operator link, to `apps/provider` (#/join). `provider-admin/operators.html` now redirects there; the admin portal's `?workspace=` views stay. Open: Arabic in the provider app.
+
+- 2026-11-28 · Codex: scaffolded the SPORT and SPORT Admin monorepo and initialized the local Supabase project. Open: CX0 merge and CX1 schema and data contract.

@@ -1,0 +1,45 @@
+flowchart TD
+    staffLogin(["SPORT Admin app<br/>staff sign in · 2FA · staff accounts only"]) --> adminHome["Admin Home<br/>shows only what your role allows"]
+
+    adminHome --> ops["Operations"]
+    adminHome --> mod["Moderation"]
+    adminHome --> fin["Finance"]
+    adminHome --> sup["Support"]
+    adminHome --> team["Team"]
+
+    ops --> opsApps["Operator applications<br/>approve · reject · ask for changes"]
+    ops --> opsListings["Live operators<br/>pause or remove an account"]
+
+    mod --> modProfiles["Profiles and photos"]
+    mod --> modReviews["Reviews and reports"]
+
+    fin --> finBookings["All bookings"]
+    fin --> finRefunds["Refund requests<br/>split refunds coach + court"]
+    fin --> finPayouts["Operator payouts"]
+
+    sup --> supAthlete["Athlete tickets"]
+    sup --> supOperator["Operator tickets"]
+
+    team --> teamStaff["Staff accounts"]
+    team --> teamRoles["Roles and permissions"]
+    team --> teamDepts["Departments<br/>add new ones as SPORT grows"]
+
+    adminHome --> audit["Activity log<br/>who changed what, when"]
+
+    %% what feeds in from the SPORT app
+    sportApp(["SPORT app<br/>same backend and database"])
+    sportApp -.->|new application| opsApps
+    sportApp -.->|new profile or photo| modProfiles
+    sportApp -.->|new review or report| modReviews
+    sportApp -.->|payments| finBookings
+    sportApp -.->|cancel or refund request| finRefunds
+    sportApp -.->|help request| supAthlete
+    opsApps -.->|decision sent back| sportApp
+    finRefunds -.->|refund status| sportApp
+
+    classDef admin fill:#3a2a0b,stroke:#f59e0b,color:#fef3c7
+    classDef dept fill:#4a360c,stroke:#fbbf24,color:#fffbeb
+    classDef app fill:#0b2a4a,stroke:#3b82f6,color:#dbeafe
+    class staffLogin,adminHome,opsApps,opsListings,modProfiles,modReviews,finBookings,finRefunds,finPayouts,supAthlete,supOperator,teamStaff,teamRoles,teamDepts,audit admin
+    class ops,mod,fin,sup,team dept
+    class sportApp app
