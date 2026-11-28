@@ -1,5 +1,11 @@
 # SPORT verification log
 
+## 28 Nov 2026 - ChatGPT - CX0 workspace scaffold
+
+- Added the pnpm/Turborepo workspace and starter Next.js apps on ports 3000 and 3001.
+- The workspace CI job runs the typecheck, lint, tests, build and HTTP checks for both dev servers. The existing prototype jobs retain their API, PostgreSQL and browser checks.
+
+
 ## 28 Nov 2026 · Claude · Provider app: a mini app for each role (`apps/provider/index.html`)
 
 - **Entry:** athlete home ends with "Are you a coach, venue, gym or academy? Open your workspace", which leads to the role picker. The choice is remembered. Sample accounts stand in until real sign-in exists.

@@ -1,0 +1,15 @@
+{
+  "name": "@sport/ui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./globals.css": "./src/globals.css",
+    "./components/*": "./src/components/*.tsx",
+    "./lib/*": "./src/lib/*.ts",
+    "./hooks/*": "./src/hooks/*.ts"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.1.17"
+  }
+}

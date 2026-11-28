@@ -20,22 +20,47 @@ Egyptian sports marketplace for athletes and parents: book courts, find coaches,
 | `AGENTS.md` | Shared rules for ChatGPT/Codex, Gemini and Claude. |
 | `docs/` | Handoff, owner decisions, verification log. |
 
-## Run it
+## Next.js workspace
+
+Use Node.js 22 or newer and pnpm 10.28.2. Corepack can activate the version pinned in `package.json`.
 
 ```sh
-npm install
-npm run start:api                      # API on http://127.0.0.1:3000, in-memory (data lost on restart)
+corepack enable
+pnpm install
+pnpm dev
+```
+
+- [SPORT](http://127.0.0.1:3000) runs from `apps/web`.
+- [SPORT Admin](http://127.0.0.1:3001) runs from `apps/admin`.
+- `pnpm build`, `pnpm typecheck`, `pnpm lint` and `pnpm test` run from the repository root.
+
+The two routes are starter pages. For work that needs the local Supabase stack, start Docker and run:
+
+```sh
+pnpm --filter @sport/db exec supabase start
+pnpm --filter @sport/db exec supabase status
+```
+
+Copy each app's `.env.example` to `.env.local` and use the local URL and publishable key from the status output. See [SPEC.md](SPEC.md) for the product plan and [tasks/codex.md](tasks/codex.md) for the implementation sequence. The CLI configuration lives in `packages/db/supabase`.
+
+The original prototype is available below. Stop the Next.js dev server before starting the prototype API on port 3000, or set `PORT` when starting the API.
+
+## Run the prototype
+
+```sh
+pnpm install
+pnpm run start:api                      # API on http://127.0.0.1:3000, in-memory (data lost on restart)
 # or, with PostgreSQL: cp .env.example .env, edit DATABASE_URL, then
-npm run start:api:db                   # creates the schema on first start and keeps data
+pnpm run start:api:db                   # creates the schema on first start and keeps data
 # open apps/athlete-preview/index.html  → header shows "API connected"
 # open apps/provider-admin/index.html
 ```
 
-## Test it
+## Test the prototype
 
 ```sh
-npm test                                # API checks on the in-memory store; PostgreSQL runs skip without DATABASE_URL
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres npm test   # every API test also on PostgreSQL (needs psql)
+pnpm run test:prototype                                # API checks on the in-memory store; PostgreSQL runs skip without DATABASE_URL
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres pnpm run test:prototype   # every API test also on PostgreSQL (needs psql)
 pip install playwright pytest && python -m playwright install chromium
 python -m pytest tests/ui/test_preview.py
 python tests/ui/smoke.py apps/athlete-preview/index.html shots

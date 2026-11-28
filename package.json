@@ -2,16 +2,30 @@
   "name": "sport-marketplace",
   "version": "0.4.0",
   "private": true,
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "type": "module",
   "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "test": "pnpm run test:prototype && turbo run test",
     "start:api": "node apps/api/src/server.mjs",
     "start:api:db": "node --env-file=.env apps/api/src/server.mjs",
     "test:api": "node --test \"tests/api/*.test.mjs\"",
     "test:db": "node --test \"tests/db/*.test.mjs\"",
-    "test": "node --test \"tests/api/*.test.mjs\" \"tests/db/*.test.mjs\""
+    "test:prototype": "node --test \"tests/api/*.test.mjs\" \"tests/db/*.test.mjs\""
   },
   "dependencies": {
     "pg": "^8.23.1"
+  },
+  "packageManager": "pnpm@10.28.2",
+  "devDependencies": {
+    "eslint": "^9.39.0",
+    "eslint-config-next": "16.4.6",
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.0"
   }
 }

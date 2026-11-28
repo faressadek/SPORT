@@ -1,0 +1,9 @@
+{
+  "name": "@sport/db",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "devDependencies": {
+    "supabase": "2.122.1"
+  }
+}
