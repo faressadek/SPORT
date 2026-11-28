@@ -4,6 +4,9 @@ Newest first. Only the owner makes decisions. Agents record them here.
 
 | Date | Decision |
 |---|---|
+| 2026-11-28 | **Adopt the SPORT build kit** (`SPEC.md`: Turborepo + pnpm, Next.js, Supabase, Claude Code/Codex split) **alongside** the preview apps. The previews stay until the new apps replace them. |
+| 2026-11-28 | **Languages: English + Arabic with right-to-left layout** (SPEC open decision 4). The design system supports RTL from day one. |
+| 2026-11-28 | Claude Code scaffolds the minimal workspace (`apps/web`, `packages/ui`, `packages/eslint-config`) so CC1 can start; Codex finishes CX0 (`apps/admin`, `packages/db`, `packages/shared`, `packages/core`, Supabase init). |
 | 2026-11-28 | **Entry flow:** the app opens on the athlete side. At the bottom of home, "Are you a coach, venue, gym or academy?" leads to a role picker (Coach, Courts/venue, Gym, Academy). Each role opens its own workspace and landing screen. See `docs/architecture.md`. |
 | 2026-11-28 | **Visual direction: Pitch-side.** Scoreboard-style condensed type, chalk pitch lines on deep green, lime only for actions and selections. |
 | 2026-11-28 | Open on the athlete home. A bottom operator link leads to four distinct operator workspaces: coach, court owner, academy owner and gym owner. |
@@ -32,5 +35,7 @@ Newest first. Only the owner makes decisions. Agents record them here.
 
 - 2026-11-28 · ChatGPT: added the athlete-to-operator entry and role-specific workspace pages. Production identity remains open.
 - 2026-11-28 · Claude: merged main (ChatGPT's operator entry) into the provider-app branch. Athlete home keeps one operator link, to `apps/provider` (#/join). `provider-admin/operators.html` now redirects there; the admin portal's `?workspace=` views stay. Open: Arabic in the provider app.
-
+- 2026-11-28 · Claude: CC1 design system and app shells. Copied the build kit (SPEC.md, tasks, CONTRACT-REQUESTS.md, flow diagrams) into the repo, scaffolded the pnpm/Turborepo workspace, wrote `docs/DESIGN.md`, built 22 components and the athlete, operator and admin shells in `packages/ui`, and a `/dev/ui` page. Open: Codex to finish CX0; open SPEC decisions 1–3 and 5.
 - 2026-11-28 · Codex: scaffolded the SPORT and SPORT Admin monorepo and initialized the local Supabase project. Open: CX0 merge and CX1 schema and data contract.
+
+- 2026-11-28 · Codex: reconciled CC1 with the merged CX0 scaffold and verified both apps. Open: CX1 schema and data contract.

@@ -240,8 +240,21 @@ The bundle added an API, a PostgreSQL schema, a provider/admin portal, Gyms and 
 - Two operator entries existed. Kept the provider app link; `operators.html` redirects old links (with `?workspace=` → that role). `test_operator_entry_and_workspace_pages` updated to the single entry and still covers the admin portal's `?workspace=` views.
 - `npm test` (PostgreSQL) 82/82, `tests/ui/test_preview.py` 2/2, `tests/ui/live_e2e.py` 31/31.
 
+## 2026-11-28 — CC1 design system and app shells (Claude)
+- `pnpm typecheck`, `pnpm lint`: pass. `pnpm test`: preview API 38/38 (in-memory store; no `DATABASE_URL` here), `@sport/ui` 69/69 (selection rules, components, and a WCAG contrast test that reads `styles.css`: every text pair ≥ 4.5:1 and every boundary ≥ 3:1 in light and dark).
+- `next build` of `apps/web` passes.
+- Browser (Playwright Chromium, `packages/ui/scripts/check-pages.mjs`): `/dev/ui`, `/`, `/dashboard`, `/dev/ui/shells/admin` at 390px and 1280px, light and dark, plus RTL: **0 axe WCAG 2.1 AA violations, no horizontal overflow, no touch target under 44px, no console errors** (404s from links to pages not built yet are ignored).
+- Interactions checked: gallery arrow keys in LTR and RTL ("Photo 2 of 3" announced), walk-in dialog adds a block to the calendar, filter sheet is a bottom sheet at 390px and an end-side panel at 1280px.
+- Screenshots: `docs/screenshots/cc1/`.
+- Not yet: real phone check, Arabic copy (layout is RTL-ready, strings are English).
+
 ## 2026-11-28 · Codex · CX0 monorepo scaffold
 
 - `pnpm dev` served SPORT on port 3000 and SPORT Admin on port 3001. Playwright verified both headings, rendered Tailwind styles, zero horizontal overflow, and no page errors at 390px and 1280px.
 - `pnpm typecheck`, `pnpm lint` and `pnpm build` passed for both apps. `pnpm test` passed all 82 existing API and schema tests with PostgreSQL 16 enabled.
 - `supabase init` generated the local project configuration in `packages/db`. Schema, seed and Supabase runtime validation are part of CX1.
+
+## 2026-11-28 · Codex · PR #12 integration
+
+- Resolved the CC1 merge against the merged CX0 scaffold and verified frozen install, type checking, linting, and both production builds.
+- Passed 82 API and database tests, 69 UI unit tests, and 19 browser accessibility scenarios.

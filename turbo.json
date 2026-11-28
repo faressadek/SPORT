@@ -10,6 +10,7 @@
       "persistent": true
     },
     "build": {
+      "env": ["ENABLE_DEV_UI"],
       "dependsOn": [
         "^build"
       ],
@@ -25,6 +26,9 @@
       "outputs": []
     },
     "lint": {
+      "outputs": []
+    },
+    "test": {
       "outputs": []
     }
   }
