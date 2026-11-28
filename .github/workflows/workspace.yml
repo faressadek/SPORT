@@ -1,0 +1,26 @@
+name: SPORT workspace
+on: [push, pull_request]
+
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm build
+      - name: Start both apps
+        shell: bash
+        run: |
+          pnpm dev > "$RUNNER_TEMP/sport-dev.log" 2>&1 &
+          dev_pid=$!
+          trap 'kill "$dev_pid" 2>/dev/null || true; cat "$RUNNER_TEMP/sport-dev.log"' EXIT
+          curl --fail --silent --show-error --retry 20 --retry-all-errors --retry-delay 2 http://127.0.0.1:3000/ -o "$RUNNER_TEMP/sport-web.html"
+          curl --fail --silent --show-error --retry 20 --retry-all-errors --retry-delay 2 http://127.0.0.1:3001/ -o "$RUNNER_TEMP/sport-admin.html"
+          grep -q '<title>SPORT</title>' "$RUNNER_TEMP/sport-web.html"
+          grep -q '<title>SPORT Admin</title>' "$RUNNER_TEMP/sport-admin.html"
