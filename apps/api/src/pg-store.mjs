@@ -16,7 +16,7 @@ const SLOT = (d, h) => `tstzrange(
   ((((${d})::timestamptz AT TIME ZONE '${TZ}')::date + make_interval(hours => ${h} + 1)) AT TIME ZONE '${TZ}'), '[)')`;
 
 const BOOKING_SELECT = `
-  SELECT b.id, b.athlete_id, b.status, b.custom_venue, b.total_egp_minor, b.hold_expires_at, b.confirmed_at, b.created_at,
+  SELECT b.id, b.athlete_id, b.status, b.custom_venue, b.source, b.note, b.checked_in_at, b.total_egp_minor, b.hold_expires_at, b.confirmed_at, b.created_at,
          to_char((lower(b.slot_range) AT TIME ZONE '${TZ}')::date, 'YYYY-MM-DD') AS local_date,
          extract(hour FROM lower(b.slot_range) AT TIME ZONE '${TZ}')::int AS hour,
          array_agg(a.resource_id ORDER BY a.id) AS resource_ids,
@@ -38,7 +38,17 @@ CREATE TABLE IF NOT EXISTS sport.resource_closures (
     created_by  TEXT REFERENCES sport.users(id),
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX IF NOT EXISTS resource_closures_day ON sport.resource_closures (day);`;
+CREATE INDEX IF NOT EXISTS resource_closures_day ON sport.resource_closures (day);
+-- Provider workspaces (28 Nov 2026): walk-ins/blocks, check-in, price overrides, enquiry pipeline, listing edits.
+ALTER TABLE sport.bookings ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'athlete';
+ALTER TABLE sport.bookings ADD COLUMN IF NOT EXISTS note TEXT;
+ALTER TABLE sport.bookings ADD COLUMN IF NOT EXISTS checked_in_at TIMESTAMPTZ;
+CREATE TABLE IF NOT EXISTS sport.resource_prices (target TEXT PRIMARY KEY, price_egp_minor BIGINT NOT NULL, updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+ALTER TABLE sport.enquiries ADD COLUMN IF NOT EXISTS trial_date DATE;
+ALTER TABLE sport.enquiries ADD COLUMN IF NOT EXISTS provider_note TEXT;
+ALTER TABLE sport.enquiries DROP CONSTRAINT IF EXISTS enquiries_status_check;
+ALTER TABLE sport.enquiries ADD CONSTRAINT enquiries_status_check CHECK (status IN ('NEW', 'CONTACTED', 'TRIAL', 'ENROLLED', 'CLOSED'));
+ALTER TABLE sport.directory_listings ADD COLUMN IF NOT EXISTS edited_at TIMESTAMPTZ;`;
 
 const CLOSURE_SELECT = `SELECT id, target, to_char(day, 'YYYY-MM-DD') AS day, hours, reason, created_by, created_at FROM sport.resource_closures`;
 const toClosure = r => r && ({ id: r.id, target: r.target, day: r.day, hours: r.hours, reason: r.reason, createdBy: r.created_by, createdAt: r.created_at.toISOString() });
@@ -97,6 +107,7 @@ export async function createPgStore(connectionString, { setup = true } = {}) {
       total: Number(r.total_egp_minor) / 100,
       holdExpiresAt: r.hold_expires_at ? r.hold_expires_at.getTime() : null,
       createdAt: r.created_at.toISOString(), confirmedAt: r.confirmed_at ? r.confirmed_at.toISOString() : null,
+      source: r.source, note: r.note, checkedInAt: r.checked_in_at ? r.checked_in_at.toISOString() : null,
     };
   }
   const fetchBooking = async (c, id, lock = false) => {
@@ -140,8 +151,11 @@ export async function createPgStore(connectionString, { setup = true } = {}) {
           `INSERT INTO sport.directory_listings (id, kind, name, sport, area, price_egp_minor, billing_period, owner_user_id, details)
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
            ON CONFLICT (id) DO UPDATE SET kind = EXCLUDED.kind, name = EXCLUDED.name, sport = EXCLUDED.sport, area = EXCLUDED.area,
-             price_egp_minor = EXCLUDED.price_egp_minor, billing_period = EXCLUDED.billing_period,
-             owner_user_id = EXCLUDED.owner_user_id, details = EXCLUDED.details`,
+             owner_user_id = EXCLUDED.owner_user_id,
+             -- Ownership and identity always follow the catalog; only provider-editable fields are kept once edited.
+             price_egp_minor = CASE WHEN sport.directory_listings.edited_at IS NULL THEN EXCLUDED.price_egp_minor ELSE sport.directory_listings.price_egp_minor END,
+             billing_period = CASE WHEN sport.directory_listings.edited_at IS NULL THEN EXCLUDED.billing_period ELSE sport.directory_listings.billing_period END,
+             details = CASE WHEN sport.directory_listings.edited_at IS NULL THEN EXCLUDED.details ELSE sport.directory_listings.details END`,
           [id, kind, name, sport, area, Math.round(price * 100), billing, ownerId ?? null, details]);
       }
     });
@@ -181,13 +195,47 @@ export async function createPgStore(connectionString, { setup = true } = {}) {
           for (const rid of [...hold.resourceIds].sort()) await c.query(
             `INSERT INTO sport.booking_allocations (booking_id, resource_id, slot_range, price_egp_minor)
              SELECT $1, $2, slot_range, $3 FROM sport.bookings WHERE id = $1`,
-            [id, rid, Math.round(catalog.lookup(rid).price * 100)]);
+            [id, rid, Math.round((hold.prices?.[rid] ?? catalog.lookup(rid).price) * 100)]);
           return fetchBooking(c, id);
         });
       } catch (e) {
         if (e.code === OVERLAP) throw new HttpError(409, 'One or more selected resources are no longer available at this time.');
         throw e;
       }
+    },
+    async createProviderBooking(hold, userId, { source, note }) {
+      const id = newId('BKG', crypto);
+      try {
+        return await tx(async c => {
+          await lockSlots(c, hold.resourceIds, hold.day, hold.hour);
+          await sweep(c);
+          await c.query(
+            `INSERT INTO sport.bookings (id, athlete_id, status, slot_range, custom_venue, total_egp_minor, confirmed_at, source, note)
+             VALUES ($1, $2, 'CONFIRMED', ${SLOT('$3', '$4::int')}, $5, $6, now(), $7, $8)`,
+            [id, userId, hold.day, hold.hour, hold.customVenue, Math.round(hold.total * 100), source, note]);
+          // Same lock order in every transaction (sorted IDs), so two holds sharing resources cannot deadlock.
+          for (const rid of [...hold.resourceIds].sort()) await c.query(
+            `INSERT INTO sport.booking_allocations (booking_id, resource_id, slot_range, price_egp_minor)
+             SELECT $1, $2, slot_range, $3 FROM sport.bookings WHERE id = $1`,
+            [id, rid, Math.round((hold.prices?.[rid] ?? catalog.lookup(rid).price) * 100)]);
+          return fetchBooking(c, id);
+        });
+      } catch (e) {
+        if (e.code === OVERLAP) throw new HttpError(409, 'One or more selected resources are no longer available at this time.');
+        throw e;
+      }
+    },
+    async checkIn(id) {
+      await pool.query('UPDATE sport.bookings SET checked_in_at = coalesce(checked_in_at, now()) WHERE id = $1', [id]);
+      return this.getBooking(id);
+    },
+    async getPrices() {
+      return new Map((await pool.query('SELECT target, price_egp_minor FROM sport.resource_prices')).rows.map(r => [r.target, Number(r.price_egp_minor) / 100]));
+    },
+    async setPrice(target, price) {
+      if (price === null) await pool.query('DELETE FROM sport.resource_prices WHERE target = $1', [target]);
+      else await pool.query(`INSERT INTO sport.resource_prices (target, price_egp_minor) VALUES ($1, $2)
+        ON CONFLICT (target) DO UPDATE SET price_egp_minor = EXCLUDED.price_egp_minor, updated_at = now()`, [target, Math.round(price * 100)]);
     },
     async getBooking(id) { return tx(async c => { await sweep(c); return fetchBooking(c, id); }); },
     async listBookings({ athleteId, activeOnly } = {}) {
@@ -297,19 +345,33 @@ export async function createPgStore(connectionString, { setup = true } = {}) {
         RETURNING id, kind, name, sport, area, owner_user_id, published, details`, [id, published])).rows[0]);
     },
 
+    // A provider's edit to its own listing. edited_at stops the startup sync from overwriting it.
+    async updateListing(id, fields) {
+      const price = fields.plans?.Monthly ?? fields.price;
+      return toListing((await pool.query(`UPDATE sport.directory_listings SET details = details || $2::jsonb, edited_at = now(),
+          price_egp_minor = coalesce($3, price_egp_minor) WHERE id = $1
+        RETURNING id, kind, name, sport, area, owner_user_id, published, details`, [id, fields, price === undefined ? null : Math.round(price * 100)])).rows[0]);
+    },
+    async updateEnquiry(id, f) {
+      const { rowCount } = await pool.query(`UPDATE sport.enquiries SET status = coalesce($2, status),
+          trial_date = CASE WHEN $3::bool THEN $4::date ELSE trial_date END, provider_note = coalesce($5, provider_note) WHERE id = $1`,
+        [id, f.status ?? null, 'trialDate' in f, f.trialDate ?? null, f.providerNote ?? null]);
+      return rowCount ? (await this.listEnquiries({ role: 'admin' })).find(e => e.id === id) : null;
+    },
     async addEnquiry(e) {
       const { rows } = await pool.query(
         `INSERT INTO sport.enquiries (id, listing_id, target_name, kind, athlete_id, full_name, phone, participant, notes)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, status, created_at`,
         [newId('ENQ', crypto), e.targetId, e.targetName, e.kind, e.athleteId, e.name, e.phone, e.participant, e.notes]);
-      return { ...e, id: rows[0].id, status: rows[0].status, createdAt: rows[0].created_at.toISOString() };
+      return { ...e, id: rows[0].id, status: rows[0].status, trialDate: null, providerNote: null, createdAt: rows[0].created_at.toISOString() };
     },
     async listEnquiries(user) {
       const { rows } = await pool.query(
-        `SELECT e.* FROM sport.enquiries e LEFT JOIN sport.directory_listings l ON l.id = e.listing_id
+        `SELECT e.*, to_char(e.trial_date, 'YYYY-MM-DD') AS trial_day FROM sport.enquiries e LEFT JOIN sport.directory_listings l ON l.id = e.listing_id
           WHERE $1 = 'admin' OR l.owner_user_id = $2 ORDER BY e.created_at`, [user.role, user.id]);
       return rows.map(r => ({ id: r.id, athleteId: r.athlete_id, kind: r.kind, targetId: r.listing_id, targetName: r.target_name,
-        name: r.full_name, phone: r.phone, participant: r.participant, notes: r.notes, status: r.status, createdAt: r.created_at.toISOString() }));
+        name: r.full_name, phone: r.phone, participant: r.participant, notes: r.notes, status: r.status, createdAt: r.created_at.toISOString(),
+        trialDate: r.trial_day, providerNote: r.provider_note }));
     },
     async listOutbox() {
       return (await pool.query(`SELECT payload FROM sport.outbox_events ORDER BY id`)).rows.map(r => r.payload);

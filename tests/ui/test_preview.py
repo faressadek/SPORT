@@ -61,29 +61,35 @@ if __name__ == "__main__":
     print("All UI checks passed.")
 
 
+PROVIDER_ADMIN = (Path(__file__).resolve().parents[2] / "apps" / "provider-admin" / "index.html").as_uri()
+
+
 def test_operator_entry_and_workspace_pages():
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 390, "height": 844})
+        # One entry at the bottom of athlete home leads to the provider app's role picker
         page.goto(HTML_URI)
         assert page.locator("#home").is_visible()
-        page.click("#operator-entry")
-        assert page.locator("nav a").count() == 4
+        page.click("#operator-link")
+        assert "/apps/provider/index.html" in page.url and page.url.endswith("#/join")
+        for role in ["coach", "venue", "gym", "academy"]:
+            expect(page.locator("#role-" + role)).to_be_visible()
+        # Old operator links still land in the provider app
+        page.goto(PROVIDER_ADMIN.replace("index.html", "operators.html") + "?workspace=gym")
+        page.wait_for_url("**/apps/provider/index.html#/gym")
+        page.click("#athlete-link")
+        assert page.locator("#home").is_visible()
+        # The admin portal's single-role views (from the earlier operator entry) still work
         for role, landing, detail in [
-            ("Coach", "Session roster", "Training availability"),
-            ("Court owner", "Court bookings", "Opening hours & closures"),
-            ("Academy owner", "Family enquiries", "Academy programs"),
-            ("Gym owner", "Membership enquiries", "Gym listings"),
+            ("coach", "Session roster", "Training availability"),
+            ("venue", "Court bookings", "Opening hours & closures"),
+            ("academy", "Family enquiries", "Academy programs"),
+            ("gym", "Membership enquiries", "Gym listings"),
         ]:
-            page.locator("nav a").filter(has=page.get_by_text(role, exact=True)).click()
-            assert page.get_by_role("heading", name=role + " dashboard").is_visible()
+            page.goto(PROVIDER_ADMIN + "?workspace=" + role)
             assert page.locator(".grid section:visible h2").inner_text() == landing
             page.get_by_role("link", name=detail, exact=True).click()
             expect(page.locator(".grid section:visible h2")).to_have_text(detail)
-            page.reload()
-            expect(page.locator(".grid section:visible h2")).to_have_text(detail)
             assert not page.locator("#token-select").is_visible()
-            page.click("#change-workspace")
-        page.click("#back")
-        assert page.locator("#home").is_visible()
         browser.close()

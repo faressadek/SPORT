@@ -1,9 +1,9 @@
 import http from 'node:http';
 import { pathToFileURL } from 'node:url';
 import { authenticate, requireRole, canAccessBooking } from './access.mjs';
-import { HttpError, validateHold, validateWeekly, validateClosure, openHours, bookingInClosure, cairoDate } from './rules.mjs';
+import { HttpError, validateHold, validateWeekly, validateClosure, openHours, bookingInClosure, cairoDate, priceOf, priceTarget, validatePrice, validateEnquiryUpdate, validateListingEdit } from './rules.mjs';
 import { createMemoryStore } from './memory-store.mjs';
-import { filterListings, publicListing, SEED_RESOURCES, CLUBS } from './catalog.mjs';
+import { filterListings, publicListing, SEED_RESOURCES, CLUBS, SPORTS, allMarketResources } from './catalog.mjs';
 
 export { createMemoryStore as createStore };
 export { SPORTS, CLUBS } from './catalog.mjs';
@@ -49,6 +49,12 @@ export function createApp(store = createMemoryStore()) {
     const path = url.pathname;
     const user = authenticate(req.headers.authorization, store.users);
 
+    // Prices come from the server: catalog price, or the provider's own price when set.
+    const pricedHold = async hold => {
+      const prices = await store.getPrices(), each = Object.fromEntries(hold.resourceIds.map(id => [id, priceOf(store.lookup(id), prices)]));
+      return { ...hold, prices: each, total: Object.values(each).reduce((a, b) => a + b, 0) };
+    };
+    const ownsResource = id => user && (user.role === 'admin' || store.lookup(id)?.ownerId === user.id);
     const ownBooking = async id => {
       const booking = await store.getBooking(id);
       if (!booking) throw new HttpError(404, 'Booking not found');
@@ -71,11 +77,11 @@ export function createApp(store = createMemoryStore()) {
         if (!day || Number.isNaN(Date.parse(day))) throw new HttpError(400, 'A valid day is required');
         if (resourceIds.length > 60) throw new HttpError(400, 'At most 60 resources per request');
         const iso = new Date(day).toISOString();
-        const [schedules, closures] = await Promise.all([store.getSchedules(), store.listClosures()]);
+        const [schedules, closures, prices] = await Promise.all([store.getSchedules(), store.listClosures(), store.getPrices()]);
         const resources = {};
         for (const id of resourceIds) {
           const r = store.lookup(id); if (!r || !r.published) continue;
-          resources[id] = { openHours: openHours(r, iso, schedules, closures), busyHours: await store.busyHours(iso, [id]) };
+          resources[id] = { openHours: openHours(r, iso, schedules, closures), busyHours: await store.busyHours(iso, [id]), price: priceOf(r, prices) };
         }
         return sendJson(res, 200, { day, busyHours: await store.busyHours(iso, resourceIds), resources });
       }
@@ -89,7 +95,7 @@ export function createApp(store = createMemoryStore()) {
       // Court only, coach only (fixed or flexible venue), or a flexible coach with an added court.
       if (req.method === 'POST' && path === '/api/holds') {
         requireRole(user, ['athlete']);
-        const hold = validateHold(await readBody(req), store.lookup);
+        const hold = await pricedHold(validateHold(await readBody(req), store.lookup));
         const [schedules, closures] = await Promise.all([store.getSchedules(), store.listClosures()]);
         if (hold.resourceIds.some(id => !openHours(store.lookup(id), hold.day, schedules, closures).includes(hold.hour))) {
           throw new HttpError(409, 'Not available at this hour.');
@@ -209,6 +215,97 @@ export function createApp(store = createMemoryStore()) {
         if (!canManage(user, scheduleTargets(store).find(x => x.target === existing.target))) throw new HttpError(403, 'Forbidden');
         await store.deleteClosure(id);
         return sendJson(res, 200, { deleted: id });
+      }
+
+      // ---- Provider workspaces -------------------------------------------------------------------
+      const PROVIDERS = ['coach', 'venue_operator', 'gym_operator', 'academy_operator', 'admin'];
+      if (req.method === 'GET' && path === '/api/provider/me') {
+        requireRole(user, PROVIDERS);
+        const prices = await store.getPrices();
+        const coaches = SEED_RESOURCES.filter(r => r.kind === 'coach' && ownsResource(r.id)).map(r => store.lookup(r.id));
+        const clubs = CLUBS.filter(c => user.role === 'admin' || c.ownerId === user.id).map(c => ({ id: c.id, name: c.name, branches: c.branches,
+          sports: Object.entries(SPORTS).map(([id, [name, unit]]) => ({ id, name, unit, price: priceOf(store.lookup(`${id}/${c.id}/0/1`), prices), priceTarget: `club:${c.id}:${id}` })) }));
+        return sendJson(res, 200, {
+          user: { id: user.id, name: user.name, role: user.role },
+          coaches: coaches.map(r => ({ id: r.id, name: r.name, sport: r.sport, fixedVenue: r.fixedVenue ?? null, price: priceOf(r, prices), defaultPrice: r.price, hours: r.hours })),
+          clubs,
+          listings: (await store.listListings()).filter(l => user.role === 'admin' || l.ownerId === user.id),
+        });
+      }
+      // One day for the caller's coaches, or one sport and branch at the caller's club: open hours and bookings per resource.
+      if (req.method === 'GET' && path === '/api/provider/calendar') {
+        requireRole(user, PROVIDERS);
+        const day = url.searchParams.get('day');
+        if (!day || Number.isNaN(Date.parse(day))) throw new HttpError(400, 'A valid day is required');
+        const iso = new Date(day).toISOString(), club = url.searchParams.get('club'), sport = url.searchParams.get('sport') || 'football', branch = url.searchParams.get('branch') || '0';
+        const ids = club ? allMarketResources().filter(r => r.id.startsWith(`${sport}/${club}/${branch}/`)).map(r => r.id)
+          : SEED_RESOURCES.filter(r => r.kind === 'coach').map(r => r.id);
+        const mine = ids.filter(ownsResource);
+        if (club && !mine.length) throw new HttpError(403, 'This is not your club');
+        const [schedules, closures, prices, all] = await Promise.all([store.getSchedules(), store.listClosures(), store.getPrices(), store.listBookings({ activeOnly: true })]);
+        const dayBookings = all.filter(b => cairoDate(b.day) === cairoDate(iso));
+        return sendJson(res, 200, { day: iso, resources: mine.map(id => {
+          const r = store.lookup(id);
+          return { id, name: r.name, price: priceOf(r, prices), openHours: openHours(r, iso, schedules, closures),
+            bookings: dayBookings.filter(b => b.resourceIds.includes(id)).map(b => ({ id: b.id, hour: b.hour, status: b.status, label: b.label,
+              source: b.source || 'athlete', note: b.note, checkedIn: Boolean(b.checkedInAt), athlete: b.source === 'athlete' || !b.source ? (store.users.get(b.athleteId)?.name ?? 'Athlete') : null,
+              customVenue: b.customVenue, total: b.total })) };
+        }) });
+      }
+      // Walk-in (a player who turned up and paid at the desk) or block (court kept out of use). Confirmed at once.
+      if (req.method === 'POST' && path === '/api/provider/blocks') {
+        requireRole(user, ['coach', 'venue_operator', 'admin']);
+        const body = await readBody(req);
+        const source = body.source === 'block' ? 'block' : 'walkin';
+        const r = store.lookup(String(body.resource || ''));
+        if (!r) throw new HttpError(404, 'Unknown court or coach');
+        if (!ownsResource(r.id)) throw new HttpError(403, 'You can record walk-ins only for your own courts');
+        const field = r.kind === 'coach' ? 'coachId' : 'resource';
+        let hold = await pricedHold(validateHold({ day: body.day, hour: body.hour, [field]: r.id }, store.lookup));
+        const [schedules, closures] = await Promise.all([store.getSchedules(), store.listClosures()]);
+        if (!openHours(r, hold.day, schedules, closures).includes(hold.hour)) throw new HttpError(409, 'Closed at this hour. Change the opening hours first.');
+        if (source === 'block') hold = { ...hold, total: 0, prices: { [r.id]: 0 } };
+        const booking = await store.createProviderBooking(hold, user.id, { source, note: String(body.note || '').slice(0, 120) || null });
+        return sendJson(res, 201, booking);
+      }
+      const provBooking = path.match(/^\/api\/provider\/bookings\/([^/]+)\/(checkin|cancel)$/);
+      if (req.method === 'POST' && provBooking) {
+        requireRole(user, PROVIDERS);
+        const b = await store.getBooking(decodeURIComponent(provBooking[1]));
+        if (!b || !b.resourceIds.some(ownsResource)) throw new HttpError(404, 'Booking not found');
+        if (provBooking[2] === 'checkin') {
+          if (b.status !== 'CONFIRMED') throw new HttpError(409, 'Only confirmed bookings can be checked in');
+          return sendJson(res, 200, await store.checkIn(b.id));
+        }
+        // Athletes' paid bookings are cancelled by the athlete or by support (refunds); providers remove only their own walk-ins and blocks.
+        if (!['walkin', 'block'].includes(b.source)) throw new HttpError(403, 'Athlete bookings are cancelled by the athlete or SPORT support');
+        const { httpStatus, result } = await store.cancel(b.id);
+        return sendJson(res, httpStatus, result);
+      }
+      if (req.method === 'PUT' && path === '/api/provider/prices') {
+        requireRole(user, ['coach', 'venue_operator', 'admin']);
+        const body = await readBody(req), target = String(body.target || '');
+        const sample = target.startsWith('club:') ? store.lookup(`${target.split(':')[2]}/${target.split(':')[1]}/0/1`) : store.lookup(target);
+        if (!sample || priceTarget(sample) !== target) throw new HttpError(404, 'Unknown price target');
+        if (!ownsResource(sample.id)) throw new HttpError(403, 'You can change only your own prices');
+        const price = validatePrice(body.price);
+        await store.setPrice(target, price);
+        return sendJson(res, 200, { target, price: priceOf(sample, await store.getPrices()) });
+      }
+      const enqMatch = path.match(/^\/api\/provider\/enquiries\/([^/]+)$/);
+      if (req.method === 'PATCH' && enqMatch) {
+        requireRole(user, PROVIDERS);
+        const id = decodeURIComponent(enqMatch[1]);
+        const e = (await store.listEnquiries(user)).find(x => x.id === id); // only enquiries for the caller's listings
+        if (!e) throw new HttpError(404, 'Enquiry not found');
+        return sendJson(res, 200, await store.updateEnquiry(id, validateEnquiryUpdate(await readBody(req))));
+      }
+      const listMatch = path.match(/^\/api\/provider\/listings\/([^/]+)$/);
+      if (req.method === 'PATCH' && listMatch) {
+        requireRole(user, PROVIDERS);
+        const l = await store.getListing(decodeURIComponent(listMatch[1]));
+        if (!l || (user.role !== 'admin' && l.ownerId !== user.id)) throw new HttpError(404, 'Listing not found');
+        return sendJson(res, 200, await store.updateListing(l.id, validateListingEdit(l.kind, await readBody(req))));
       }
 
       if (req.method === 'PATCH' && path.startsWith('/api/admin/listings/')) {

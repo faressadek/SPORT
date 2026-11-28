@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SPORT for providers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Big+Shoulders+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+/* Same Pitch-side system as the athlete app. Lime marks only what you can act on or have chosen. */
+:root{--pitch:#0d3a28;--turf:#165c3f;--chalk:#f3f6f1;--surface:#fff;--line:#cfdbd2;--ink:#0e1c15;--muted:#56675d;--lime:#d4f74a;--tint:#e4efdc;--warn:#9a3412;
+  --display:'Big Shoulders Display','Arial Narrow',sans-serif;font:16px/1.5 'Barlow',system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--chalk);color:var(--ink);padding-bottom:84px}
+h1,h2,h3,p{margin:0}
+h1,h2{font-family:var(--display);font-weight:800;line-height:1}
+button,input,select,textarea{font:inherit;color:inherit}
+button,select{min-height:44px;cursor:pointer}
+:focus-visible{outline:3px solid #1f7a4f;outline-offset:2px}
+[tabindex="-1"]:focus{outline:none}
+[hidden]{display:none!important}
+.wrap{width:min(960px,calc(100% - 32px));margin-inline:auto}
+header{background:var(--pitch);color:var(--chalk)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-size:1.8rem;font-weight:900;color:var(--chalk);text-decoration:none}
+.brand small{font-family:'Barlow',sans-serif;font-size:.85rem;font-weight:600;color:#b9d3c2;margin-inline-start:8px}
+header nav a{color:#d8e6dc;font-weight:600;margin-inline-start:14px}
+main{padding:22px 0 40px}
+.page-title{font-size:clamp(2.4rem,8vw,3.6rem);margin-bottom:6px}
+.lead{color:var(--muted);margin-bottom:18px;max-width:60ch}
+.tabs{position:fixed;inset:auto 0 0 0;background:var(--surface);border-top:1px solid var(--line);z-index:5}
+.tabs .wrap{display:grid;grid-auto-flow:column;grid-auto-columns:1fr}
+.tabs a{display:grid;place-items:center;min-height:62px;text-decoration:none;color:var(--muted);font-weight:600;font-size:.92rem;border-top:3px solid transparent;text-align:center}
+.tabs a[aria-current]{color:var(--pitch);border-color:var(--pitch)}
+@media(min-width:800px){body{padding-bottom:0}.tabs{position:static;border:0;border-bottom:1px solid var(--line);background:none}.tabs .wrap{grid-auto-columns:max-content;gap:26px}.tabs a{border-top:0;border-bottom:3px solid transparent;min-height:52px}.tabs a[aria-current]{border-color:var(--pitch)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+.panel h2{font-size:1.7rem;margin-bottom:10px}
+.muted{color:var(--muted)}
+.notice{background:var(--tint);border-radius:10px;padding:12px 14px;margin:12px 0}
+.error{color:var(--warn);font-weight:600}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px;font-weight:600}
+.btn.go{background:var(--lime);border-color:var(--lime);color:var(--pitch)}
+.btn.dark{background:var(--pitch);border-color:var(--pitch);color:var(--chalk)}
+.btn.small{min-height:36px;padding:4px 10px;font-size:.9rem}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input,select,textarea{border:1px solid var(--line);border-radius:8px;padding:9px 10px;background:var(--surface);min-height:44px}
+label{display:grid;gap:4px;font-weight:600;font-size:.92rem}
+.form{display:grid;gap:12px}
+.form.two{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+/* Join */
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:12px;margin-top:18px}
+.roles a{position:relative;display:grid;align-content:end;min-height:170px;padding:18px;border-radius:14px;background:var(--pitch);color:var(--chalk);text-decoration:none;overflow:hidden}
+.roles a:nth-child(even){background:var(--turf)}
+.roles a:before{content:'';position:absolute;inset:12px;border:1.5px solid #ffffff2b;border-radius:4px;background:linear-gradient(90deg,transparent calc(50% - 1px),#ffffff2b calc(50% - 1px) calc(50% + 1px),transparent calc(50% + 1px))}
+.roles strong{position:relative;font-family:var(--display);font-size:2.2rem;line-height:1}
+.roles small{position:relative;color:#cfe0d5;margin-top:6px}
+/* Days */
+.days{display:flex;gap:6px;overflow-x:auto;margin:4px 0 14px}
+.days button{flex:1;min-width:54px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 4px}
+.days b{display:block;font-family:var(--display);font-size:1.5rem;line-height:1}
+.days small{display:block;font-size:.8rem}
+.days [aria-pressed=true]{background:var(--pitch);color:var(--chalk);border-color:var(--pitch)}
+/* Scoreboard hour tile, as in the athlete app */
+.hour{font-family:var(--display);font-weight:800;font-size:1.35rem;background:var(--pitch);color:var(--chalk);border-radius:6px;padding:4px 8px;min-width:68px;text-align:center;display:inline-block}
+.sessions{display:grid;gap:8px}
+.session{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.session.free{background:transparent;border-style:dashed}
+.session.free .hour{background:transparent;color:var(--muted);border:1px dashed var(--line)}
+.session strong{display:block}
+.pill{display:inline-block;font-size:.8rem;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid var(--line)}
+.pill.in{background:var(--lime);border-color:var(--lime);color:var(--pitch)}
+/* Court calendar */
+.grid{overflow-x:auto}
+.grid table{border-spacing:6px;min-width:100%}
+.grid th{font-weight:600;color:var(--muted);text-align:center;padding:4px}
+.grid td{min-width:112px;vertical-align:top}
+.grid td:first-child{min-width:70px}
+.cell{width:100%;min-height:56px;border-radius:8px;border:1px dashed var(--line);background:transparent;color:var(--muted);font-weight:600;text-align:start;padding:6px 8px}
+.cell.taken{border:1px solid var(--pitch);background:var(--pitch);color:var(--chalk)}
+.cell.walkin{background:var(--turf);border-color:var(--turf)}
+.cell.block{background:repeating-linear-gradient(135deg,#e7ece8 0 6px,#f6f8f6 6px 12px);border:1px solid var(--line);color:var(--ink)}
+.cell.closed{border:0;background:none;color:#a3b0a8;cursor:default}
+.cell small{display:block;font-size:.78rem;opacity:.85}
+/* Pipeline */
+.pipeline{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(240px,1fr);gap:10px;overflow-x:auto;padding-bottom:6px}
+.stage{background:#e9efe9;border-radius:12px;padding:10px;min-height:120px}
+.stage h3{font-weight:700;margin:2px 4px 8px;display:flex;justify-content:space-between}
+.lead-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;display:grid;gap:6px}
+.lead-card a{color:var(--turf);font-weight:600}
+dialog{border:0;border-radius:18px;padding:22px;width:min(460px,calc(100% - 28px))}
+dialog::backdrop{background:#082a1cb3}
+@media(max-width:700px){dialog{margin:auto 0 0;width:100%;max-width:none;border-radius:18px 18px 0 0}}
+table.plain{width:100%;border-collapse:collapse}
+table.plain td,table.plain th{border-bottom:1px solid var(--line);padding:8px 6px;text-align:start}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="brand" href="#/join">SPORT <small id="ws-name">for providers</small></a>
+  <nav><a href="#/join" id="switch-link">Switch workspace</a><a id="athlete-link" href="../athlete-preview/index.html">Athlete app</a></nav></div></header>
+<nav class="tabs" id="tabs" aria-label="Workspace pages" hidden><div class="wrap" id="tab-list"></div></nav>
+<main class="wrap" id="view" aria-live="polite"></main>
+<dialog id="sheet" aria-labelledby="sheet-title"></dialog>
+<script>
+const qs = new URLSearchParams(location.search);
+const API = qs.get('api') || 'http://127.0.0.1:3000';
+document.getElementById('athlete-link').href += location.search;
+const $ = id => document.getElementById(id);
+// DOM builder: text is always set as text, never as HTML.
+function h(tag, attrs = {}, ...kids) {
+  if (attrs === null || typeof attrs !== 'object' || attrs instanceof Node || Array.isArray(attrs)) { kids.unshift(attrs); attrs = {}; }
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else if (k === 'class') e.className = v; else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const k of kids.flat()) if (k !== null && k !== undefined && k !== false) e.append(k instanceof Node ? k : String(k));
+  return e;
+}
+const money = n => new Intl.NumberFormat('en-EG').format(n) + ' EGP';
+const timeLabel = hr => String(hr).padStart(2, '0') + ':00';
+const cairoToday = () => { const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Cairo', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()).map(x => [x.type, x.value])); return new Date(Date.UTC(+p.year, +p.month - 1, +p.day, 12)); };
+const days = Array.from({ length: 7 }, (_, i) => new Date(cairoToday().getTime() + i * 864e5));
+const ymd = d => d.toISOString().slice(0, 10);
+
+// Sample accounts until real sign-in exists. The role is chosen once here and kept.
+const ROLES = {
+  coach: { token: 'coach-omar', title: 'Coach', blurb: 'Your sessions today, hours, locations and prices', tabs: [['today', "Today's sessions"], ['schedule', 'Schedule'], ['prices', 'Prices'], ['bookings', 'Bookings']] },
+  venue: { token: 'venue-coastal', title: 'Courts & venue', blurb: 'Every court on one calendar, walk-ins and check-in', tabs: [['today', "Today's courts"], ['hours', 'Hours & closures'], ['prices', 'Prices']] },
+  gym: { token: 'gym-apex', title: 'Gym', blurb: 'Enquiries from first contact to joining, plans and facilities', tabs: [['enquiries', 'Enquiries'], ['plans', 'Plans & prices'], ['facilities', 'Facilities & hours']] },
+  academy: { token: 'academy-alex-youth', title: 'Academy', blurb: 'Programs, trial sessions and parent enquiries', tabs: [['programs', 'Programs'], ['trials', 'Trials'], ['enquiries', 'Enquiries']] },
+};
+let me = null, role = null, dayIdx = 0;
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, { ...opts, headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + ROLES[role].token } });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || `Request failed (${res.status})`);
+  return body;
+}
+const send = (method, path, body) => api(path, { method, body: JSON.stringify(body) });
+
+function dayStrip(onPick) {
+  return h('div', { class: 'days', role: 'group', 'aria-label': 'Day' }, days.map((d, i) => h('button', { type: 'button', 'aria-pressed': String(i === dayIdx), onclick: () => { dayIdx = i; onPick(); } },
+    h('small', i === 0 ? 'Today' : new Intl.DateTimeFormat('en-GB', { weekday: 'short', timeZone: 'UTC' }).format(d)), h('b', String(d.getUTCDate())))));
+}
+function page(title, lead, ...body) { $('view').replaceChildren(h('h1', { class: 'page-title', tabindex: '-1', id: 'page-title' }, title), lead ? h('p', { class: 'lead' }, lead) : null, ...body); }
+function fail(err) { $('view').append(h('p', { class: 'error', role: 'alert' }, err.message)); }
+function openSheet(title, ...body) { const s = $('sheet'); s.replaceChildren(h('h2', { id: 'sheet-title', tabindex: '-1' }, title), ...body); s.showModal(); $('sheet-title').focus(); }
+
+// ---- Join: the entry for providers -------------------------------------------------------------
+function join() {
+  role = null; $('tabs').hidden = true; $('ws-name').textContent = 'for providers';
+  page('What do you run?', 'Choose your business type. Your workspace opens with the pages you need every day. Sample accounts are used until sign-in is ready.',
+    h('div', { class: 'roles' }, Object.entries(ROLES).map(([k, r]) => h('a', { href: `#/${k}`, id: 'role-' + k }, h('strong', r.title), h('small', r.blurb)))),
+    h('p', { class: 'muted', style: 'margin-top:18px' }, 'SPORT staff: ', h('a', { href: '../provider-admin/index.html' + location.search }, 'open the admin workspace')));
+}
+
+// ---- Shared: weekly hours and closures ---------------------------------------------------------
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const toText = hours => { const out = []; let a = null, b = null; for (const x of [...hours].sort((p, q) => p - q)) { if (a !== null && x === b + 1) b = x; else { if (a !== null) out.push(`${a}-${b + 1}`); a = b = x; } } if (a !== null) out.push(`${a}-${b + 1}`); return out.join(', '); };
+const toHours = t => t.split(',').map(x => x.trim()).filter(Boolean).flatMap(r => { const [a, b] = r.split('-').map(Number); return Array.from({ length: Math.max(0, (b ?? a + 1) - a) }, (_, i) => a + i); });
+async function scheduleEditor(target) {
+  const data = await api('/api/provider/schedule'), t = data.targets.find(x => x.target === target);
+  const weekly = h('form', { class: 'panel' }, h('h2', 'Weekly hours'), h('p', { class: 'muted' }, 'Type the hours you are open, e.g. 8-12, 16-21. Leave a day empty when closed.'),
+    h('div', { class: 'form two', style: 'margin-top:10px' }, DAYS.map((d, i) => h('label', {}, d, h('input', { name: 'd' + i, value: toText(t.weekly ? (t.weekly[i] || []) : t.defaultHours) })))),
+    h('div', { class: 'row', style: 'margin-top:12px' }, h('button', { class: 'btn go', type: 'submit' }, 'Save hours'), h('button', { class: 'btn', type: 'button', onclick: async () => { await send('PUT', `/api/provider/schedule/${encodeURIComponent(target)}`, { weekly: null }); route(); } }, 'Use default hours'),
+      h('span', { class: 'muted' }, t.weekly ? 'Your own hours' : 'Default hours')));
+  weekly.onsubmit = async e => { e.preventDefault(); try { await send('PUT', `/api/provider/schedule/${encodeURIComponent(target)}`, { weekly: Object.fromEntries(DAYS.map((_, i) => [i, toHours(weekly['d' + i].value)])) }); route(); } catch (err) { weekly.append(h('p', { class: 'error' }, err.message)); } };
+  const msg = h('p', { role: 'status' });
+  const add = h('form', { class: 'form two' }, h('label', {}, 'Date', h('input', { type: 'date', name: 'day', required: true, min: ymd(days[0]) })), h('label', {}, 'Hours (empty = all day)', h('input', { name: 'hours', placeholder: 'e.g. 9-12' })),
+    h('label', {}, 'Reason', h('input', { name: 'reason', maxlength: 120 })), h('div', { class: 'row', style: 'align-self:end' }, h('button', { class: 'btn dark', type: 'submit' }, 'Add closure')));
+  add.onsubmit = async e => {
+    e.preventDefault();
+    try {
+      const out = await send('POST', '/api/provider/closures', { target, day: add.day.value, hours: add.hours.value.trim() ? toHours(add.hours.value) : null, reason: add.reason.value });
+      await route();
+      $('view').append(h('p', { class: 'notice', role: 'status' }, out.affectedBookings.length ? `Closure added. ${out.affectedBookings.length} booking(s) already fall inside it and were kept. Contact those players.` : 'Closure added.'));
+    } catch (err) { msg.textContent = err.message; msg.className = 'error'; }
+  };
+  const mine = data.closures.filter(c => c.target === target);
+  return [weekly, h('section', { class: 'panel' }, h('h2', 'Closures'), add, msg,
+    mine.length ? h('table', { class: 'plain', style: 'margin-top:10px' }, h('tr', {}, h('th', 'Date'), h('th', 'Hours'), h('th', 'Reason'), h('th', '')),
+      mine.map(c => h('tr', {}, h('td', c.day), h('td', c.hours ? toText(c.hours) : 'All day'), h('td', c.reason), h('td', {}, h('button', { class: 'btn small', type: 'button', 'data-closure': c.id, onclick: async () => { await api(`/api/provider/closures/${encodeURIComponent(c.id)}`, { method: 'DELETE' }); route(); } }, 'Remove')))))
+      : h('p', { class: 'muted', style: 'margin-top:8px' }, 'No closures.'))];
+}
+function priceForm(label, current, fallback, target) {
+  const f = h('form', { class: 'row' }, h('label', {}, label, h('input', { type: 'number', name: 'price', min: 50, max: 20000, step: 1, value: current, required: true })),
+    h('button', { class: 'btn go', type: 'submit', style: 'align-self:end' }, 'Save price'), fallback != null && current !== fallback ? h('span', { class: 'muted', style: 'align-self:end' }, `SPORT default: ${money(fallback)}`) : null);
+  f.onsubmit = async e => { e.preventDefault(); try { await send('PUT', '/api/provider/prices', { target, price: Number(f.price.value) }); route(); } catch (err) { f.append(h('p', { class: 'error' }, err.message)); } };
+  return f;
+}
+
+// ---- Coach -------------------------------------------------------------------------------------
+async function coachToday() {
+  const coach = me.coaches[0];
+  const cal = await api(`/api/provider/calendar?day=${days[dayIdx].toISOString()}`), r = cal.resources.find(x => x.id === coach.id);
+  const hours = [...new Set([...r.openHours, ...r.bookings.map(b => b.hour)])].sort((a, b) => a - b);
+  page(dayIdx === 0 ? "Today's sessions" : 'Sessions', `${coach.name} · ${coach.fixedVenue ? 'Trains at ' + coach.fixedVenue : 'Flexible location: players add a court or meet you where you arranged'}`,
+    dayStrip(route),
+    h('div', { class: 'sessions' }, hours.length ? hours.map(hr => {
+      const b = r.bookings.find(x => x.hour === hr);
+      if (!b) return h('div', { class: 'session free' }, h('span', { class: 'hour' }, timeLabel(hr)), h('span', { class: 'muted' }, 'Free'),
+        h('button', { class: 'btn small', type: 'button', onclick: () => privateSession(coach, hr) }, 'Add private session'));
+      const where = b.label.includes('+') ? b.label.split(' + ')[0] : (b.customVenue || coach.fixedVenue || 'Location to confirm');
+      return h('div', { class: 'session' }, h('span', { class: 'hour' }, timeLabel(hr)),
+        h('div', {}, h('strong', b.source === 'athlete' ? b.athlete : (b.note || 'Private session')), h('span', { class: 'muted' }, where), ' ', b.checkedIn ? h('span', { class: 'pill in' }, 'Attended') : h('span', { class: 'pill' }, b.status === 'HOLD' ? 'Paying now' : 'Confirmed')),
+        b.status === 'CONFIRMED' && !b.checkedIn ? h('button', { class: 'btn go small', type: 'button', onclick: async () => { await send('POST', `/api/provider/bookings/${b.id}/checkin`, {}); route(); } }, 'Mark attended') : h('span'));
+    }) : h('p', { class: 'notice' }, 'You are not open on this day. Change it in Schedule.')));
+}
+function privateSession(coach, hr) {
+  const note = h('input', { name: 'note', maxlength: 120, placeholder: 'Player name' });
+  openSheet(`Private session at ${timeLabel(hr)}`, h('p', { class: 'muted' }, 'A player you booked yourself. The hour is no longer offered in the app.'), h('label', { style: 'margin-top:12px' }, 'Who is it for?', note),
+    h('div', { class: 'row', style: 'margin-top:14px' }, h('button', { class: 'btn go', type: 'button', onclick: async () => { try { await send('POST', '/api/provider/blocks', { resource: coach.id, day: days[dayIdx].toISOString(), hour: hr, source: 'walkin', note: note.value }); $('sheet').close(); route(); } catch (err) { $('sheet').append(h('p', { class: 'error' }, err.message)); } } }, 'Add session'), h('button', { class: 'btn', type: 'button', onclick: () => $('sheet').close() }, 'Cancel')));
+}
+async function coachSchedule() { const c = me.coaches[0]; page('Schedule', `When ${c.name} is available. Players can only book these hours.`, ...await scheduleEditor(c.id)); }
+async function coachPrices() {
+  const c = me.coaches[0];
+  page('Prices', 'Your price per one-hour session. Players see it before they book, and the court is priced separately when they add one.', h('div', { class: 'panel' }, priceForm('Session price (EGP)', c.price, c.defaultPrice, c.id)));
+}
+async function coachBookings() {
+  const c = me.coaches[0], rows = [];
+  for (const d of days) { const cal = await api(`/api/provider/calendar?day=${d.toISOString()}`); for (const b of cal.resources.find(x => x.id === c.id).bookings) rows.push([d, b]); }
+  page('Bookings', 'Your next 7 days.', rows.length ? h('table', { class: 'plain panel' }, h('tr', {}, h('th', 'Day'), h('th', 'Time'), h('th', 'Player'), h('th', 'Where'), h('th', 'Price')),
+    rows.map(([d, b]) => h('tr', {}, h('td', new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }).format(d)), h('td', timeLabel(b.hour)), h('td', b.athlete || b.note || 'Private session'), h('td', b.label.includes('+') ? b.label.split(' + ')[0] : (b.customVenue || c.fixedVenue || '—')), h('td', money(b.total))))) : h('p', { class: 'notice' }, 'No bookings in the next 7 days.'));
+}
+
+// ---- Venue -------------------------------------------------------------------------------------
+let venueSport = 'football', venueBranch = 0;
+async function venueToday() {
+  const club = me.clubs[0], sport = club.sports.find(s => s.id === venueSport);
+  const cal = await api(`/api/provider/calendar?day=${days[dayIdx].toISOString()}&club=${club.id}&sport=${venueSport}&branch=${venueBranch}`);
+  const hours = [...new Set(cal.resources.flatMap(r => [...r.openHours, ...r.bookings.map(b => b.hour)]))].sort((a, b) => a - b);
+  const pick = h('div', { class: 'row', style: 'margin-bottom:10px' },
+    h('label', {}, 'Branch', h('select', { id: 'branch', onchange: e => { venueBranch = Number(e.target.value); route(); } }, club.branches.map(([n], i) => h('option', { value: i, selected: i === venueBranch }, n)))),
+    h('label', {}, 'Sport', h('select', { id: 'sport', onchange: e => { venueSport = e.target.value; route(); } }, club.sports.map(s => h('option', { value: s.id, selected: s.id === venueSport }, s.name)))));
+  const table = h('table', {}, h('tr', {}, h('th', ''), cal.resources.map((r, i) => h('th', `${sport.unit} ${i + 1}`))),
+    hours.map(hr => h('tr', {}, h('td', {}, h('span', { class: 'hour' }, timeLabel(hr))), cal.resources.map((r, i) => {
+      const b = r.bookings.find(x => x.hour === hr), open = r.openHours.includes(hr), name = `${sport.unit} ${i + 1} at ${timeLabel(hr)}`;
+      if (b) return h('td', {}, h('button', { type: 'button', class: 'cell taken ' + (b.source || ''), 'aria-label': `${name}: ${b.source === 'block' ? 'blocked' : 'booked'}`, onclick: () => slotSheet(r, b, name) },
+        b.source === 'block' ? 'Blocked' : (b.source === 'walkin' ? 'Walk-in' : b.athlete), h('small', b.checkedIn ? 'Checked in' : (b.status === 'HOLD' ? 'Paying now' : (b.note || money(b.total))))));
+      if (!open) return h('td', {}, h('span', { class: 'cell closed' }, 'Closed'));
+      return h('td', {}, h('button', { type: 'button', class: 'cell', 'data-free': `${r.id}|${hr}`, 'aria-label': `${name}: free. Add a walk-in or block`, onclick: () => addSheet(r, hr, name) }, '+ Free'));
+    }))));
+  page(dayIdx === 0 ? "Today's courts" : 'Courts', `${club.name} · ${club.branches[venueBranch][0]}. Tap a free slot to add a walk-in or block it. Athletes stop seeing it at once.`, pick, dayStrip(route), h('div', { class: 'grid' }, table));
+}
+function addSheet(r, hr, name) {
+  const note = h('input', { maxlength: 120, placeholder: 'Name or reason' });
+  const go = source => async () => { try { await send('POST', '/api/provider/blocks', { resource: r.id, day: days[dayIdx].toISOString(), hour: hr, source, note: note.value }); $('sheet').close(); route(); } catch (err) { $('sheet').append(h('p', { class: 'error' }, err.message)); } };
+  openSheet(name, h('p', { class: 'muted' }, `Walk-in: a player paid at the desk (${money(r.price)}). Block: keep the ${r.name.split(' · ').pop().split(' ')[0].toLowerCase()} out of use.`),
+    h('label', { style: 'margin-top:12px' }, 'Note', note),
+    h('div', { class: 'row', style: 'margin-top:14px' }, h('button', { class: 'btn go', type: 'button', id: 'add-walkin', onclick: go('walkin') }, 'Add walk-in'), h('button', { class: 'btn dark', type: 'button', onclick: go('block') }, 'Block'), h('button', { class: 'btn', type: 'button', onclick: () => $('sheet').close() }, 'Cancel')));
+}
+function slotSheet(r, b, name) {
+  const act = (path, label, cls) => h('button', { class: 'btn ' + cls, type: 'button', onclick: async () => { try { await send('POST', `/api/provider/bookings/${b.id}/${path}`, {}); $('sheet').close(); route(); } catch (err) { $('sheet').append(h('p', { class: 'error' }, err.message)); } } }, label);
+  openSheet(name, h('p', {}, h('strong', b.source === 'athlete' ? b.athlete : (b.source === 'block' ? 'Blocked' : 'Walk-in')), b.note ? ' · ' + b.note : ''),
+    h('p', { class: 'muted' }, `${b.label} · ${money(b.total)} · reference ${b.id}`),
+    h('div', { class: 'row', style: 'margin-top:14px' }, b.status === 'CONFIRMED' && !b.checkedIn && b.source !== 'block' ? act('checkin', 'Check in', 'go') : null,
+      ['walkin', 'block'].includes(b.source) ? act('cancel', b.source === 'block' ? 'Remove block' : 'Remove walk-in', 'dark') : h('span', { class: 'muted' }, 'Paid athlete bookings are cancelled by the athlete or SPORT support.'),
+      h('button', { class: 'btn', type: 'button', onclick: () => $('sheet').close() }, 'Close')));
+}
+async function venueHours() { const c = me.clubs[0]; page('Hours & closures', `Opening hours for every court at ${c.name}, all sports. Close a day for maintenance or an event.`, ...await scheduleEditor('club:' + c.id)); }
+async function venuePrices() {
+  const c = me.clubs[0];
+  page('Prices', `Price per court per hour at ${c.name}. Branches after the first add 25 EGP each.`,
+    h('div', { class: 'panel form' }, c.sports.map(s => priceForm(`${s.name} (EGP / hour)`, s.price, null, s.priceTarget))));
+}
+
+// ---- Gyms and academies: enquiry pipeline and listing ------------------------------------------
+const STAGES = { gym: [['NEW', 'New'], ['CONTACTED', 'Contacted'], ['TRIAL', 'Visit booked'], ['ENROLLED', 'Joined'], ['CLOSED', 'Closed']],
+  academy: [['NEW', 'New'], ['CONTACTED', 'Contacted'], ['TRIAL', 'Trial booked'], ['ENROLLED', 'Enrolled'], ['CLOSED', 'Closed']] };
+const listingOf = kind => me.listings.find(l => l.kind === kind);
+async function pipeline(kind) {
+  const ov = await api('/api/provider/overview'), stages = STAGES[kind];
+  const move = (e, status, extra = {}) => async () => { try { await send('PATCH', `/api/provider/enquiries/${e.id}`, { status, ...extra }); route(); } catch (err) { alert(err.message); } };
+  page('Enquiries', `Everyone who asked about ${listingOf(kind)?.name}. Move each one along as you talk to them.`,
+    ov.enquiries.length ? h('div', { class: 'pipeline' }, stages.map(([st, label], i) => {
+      const items = ov.enquiries.filter(e => e.status === st);
+      return h('section', { class: 'stage', 'data-stage': st }, h('h3', {}, label, h('span', { class: 'muted' }, String(items.length))), items.map(e => h('article', { class: 'lead-card' },
+        h('strong', e.name), e.participant ? h('span', { class: 'muted' }, e.participant) : null, h('a', { href: 'tel:' + e.phone }, e.phone),
+        e.notes ? h('span', {}, e.notes) : null, e.trialDate ? h('span', { class: 'pill' }, `${kind === 'gym' ? 'Visit' : 'Trial'} ${e.trialDate}`) : null,
+        h('div', { class: 'row' }, i > 0 ? h('button', { class: 'btn small', type: 'button', onclick: move(e, stages[i - 1][0]) }, '‹ Back') : null,
+          i < stages.length - 2 ? h('button', { class: 'btn go small', type: 'button', onclick: stages[i + 1][0] === 'TRIAL' ? () => trialSheet(kind, e) : move(e, stages[i + 1][0]) }, stages[i + 1][1]) : null,
+          st !== 'CLOSED' ? h('button', { class: 'btn small', type: 'button', onclick: move(e, 'CLOSED') }, 'Close') : null))));
+    })) : h('p', { class: 'notice' }, 'No enquiries yet. They appear here when athletes or parents tap Enquire on your listing.'));
+}
+function trialSheet(kind, e) {
+  const date = h('input', { type: 'date', min: ymd(days[0]), required: true });
+  openSheet(kind === 'gym' ? `Book a visit for ${e.name}` : `Book a trial for ${e.name}`, h('label', {}, 'Date', date),
+    h('div', { class: 'row', style: 'margin-top:14px' }, h('button', { class: 'btn go', type: 'button', onclick: async () => { if (!date.value) return; await send('PATCH', `/api/provider/enquiries/${e.id}`, { status: 'TRIAL', trialDate: date.value }); $('sheet').close(); route(); } }, 'Save'), h('button', { class: 'btn', type: 'button', onclick: () => $('sheet').close() }, 'Cancel')));
+}
+function listingForm(l, fields, note) {
+  const f = h('form', { class: 'panel form two' }, fields.map(([k, label, type]) => h('label', {}, label,
+    type === 'area' ? h('textarea', { name: k, rows: 3 }, l[k]) : h('input', { name: k, type: type === 'num' ? 'number' : 'text', value: type === 'list' ? l[k].join(', ') : l[k] }))),
+    h('div', { class: 'row' }, h('button', { class: 'btn go', type: 'submit' }, 'Save changes'), h('span', { class: 'muted' }, note)));
+  f.onsubmit = async e => {
+    e.preventDefault();
+    const body = Object.fromEntries(fields.map(([k, , type]) => [k, type === 'num' ? Number(f[k].value) : type === 'list' ? f[k].value.split(',').map(x => x.trim()).filter(Boolean) : f[k].value]));
+    try { await send('PATCH', `/api/provider/listings/${l.id}`, body); me = await api('/api/provider/me'); route(); } catch (err) { f.append(h('p', { class: 'error', role: 'alert' }, err.message)); }
+  };
+  return f;
+}
+async function gymPlans() {
+  const l = listingOf('gym');
+  const f = h('form', { class: 'panel form two' }, ['Monthly', 'Quarterly', 'Annual'].map(p => h('label', {}, `${p} (EGP)`, h('input', { type: 'number', name: p, value: l.plans[p], min: 50 }))),
+    h('label', {}, 'Free trial offer', h('input', { name: 'trial', value: l.trial })), h('div', { class: 'row' }, h('button', { class: 'btn go', type: 'submit' }, 'Save plans')));
+  f.onsubmit = async e => { e.preventDefault(); try { await send('PATCH', `/api/provider/listings/${l.id}`, { plans: { Monthly: +f.Monthly.value, Quarterly: +f.Quarterly.value, Annual: +f.Annual.value }, trial: f.trial.value }); me = await api('/api/provider/me'); route(); } catch (err) { f.append(h('p', { class: 'error', role: 'alert' }, err.message)); } };
+  page('Plans & prices', `What athletes see when they compare ${l.name} with other gyms.`, f);
+}
+async function gymFacilities() {
+  const l = listingOf('gym');
+  page('Facilities & hours', 'Shown on your listing and in the gym comparison.', listingForm(l, [['facilities', 'Facilities (comma separated)', 'list'], ['hours', 'Opening hours', 'text'], ['note', 'Description', 'area']], 'Your name and area are changed by SPORT support.'));
+}
+async function academyPrograms() {
+  const l = listingOf('academy');
+  page('Programs', `${l.name}: what parents see before they enquire.`, listingForm(l, [['ages', 'Age groups (comma separated)', 'list'], ['levels', 'Levels (comma separated)', 'list'], ['schedule', 'Schedule', 'text'], ['price', 'Price (EGP)', 'num'], ['billing', 'Billing period', 'text'], ['coachLead', 'Coaches', 'text'], ['summary', 'Description', 'area']], ''));
+}
+async function academyTrials() {
+  const ov = await api('/api/provider/overview'), trials = ov.enquiries.filter(e => e.status === 'TRIAL').sort((a, b) => String(a.trialDate).localeCompare(String(b.trialDate)));
+  const set = (e, status) => async () => { await send('PATCH', `/api/provider/enquiries/${e.id}`, { status }); route(); };
+  page('Trials', 'Booked trial sessions. After the trial, mark each child enrolled or close the enquiry.',
+    trials.length ? h('div', { class: 'sessions' }, trials.map(e => h('div', { class: 'session' }, h('span', { class: 'hour' }, e.trialDate ? e.trialDate.slice(5).replace('-', '/') : '—'),
+      h('div', {}, h('strong', e.participant ? `${e.name} · ${e.participant}` : e.name), h('a', { href: 'tel:' + e.phone }, e.phone)),
+      h('div', { class: 'row' }, h('button', { class: 'btn go small', type: 'button', onclick: set(e, 'ENROLLED') }, 'Enrolled'), h('button', { class: 'btn small', type: 'button', onclick: set(e, 'CLOSED') }, 'Close')))))
+      : h('p', { class: 'notice' }, 'No trials booked. Book one from Enquiries.'));
+}
+
+// ---- Router ------------------------------------------------------------------------------------
+const PAGES = { coach: { today: coachToday, schedule: coachSchedule, prices: coachPrices, bookings: coachBookings },
+  venue: { today: venueToday, hours: venueHours, prices: venuePrices },
+  gym: { enquiries: () => pipeline('gym'), plans: gymPlans, facilities: gymFacilities },
+  academy: { programs: academyPrograms, trials: academyTrials, enquiries: () => pipeline('academy') } };
+async function route() {
+  const [, r, p] = location.hash.split('/');
+  if (!ROLES[r]) return join();
+  const pages = PAGES[r], name = pages[p] ? p : ROLES[r].tabs[0][0];
+  if (role !== r) { role = r; me = null; dayIdx = 0; }
+  try { localStorage.setItem('sport.provider.role', r); } catch {}
+  $('tabs').hidden = false;
+  $('tab-list').replaceChildren(...ROLES[r].tabs.map(([k, label]) => h('a', { href: `#/${r}/${k}`, 'aria-current': k === name ? 'page' : null }, label)));
+  try {
+    me = me || await api('/api/provider/me');
+    $('ws-name').textContent = `${ROLES[r].title} · ${me.user.name}`;
+    await pages[name]();
+  } catch (err) {
+    page(ROLES[r].title, null, h('p', { class: 'notice', role: 'alert' }, err instanceof TypeError ? 'Your workspace needs the SPORT API. Start it with: npm run start:api' : err.message));
+  }
+}
+window.addEventListener('hashchange', () => { window.scrollTo(0, 0); route().then(() => $('page-title')?.focus()); });
+if (!location.hash) { let saved = null; try { saved = localStorage.getItem('sport.provider.role'); } catch {} location.replace('#/' + (saved || 'join')); }
+route();
+</script>
+</body>
+</html>

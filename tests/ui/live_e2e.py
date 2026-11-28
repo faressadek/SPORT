@@ -1,5 +1,5 @@
 """Athlete app + provider portal against a running API. Start `npm run start:api`, then: python3 tests/ui/live_e2e.py . http://127.0.0.1:3000"""
-import sys, pathlib, json, urllib.request
+import sys, pathlib, json, urllib.request, urllib.error
 from playwright.sync_api import sync_playwright
 root = pathlib.Path(sys.argv[1]).resolve(); api = sys.argv[2]
 athlete = (root / "apps/athlete-preview/index.html").as_uri() + f"?api={api}"
@@ -95,6 +95,30 @@ with sync_playwright() as p:
     check("closed club shows no bookable slot", page.locator("#market td button:enabled").count() == 0, page.locator("#market td button:enabled").count())
     p2.locator("#schedule-box button[data-closure]").first.click(); p2.wait_for_timeout(600)
     check("closure removed", "No closures" in p2.text_content("#schedule-box"))
+    # Provider workspaces: entry from the athlete app, one mini app per role
+    page.goto(athlete + "#/home"); page.wait_for_timeout(800)
+    page.click("#operator-link"); page.wait_for_timeout(800)
+    check("athlete home leads to the role picker", page.locator(".roles a").count() == 4, page.url)
+    perrs = []; page.on("pageerror", lambda e: perrs.append(str(e)))
+    for role_id, title in [("coach", "Today's sessions"), ("venue", "Today's courts"), ("gym", "Enquiries"), ("academy", "Programs")]:
+        page.evaluate(f"location.hash='/join'"); page.wait_for_timeout(200)
+        page.click(f"#role-{role_id}"); page.wait_for_timeout(1000)
+        check(f"{role_id} workspace lands on {title}", page.text_content("#page-title") == title, page.text_content("#page-title"))
+    # Venue records a walk-in; the athlete can no longer book that court and hour
+    page.evaluate("location.hash='/venue/today'"); page.wait_for_timeout(1000)
+    free = page.locator("[data-free]").first; rid, hr = free.get_attribute("data-free").split("|")
+    free.click(); page.wait_for_timeout(200); page.fill("#sheet input", "Karim"); page.click("#add-walkin"); page.wait_for_timeout(800)
+    check("walk-in shows on the venue calendar", page.locator(".cell.walkin").count() >= 1)
+    day = page.evaluate("days[0].toISOString()")
+    r = urllib.request.Request(api + "/api/holds", data=json.dumps({"day": day, "hour": int(hr), "resource": rid}).encode(), method="POST",
+                               headers={"Authorization": "Bearer demo-athlete-marwan", "Content-Type": "application/json"})
+    try: urllib.request.urlopen(r); status = 201
+    except urllib.error.HTTPError as e: status = e.code
+    check("athlete booking of the walk-in slot is refused (409)", status == 409, status)
+    page.evaluate("location.hash='/gym/enquiries'"); page.wait_for_timeout(900)
+    page.locator("[data-stage=NEW] .btn.go").first.click(); page.wait_for_timeout(700)
+    check("gym moves an enquiry to Contacted", page.locator("[data-stage=CONTACTED] .lead-card").count() >= 1)
+    check("no JS errors in provider app", not perrs, perrs[:3])
     b.close()
 for n, ok, d in res: print(("PASS " if ok else "FAIL ") + n + ("" if ok else f"  [{d}]"))
 print(f"{sum(r[1] for r in res)}/{len(res)} passed")

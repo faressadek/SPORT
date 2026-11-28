@@ -7,6 +7,7 @@ Egyptian sports marketplace for athletes and parents: book courts, find coaches,
 | Path | What it is |
 |---|---|
 | `apps/athlete-preview/index.html` | Athlete app: Courts, Coaches (with the court add-on for coaches without a venue), Gyms, Academies, My bookings, English/Arabic. Works offline with sample data, or against the API. |
+| `apps/provider/index.html` | Provider app: role picker, then a workspace for each role: Coach, Courts & venue, Gym, Academy. Needs the API. |
 | `apps/provider-admin/index.html` | Provider and admin portal: bookings, opening hours and closures, gym and academy listings (admins can hide or publish them), enquiries, refund queue. |
 | `apps/api/src/server.mjs` | Booking API (Node 22). Uses PostgreSQL when `DATABASE_URL` is set, otherwise an in-memory store for demos. |
 | `apps/api/src/pg-store.mjs`, `memory-store.mjs` | The two stores. Same interface, same tests. |

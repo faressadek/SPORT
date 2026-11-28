@@ -4,204 +4,237 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Athlete home | SPORT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Big+Shoulders+Display:wght@700;800;900&family=Noto+Kufi+Arabic:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
+/* Pitch-side design (Nov 2026). Deep pitch green and chalk white; lime only marks what you can act on or have chosen.
+   Big Shoulders Display (stadium signage) for headlines, times and prices; Barlow for reading; Noto Kufi Arabic for Arabic. */
 :root{
   color-scheme:light;
-  /* One colour system across the app: dark green and lime (owner decision, 28 Nov 2026). */
-  --ink:#17201b;--muted:#56615a;--green:#1f5a43;--brand:#174a37;--brand-dark:#0f3326;
-  --accent:#ab461e;--teal:#174a37;--paper:#f4f6f1;--white:#ffffff;--line:#dde3d8;--lime:#ddfa93;
-  --tint:#e8f3d8;--tint-soft:#f0f7e6;--focus:#2f6b4f;
-  font:16px/1.5 'Segoe UI',system-ui,-apple-system,sans-serif;
+  --pitch:#0d3a28;--turf:#165c3f;--chalk:#f3f6f1;--surface:#ffffff;--line:#cfdbd2;--ink:#0e1c15;--muted:#56675d;--lime:#d4f74a;
+  --brand:var(--pitch);--brand-dark:#082a1c;--green:var(--turf);--teal:var(--pitch);--tint:#e4efdc;--tint-soft:#eef5e8;--focus:#1f7a4f;--paper:var(--chalk);--white:var(--surface);
+  --display:'Big Shoulders Display','Barlow Condensed','Arial Narrow',sans-serif;
+  --body:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font:17px/1.5 var(--body);
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink)}
-[dir="rtl"] body{font-family:'Segoe UI',Tahoma,'Noto Sans Arabic',system-ui,sans-serif}
+body{margin:0;background:var(--chalk);color:var(--ink);-webkit-font-smoothing:antialiased}
+[dir="rtl"]{--display:'Noto Kufi Arabic','Big Shoulders Display',sans-serif;--body:'Noto Kufi Arabic',system-ui,sans-serif}
+[dir="rtl"] body{font-size:15px}
 h1,h2,h3,p{margin:0}
-button,select,input,textarea{font:inherit}
+h1,h2{font-family:var(--display);font-weight:800;letter-spacing:.005em;line-height:.98}
+button,select,input,textarea{font:inherit;color:inherit}
 button,select{min-height:44px}
 button{cursor:pointer}
-button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+[tabindex="-1"]:focus{outline:none}
 [hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
+/* Header */
 .shell{width:min(1100px,calc(100% - 32px));margin-inline:auto}
-.top{min-height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:8px}
-.brand{font-size:1.65rem;letter-spacing:-.09em;font-weight:900;font-style:italic;text-decoration:none;color:inherit}
-[dir="rtl"] .brand{font-style:normal;letter-spacing:0}
-.top-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.api-badge{font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;background:#eaefe6;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
-.api-badge i{width:7px;height:7px;border-radius:50%;background:#d97706;display:inline-block}
-.api-badge[data-live="true"] i{background:#16a34a}
-.lang-toggle,.history-link{background:var(--white);border:1px solid var(--line);color:var(--green);font-weight:700;padding:6px 12px;border-radius:10px;min-height:40px}
-.history-link{border:0;background:none;text-decoration:underline;text-underline-offset:4px}
-
-.top nav{display:grid;grid-template-columns:repeat(4,1fr);position:relative;padding:4px;background:#e6ece3;border-radius:100px;isolation:isolate}
-.top nav:before{content:'';position:absolute;inset-block:4px;inset-inline-start:4px;width:calc((100% - 8px)/4);border-radius:100px;background:var(--white);box-shadow:0 1px 3px #0f332630;z-index:-1;transition:transform 280ms cubic-bezier(.32,.72,0,1)}
-.top[data-page=courts] nav:before{transform:translateX(0%)}
+.top{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:10px}
+.brand{font-family:var(--display);font-size:2rem;font-weight:900;text-decoration:none;color:var(--pitch);line-height:1}
+.top-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.api-badge{font-size:.78rem;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:6px;padding-inline-end:6px}
+.api-badge i{width:7px;height:7px;border-radius:50%;background:#c2770c}
+.api-badge[data-live="true"] i{background:#1f9d55}
+.lang-toggle,.history-link{background:none;border:1px solid var(--line);color:var(--pitch);font-weight:600;padding:6px 12px;border-radius:8px;min-height:40px}
+.history-link{background:var(--pitch);border-color:var(--pitch);color:var(--chalk)}
+.top nav{order:3;flex-basis:100%;display:grid;grid-template-columns:repeat(4,1fr);position:relative;border-bottom:1px solid var(--line);isolation:isolate}
+.top nav:before{content:'';position:absolute;bottom:-1px;inset-inline-start:0;width:25%;height:3px;background:var(--pitch);transition:transform 260ms cubic-bezier(.32,.72,0,1)}
 .top[data-page=coaches] nav:before{transform:translateX(100%)}
 .top[data-page=gyms] nav:before{transform:translateX(200%)}
 .top[data-page=academies] nav:before{transform:translateX(300%)}
 [dir="rtl"] .top[data-page=coaches] nav:before{transform:translateX(-100%)}
 [dir="rtl"] .top[data-page=gyms] nav:before{transform:translateX(-200%)}
 [dir="rtl"] .top[data-page=academies] nav:before{transform:translateX(-300%)}
-.top nav a{display:grid;place-items:center;min-height:40px;padding:3px 16px;border-radius:100px;color:var(--ink);font-weight:750;text-decoration:none;font-size:.9rem;white-space:nowrap}
+.top nav a{display:grid;place-items:center;min-height:46px;color:var(--muted);font-weight:600;text-decoration:none;white-space:nowrap}
+.top[data-page=courts] #courts-link,.top[data-page=coaches] #coaches-link,.top[data-page=gyms] #gyms-link,.top[data-page=academies] #academies-link{color:var(--ink)}
 .at-home .top nav,.in-market .top nav{display:none}
 
-#home,#discover,.intro,#market,#gyms-view,#academies-view{max-width:860px;margin-inline:auto}
-#home{padding:16px 0 44px}
-.welcome{background:var(--brand);color:white;border-radius:20px;padding:clamp(22px,5vw,40px)}
-.welcome h1{font-size:clamp(2rem,6vw,3.6rem);letter-spacing:-.05em;margin:12px 0 18px;line-height:1.05}
-.welcome>b{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
-#search-home,.toolbar,.counts,.shortcuts{display:flex;align-items:center;gap:8px}
-input[type=search]{font:inherit;background:white;border:1px solid var(--line);border-radius:11px;padding:11px 14px;min-width:0;flex:1;color:var(--ink)}
-#search-home button,.toolbar button,.shortcuts button{border:1px solid var(--line);background:white;color:var(--green);border-radius:10px;font-weight:700;padding:8px 14px}
-.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:16px 0}
-.actions a{display:grid;gap:4px;background:var(--brand-dark);color:white;text-decoration:none;padding:18px;border-radius:14px}
-.actions a:nth-child(2){background:var(--accent)}
-.actions a:nth-child(3){background:#165b49}
-.actions a:nth-child(4){background:#2d4a22}
-.actions span{font-size:1.45rem}
-.actions strong{font-size:1.15rem}
-.actions small{opacity:.9;font-size:.86rem}
-.shortcuts{margin-bottom:24px;flex-wrap:wrap}
-.shortcuts button{flex:1;min-width:140px}
-#local-picks{display:flex;gap:10px;overflow:auto;padding:12px 0}
-#local-picks a{background:white;min-width:170px;flex:1;border-radius:14px;overflow:hidden;color:inherit;text-decoration:none;padding-bottom:12px;border:1px solid var(--line)}
-#local-picks a :is(strong,small){display:block;margin:4px 12px}
-#local-picks .field{height:90px}
+/* Home: the pitch is the hero */
+#home,#discover,.intro,#market,#gyms-view,#academies-view{max-width:880px;margin-inline:auto}
+#home{padding:4px 0 48px}
+.welcome{position:relative;overflow:hidden;background:var(--pitch);color:var(--chalk);border-radius:22px;padding:clamp(22px,5vw,44px)}
+.pitch-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;stroke:#ffffff;stroke-opacity:.13;stroke-width:2;fill:none}
+.welcome>*:not(.pitch-lines){position:relative}
+.hello{color:#b9d3c2;font-weight:500}
+.welcome h1{font-size:clamp(3rem,12vw,5.6rem);margin:6px 0 20px;max-width:9ch;text-transform:none}
+#search-home{display:flex;gap:8px}
+input[type=search]{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px;min-width:0;flex:1;color:var(--ink)}
+.welcome input[type=search]{border:0;min-height:50px}
+#search-home button{border:0;background:var(--lime);color:var(--pitch);border-radius:10px;font-weight:700;padding:8px 18px}
+.board{margin-top:26px;border-top:1px solid #ffffff26;padding-top:16px}
+.board p{font-weight:600;color:#b9d3c2;margin-bottom:10px}
+#next-slots{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+#next-slots a{flex:0 0 auto;display:grid;gap:2px;min-width:132px;padding:10px 12px;border-radius:8px;background:#ffffff12;color:var(--chalk);text-decoration:none;border:1px solid #ffffff1f}
+#next-slots b{font-family:var(--display);font-size:1.9rem;line-height:1;color:var(--lime)}
+#next-slots small{font-size:.8rem;color:#cfe0d5}
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:0;margin:22px 0 8px;border-top:1px solid var(--line)}
+.actions a{display:grid;grid-template-columns:44px 1fr;column-gap:12px;align-items:center;padding:16px 4px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.actions a:nth-child(odd){padding-inline-end:16px;border-inline-end:1px solid var(--line)}
+.actions a:nth-child(even){padding-inline-start:16px}
+.actions svg{grid-row:span 2;width:40px;height:40px;stroke:var(--turf);stroke-width:1.6;fill:none}
+.actions strong{font-family:var(--display);font-size:1.6rem;font-weight:800;line-height:1}
+.actions small{color:var(--muted);font-size:.9rem}
+.shortcuts{display:flex;gap:8px;margin:14px 0 30px;flex-wrap:wrap}
+.shortcuts button{flex:1;min-width:140px;border:1px solid var(--line);background:var(--surface);color:var(--pitch);border-radius:10px;font-weight:600}
+#home>h2{font-size:2rem;margin-bottom:4px}
+#local-picks{display:flex;gap:12px;overflow-x:auto;padding:10px 0}
+#local-picks a{flex:0 0 200px;background:var(--surface);border-radius:14px;overflow:hidden;color:inherit;text-decoration:none;border:1px solid var(--line);padding-bottom:12px}
+#local-picks a :is(strong,small){display:block;margin:6px 12px 0}
+#local-picks small{color:var(--muted)}
+#local-picks .field{height:96px;border-radius:0}
+.operator{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:28px;padding:16px 18px;border-radius:14px;border:1px solid var(--pitch);color:var(--ink);text-decoration:none}
+.operator b{background:var(--pitch);color:var(--chalk);padding:8px 14px;border-radius:8px;font-weight:600}
 
-.intro{padding:24px 0 10px}
-.location{color:var(--green);font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
-.intro h1{font-size:clamp(2.1rem,5vw,3.4rem);line-height:1.05;letter-spacing:-.05em;font-weight:800}
-.intro p:last-child{margin-top:8px;color:var(--muted)}
+/* Page headings */
+.intro{padding:22px 0 8px}
+.location{color:var(--turf);font-weight:600;margin-bottom:2px}
+.intro h1{font-size:clamp(2.6rem,8vw,4.2rem)}
+.intro p:last-child{margin-top:8px;color:var(--muted);max-width:60ch}
 
+/* Coach listing */
 #discover,#gyms-view,#academies-view{padding-bottom:48px}
-.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-bottom:1px solid var(--line);padding:12px 0 18px;margin-bottom:10px}
-.filters label{display:block;font-weight:700;font-size:.88rem}
-.filters select{width:100%;margin-top:5px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--white);color:var(--ink)}
+.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:12px 0 18px;border-bottom:1px solid var(--line);margin-bottom:10px}
+.filters label{display:block;font-weight:600;font-size:.9rem}
+.filters select,.counts select,.format select{width:100%;margin-top:5px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.toolbar,.counts{display:flex;align-items:center;gap:8px}
+.toolbar button{border:1px solid var(--line);background:var(--surface);color:var(--pitch);border-radius:10px;font-weight:600;padding:8px 14px}
 .counts{justify-content:space-between;margin:12px 0}
-.counts select{width:auto;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--white)}
+.counts select{width:auto;margin:0}
 #count,.sample{color:var(--muted);font-size:.9rem}
-.sample{margin-top:16px;font-size:.83rem}
-
-#week{display:flex;overflow:auto;gap:6px;margin:14px 0 5px}
-#week button{flex:1;min-width:48px;padding:8px 3px;background:white;border:1px solid var(--line);border-radius:10px;color:inherit}
+.sample{margin-top:16px;font-size:.85rem}
+#week{display:flex;overflow-x:auto;gap:6px;margin:14px 0 6px}
+#week button{flex:1;min-width:50px;padding:8px 3px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
 #week b,#week small{display:block}
-#week b{font-size:1.12rem}
-#week [aria-pressed=true],#likes[aria-pressed=true]{background:var(--brand);color:white;border-color:var(--brand)}
+#week b{font-family:var(--display);font-size:1.5rem;line-height:1}
+#week [aria-pressed=true],#likes[aria-pressed=true]{background:var(--pitch);color:var(--chalk);border-color:var(--pitch)}
+.listing-grid{display:grid;gap:12px}
+.listing{display:grid;grid-template-columns:84px 1fr 44px;align-items:center;gap:14px;padding:14px;border:1px solid var(--line);background:var(--surface);border-radius:14px}
+.listing>.field,.listing>.coach-art{height:84px;border-radius:10px;overflow:hidden}
+.field,.coach-art{background:var(--turf);display:grid;place-items:center}
+.markings{width:84%;aspect-ratio:1.55;border:1.5px solid #ffffff59;position:relative;background:radial-gradient(circle at center,transparent 0 11%,#ffffff59 11% 12.5%,transparent 13%),linear-gradient(90deg,transparent 49.5%,#ffffff59 49.5% 50.5%,transparent 50.5%)}
+.markings i{position:absolute;width:8px;height:8px;border-radius:50%;transform:translate(-50%,-50%);background:var(--lime)}
+.coach-art{background:var(--pitch);color:var(--chalk)}
+.coach-art span{font-family:var(--display);font-size:2.1rem;font-weight:800}
+.listing h2{font-family:var(--body);letter-spacing:0}
+.listing h2 button{font-size:1.15rem;min-height:32px;background:none;border:0;text-align:start;padding:0;font-weight:700}
+.eyeline{font-size:.85rem;font-weight:600;color:var(--muted)}
+.description{color:var(--muted);font-size:.92rem;margin:2px 0 6px}
+.listing-price{font-family:var(--display);font-size:1.35rem}
+.heart{border:1px solid var(--line);background:var(--surface);color:#b4234a;font-size:1.2rem;border-radius:50%;align-self:start;width:42px;height:42px}
+.listing .quick-times{grid-column:1/-1;display:flex;overflow-x:auto;gap:6px;border-top:1px solid var(--line);padding-top:12px}
 
-.listing-grid{display:grid;grid-template-columns:1fr;gap:12px}
-.listing{display:grid;grid-template-columns:100px 1fr 44px;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);background:white;border-radius:15px}
-.listing>.field,.listing>.coach-art{height:82px;border-radius:10px;overflow:hidden}
-.field,.coach-art{background:#18513b;display:grid;place-items:center}
-.markings{width:84%;height:auto;aspect-ratio:1.55;border:1px solid #b2c9a6;position:relative;background:radial-gradient(circle at center,transparent 0 11%,#a4ba99 11% 12%,transparent 12.5%),linear-gradient(90deg,transparent 49.6%,#afbea4 49.6% 50.3%,transparent 50.3%)}
-.markings i{position:absolute;width:8px;height:8px;border:2px solid #e5f3d2;border-radius:50%;transform:translate(-50%,-50%);background:#d0e88e}
-.coach-art{background:#263e35;color:#eef5e8;gap:6px;align-content:center}
-.coach-art span{border:1px solid #a0b0a5;border-radius:50%;padding:8px;font-size:1.25rem}
-.listing h2 button{font-size:1.15rem;min-height:32px;background:none;border:0;text-align:start;color:inherit;padding:0;font-weight:800}
-.eyeline{font-size:.82rem;font-weight:700;color:var(--muted)}
-.description{color:var(--muted);font-size:.9rem;margin:2px 0 6px}
-.listing-price{font-size:1rem;color:var(--ink)}
-.heart{border:0;background:#f1f4ee;color:#a4284e;font-size:1.35rem;border-radius:50%;align-self:start;width:40px;height:40px}
-.listing .quick-times{grid-column:1/-1;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;border-top:1px solid var(--line);padding-top:10px}
-.quick-times button{min-height:38px;background:white;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:4px 10px;font-weight:650;min-width:66px}
+/* Scoreboard tiles: every bookable time in the app */
+.quick-times button,#times .choice,.vslots a,#market td button{font-family:var(--display);font-weight:800;font-size:1.25rem;letter-spacing:.02em;background:var(--pitch);color:var(--chalk);border:1px solid var(--pitch);border-radius:6px}
+.quick-times button{min-height:42px;min-width:72px;padding:4px 10px}
+.vslots a{padding:8px 12px}
+.quick-times button:hover,.vslots a:hover,#market td button:enabled:hover{background:var(--turf)}
 
-.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,350px);gap:18px;align-items:start;padding-bottom:52px;max-width:860px;margin-inline:auto}
-.card{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--white);box-shadow:0 10px 28px #0f332608}
+/* Booking page */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,350px);gap:18px;align-items:start;padding-bottom:52px;max-width:880px;margin-inline:auto}
+.card{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
 fieldset{border:0;padding:0;margin:0 0 18px;min-width:0}
-legend{font-weight:750;margin-bottom:9px}
+legend,#court-label{font-weight:700;margin-bottom:9px}
 .times{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.dates{margin-bottom:11px}
-.choice{border:1px solid var(--line);border-radius:10px;background:var(--white);color:var(--ink);padding:9px 8px;font-weight:700;font-size:.88rem}
-.dates .choice{border-radius:100px}
-.choice[aria-pressed=true]{background:#edf7e0;border-color:var(--teal);box-shadow:inset 0 0 0 1px var(--teal)}
-.catalog{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:9px;margin-top:8px}
-.catalog .choice{text-align:start;padding:11px 12px;min-height:82px}
+.choice{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:9px 8px;font-weight:600;font-size:.92rem}
+.dates{margin-bottom:12px}
+.dates .choice{border-radius:8px}
+.choice[aria-pressed=true],#times .choice[aria-pressed=true]{background:var(--lime);color:var(--pitch);border-color:var(--pitch);box-shadow:inset 0 0 0 1px var(--pitch)}
+.catalog{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:8px;margin-top:8px}
+.catalog .choice{text-align:start;padding:12px;min-height:84px}
+.catalog .choice[aria-pressed=true]{background:var(--tint)}
 .catalog strong,.catalog small{display:block}
 .catalog small{color:var(--muted);font-weight:500;margin-top:2px}
-.catalog .rate{display:block;font-size:.85rem;font-weight:750;margin-top:6px;color:var(--teal)}
-.coach-location{margin-top:9px;color:var(--muted);font-size:.9rem}
-.venue-options{margin:12px 0 0;padding:12px;border:1px solid var(--line);border-radius:10px}
-.toggle{display:flex;align-items:center;min-height:40px;gap:9px;font-weight:700}
-.toggle input{width:18px;height:18px;accent-color:var(--teal)}
-#own-location{min-height:44px;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-top:6px}
-.format{display:flex;align-items:center;gap:10px;margin:10px 0;color:var(--muted);font-weight:650}
-.format select{padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--white)}
-.details{color:var(--muted);font-size:.87rem;margin-top:10px}
-
-.summary{position:sticky;top:16px;background:#102f24;color:#fafff5;border-radius:16px;padding:24px}
-.summary h2{font-size:1.4rem;letter-spacing:-.03em}
-.meta{color:#c7dfce;margin:6px 0 14px;font-size:.9rem}
-.summary dl{font-size:.9rem}
+.catalog .rate{display:block;font-family:var(--display);font-size:1.2rem;font-weight:800;margin-top:6px;color:var(--pitch)}
+.coach-location{margin-top:9px;color:var(--muted)}
+.venue-options{margin:12px 0 0;padding:12px;border:1px dashed var(--line);border-radius:10px}
+.toggle{display:flex;align-items:center;min-height:40px;gap:10px;font-weight:600}
+.toggle input{width:20px;height:20px;accent-color:var(--pitch)}
+#own-location{min-height:44px;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-top:6px}
+.details{color:var(--muted);font-size:.88rem;margin-top:10px}
+.summary{position:sticky;top:16px;background:var(--pitch);color:var(--chalk);border-radius:16px;padding:24px}
+.summary h2{font-size:2rem}
+.meta{color:#b9d3c2;margin:6px 0 14px;font-size:.92rem}
 .price{display:flex;justify-content:space-between;gap:10px;margin:6px 0}
 .price dd{margin:0;white-space:nowrap}
-.total{border-top:1px solid #759380;padding-top:11px;margin-top:11px;font-size:1.05rem;font-weight:800}
-.primary{width:100%;padding:11px 16px;border:0;border-radius:11px;background:var(--lime);color:#193322;font-weight:800;margin-top:12px}
-.primary:disabled{opacity:.6;cursor:default}
-.demo{color:#c7dfce;margin-top:9px;font-size:.82rem}
-.back{background:var(--white);border:1px solid var(--line);color:var(--green);padding:8px 14px;border-radius:10px;font-weight:700;margin-top:12px}
-#return-results{max-width:860px;margin:0 auto 14px;display:block}
+.total{border-top:1px solid #ffffff33;padding-top:12px;margin-top:12px;font-family:var(--display);font-size:1.6rem;font-weight:800}
+.primary{width:100%;padding:12px 16px;border:0;border-radius:10px;background:var(--lime);color:var(--pitch);font-weight:700;margin-top:12px}
+.primary:disabled{background:#d4f74a66;color:#0d3a28aa;cursor:default}
+.demo{color:#b9d3c2;margin-top:10px;font-size:.84rem}
+.back{background:var(--surface);border:1px solid var(--line);color:var(--pitch);padding:8px 14px;border-radius:10px;font-weight:600;margin-top:12px}
+#return-results{max-width:880px;margin:0 auto 14px;display:block}
 
-#market{max-width:860px;margin:18px auto 50px}
-#market h1{font-size:clamp(1.9rem,5vw,3.2rem);letter-spacing:-.05em;margin:14px 0;color:var(--brand)}
-#market h2{font-size:1.15rem;margin:20px 0 10px}
+/* Courts: sports, clubs, branch grid */
+#market{max-width:880px;margin:10px auto 50px}
+#market h1{font-size:clamp(2.6rem,8vw,4.2rem);margin:8px 0 14px;color:var(--pitch)}
+#market h2{font-size:1.6rem;margin:0 0 4px}
 #market a{text-decoration:none;color:inherit}
-.mback{display:inline-flex;align-items:center;min-height:44px;color:var(--green)!important;font-weight:700}
-.sportgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
-.sportgrid a,.branches a{border:1px solid var(--line);border-radius:14px;padding:16px;background:white}
-.sportgrid span{display:block;font-size:2rem;margin-bottom:8px}
+.mback{display:inline-flex;align-items:center;min-height:44px;color:var(--turf)!important;font-weight:600}
+.sportgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.sportgrid a{position:relative;display:flex;align-items:flex-end;min-height:118px;padding:14px;border-radius:12px;background:var(--pitch);color:var(--chalk)!important;overflow:hidden}
+.sportgrid a:before{content:'';position:absolute;inset:12px;border:1.5px solid #ffffff2b;border-radius:4px;background:linear-gradient(90deg,transparent calc(50% - 1px),#ffffff2b calc(50% - 1px) calc(50% + 1px),transparent calc(50% + 1px))}
+.sportgrid a:nth-child(even){background:var(--turf)}
+.sportgrid span{display:none}
+.sportgrid strong{position:relative;font-family:var(--display);font-size:1.9rem;font-weight:800;line-height:1}
 .sporttabs,.mstrip,.branches,.vslots{display:flex;gap:8px;overflow-x:auto;padding:5px 0}
-.sporttabs a,.vslots a,.mtools button,.mstrip button{padding:10px 12px;border:1px solid var(--line);background:white;border-radius:11px;font-weight:650;white-space:nowrap}
-.sporttabs [aria-current],.branches [aria-current],.mstrip [aria-pressed=true],.mtools [aria-pressed=true]{background:var(--tint);color:var(--brand)!important;border-color:var(--focus)}
+.sporttabs a{padding:8px 4px;border-bottom:3px solid transparent;font-weight:600;white-space:nowrap;color:var(--muted)!important}
+.sporttabs [aria-current]{border-color:var(--pitch);color:var(--ink)!important}
 .mtools{display:flex;gap:8px;margin:12px 0}
-.mstrip button{flex:1;min-width:48px}
+.mstrip button{flex:1;min-width:50px;padding:8px 4px;border:1px solid var(--line);background:var(--surface);border-radius:8px}
 .mstrip small,.mstrip strong,.branches small{display:block}
-.branches small{margin-top:4px;color:var(--muted)}
-.venuecard{position:relative;border:1px solid var(--line);background:white;border-radius:16px;padding:14px;margin-bottom:12px}
-.venuehead{display:flex;align-items:center;gap:12px;padding-inline-end:42px}
-.venuehead h2{margin:0 0 4px!important}
-.venuehead strong,.venuehead small{display:block;font-size:.86rem}
-.sportart{display:grid;place-items:center;flex:0 0 76px;height:72px;font-size:2rem;border-radius:10px;color:white}
-.venuecard>.heart{position:absolute;inset-inline-end:10px;top:10px}
-.vslots{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
-.vslots a{font-size:.88rem}
-.vbanner{padding:22px;color:white;font-weight:700;border-radius:14px;margin-top:7px}
-.branches a{min-width:120px}
+.mstrip strong{font-family:var(--display);font-size:1.5rem;line-height:1}
+.mstrip [aria-pressed=true]{background:var(--pitch);color:var(--chalk);border-color:var(--pitch)}
+.branches a{min-width:130px;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--surface)}
+.branches [aria-current]{background:var(--tint);border-color:var(--pitch)}
+.branches small{margin-top:2px;color:var(--muted)}
+.venuecard{position:relative;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:14px;margin-bottom:12px}
+.venuehead{display:flex;align-items:center;gap:14px}
+.venuehead strong,.venuehead small{display:block}
+.venuehead small{color:var(--muted)}
+.venuehead strong{font-family:var(--display);font-size:1.3rem;font-weight:800;margin-top:2px}
+.sportart{flex:0 0 64px;height:64px;border-radius:10px;font-size:0;position:relative}
+.sportart:before{content:'';position:absolute;inset:8px;border:1.5px solid #ffffff4d;border-radius:3px;background:radial-gradient(circle at center,transparent 0 22%,#ffffff4d 22% 26%,transparent 27%)}
+.vslots{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
+.vbanner{position:relative;padding:18px 20px;color:var(--chalk);font-family:var(--display);font-size:1.5rem;font-weight:800;border-radius:12px;margin-top:6px;overflow:hidden}
 .gridslide{overflow:auto;margin-top:15px}
 #market table{width:100%;border-spacing:6px}
-#market td{min-width:106px}
-#market td button{width:100%;border:1px solid var(--line);background:white;color:var(--green);border-radius:9px;font-weight:700}
-#market td button:disabled{color:#8f988f;background:#e9ece6;text-decoration:line-through}
-#market td .hint:enabled{border-color:var(--focus);background:var(--tint-soft)}
-#market th{padding:8px 0}
+#market td{min-width:96px}
+#market th{padding:8px 0;font-weight:600;color:var(--muted)}
+#market td button{width:100%;min-height:46px}
+#market td button:disabled{background:transparent;color:#9aa89f;border:1px dashed var(--line);text-decoration:line-through;font-weight:600}
 
-.directory-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr));gap:14px;margin-top:12px}
-.dir-card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px}
+/* Gyms and academies */
+.directory-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:12px;margin-top:12px}
+.dir-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px}
 .dir-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.dir-badge{display:inline-block;font-size:.76rem;font-weight:750;padding:3px 9px;border-radius:999px;background:var(--tint);color:var(--green)}
-.dir-card h2{font-size:1.25rem;letter-spacing:-.03em;margin-top:4px}
-.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.tag{font-size:.78rem;padding:3px 8px;border-radius:6px;background:#eef2ea;color:var(--ink);font-weight:600}
-.price-strip{border-top:1px solid var(--line);padding-top:10px;display:flex;justify-content:space-between;align-items:baseline}
-.price-strip strong{font-size:1.15rem;color:var(--teal)}
-.card-actions{display:flex;gap:8px;margin-top:6px}
-.card-actions button{flex:1;padding:9px 12px;border-radius:10px;font-weight:700;font-size:.88rem;border:1px solid var(--line);background:var(--white);color:var(--ink)}
-.card-actions button.cta{background:var(--brand);color:white;border-color:var(--brand)}
-.card-actions button[aria-pressed="true"]{background:var(--tint);border-color:var(--brand);color:var(--brand-dark)}
+.dir-badge{font-size:.85rem;font-weight:600;color:var(--turf)}
+.dir-card h2{font-size:1.9rem;margin-top:4px}
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-size:.82rem;padding:3px 9px;border-radius:999px;border:1px solid var(--line);font-weight:500}
+.price-strip{border-top:1px solid var(--line);padding-top:10px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.price-strip strong{font-family:var(--display);font-size:1.7rem;font-weight:800;color:var(--pitch)}
+.card-actions{display:flex;gap:8px;margin-top:8px}
+.card-actions button{flex:1;padding:9px 12px;border-radius:10px;font-weight:600;border:1px solid var(--line);background:var(--surface)}
+.card-actions button.cta{background:var(--lime);color:var(--pitch);border-color:var(--lime)}
+.card-actions button[aria-pressed="true"]{background:var(--tint);border-color:var(--pitch)}
+.compare-bar{position:sticky;bottom:14px;background:var(--pitch);color:var(--chalk);padding:12px 18px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;z-index:10}
+.compare-bar button{background:var(--lime);color:var(--pitch);border:0;padding:8px 16px;border-radius:8px;font-weight:700}
+.compare-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.92rem}
+.compare-table th,.compare-table td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:start;vertical-align:top}
+.compare-table th{font-weight:700;width:28%}
 
-.compare-bar{position:sticky;bottom:14px;background:var(--brand-dark);color:white;padding:12px 18px;border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;box-shadow:0 12px 32px #00000033;z-index:10}
-.compare-bar button{background:var(--lime);color:#142921;border:0;padding:8px 16px;border-radius:9px;font-weight:800}
-.compare-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.9rem}
-.compare-table th,.compare-table td{border:1px solid var(--line);padding:10px;text-align:start;vertical-align:top}
-.compare-table th{background:#f1f4ee;font-weight:750;width:28%}
-
-dialog{border:0;border-radius:20px;padding:24px;color:var(--ink);background:var(--white);width:min(540px,calc(100% - 28px));max-height:86dvh;overflow-y:auto;box-shadow:0 30px 90px #0f332677}
-dialog::backdrop{background:#0f332688;backdrop-filter:blur(3px)}
-dialog h2{font-size:1.5rem;letter-spacing:-.04em;margin-bottom:8px}
-.review-total{font-weight:800;margin-top:10px}
+/* Sheets and dialogs */
+dialog{border:0;border-radius:20px;padding:24px;color:var(--ink);background:var(--surface);width:min(540px,calc(100% - 28px));max-height:86dvh;overflow-y:auto}
+dialog::backdrop{background:#082a1cb3}
+dialog h2{font-size:2.2rem;margin-bottom:8px}
+.review-total{font-family:var(--display);font-size:1.5rem;font-weight:800;margin-top:10px}
 .notice{color:var(--muted);margin-top:6px}
 .form-stack{display:grid;gap:12px;margin-top:14px}
-.form-stack label{display:grid;gap:4px;font-weight:700;font-size:.88rem}
-.form-stack input,.form-stack select,.form-stack textarea{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--white);color:var(--ink)}
+.form-stack label{display:grid;gap:4px;font-weight:600;font-size:.92rem}
+.form-stack input,.form-stack select,.form-stack textarea{padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 .dialog-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
 .dialog-actions button{flex:1}
 #saved article{padding:14px 0;border-bottom:1px solid var(--line)}
@@ -210,15 +243,16 @@ dialog h2{font-size:1.5rem;letter-spacing:-.04em;margin-bottom:8px}
   .layout{grid-template-columns:1fr}
   .summary{position:static}
   .actions{grid-template-columns:1fr}
+  .actions a:nth-child(n){padding-inline:4px;border-inline-end:0}
   .filters{grid-template-columns:1fr 1fr}
-  .top nav a{padding-inline:8px;font-size:.82rem}
+  .top nav a{font-size:.92rem}
   dialog{margin:auto 0 0;width:100%;max-width:none;border-radius:20px 20px 0 0;padding-bottom:max(22px,env(safe-area-inset-bottom))}
 }
-.operator-entry{text-align:center;padding:24px 0}.operator-entry a{color:var(--brand);font-weight:700;text-underline-offset:4px}</style>
+</style>
 </head>
 <body>
 <header class="shell top" data-page="courts">
-  <a class="brand" href="#/home" aria-label="SPORT home">SPORT.</a>
+  <a class="brand" href="#/home" aria-label="SPORT home">SPORT</a>
   <nav aria-label="Marketplace sections">
     <a href="#/sports" id="courts-link" data-i18n="nav_courts">Courts</a>
     <a href="#/coaches" id="coaches-link" data-i18n="nav_coaches">Coaches</a>
@@ -236,26 +270,28 @@ dialog h2{font-size:1.5rem;letter-spacing:-.04em;margin-bottom:8px}
   <section id="market" hidden></section>
   <section id="home" hidden>
     <div class="welcome">
-      <b data-i18n="city_alex">ALEXANDRIA</b>
-      <h1 data-i18n="welcome_user">Hey, Marwan 👋</h1>
+      <svg class="pitch-lines" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect x="20" y="20" width="360" height="260"/><line x1="200" y1="20" x2="200" y2="280"/><circle cx="200" cy="150" r="46"/><rect x="20" y="85" width="58" height="130"/><rect x="322" y="85" width="58" height="130"/></svg>
+      <p class="hello" data-i18n="welcome_user">Welcome back, Marwan</p>
+      <h1 data-i18n="hero_title">Play tonight in Alexandria.</h1>
       <form id="search-home">
         <input id="home-text" type="search" data-i18n-placeholder="search_home_ph" placeholder="Search a venue, gym, academy, or neighborhood">
         <button type="submit" data-i18n="btn_search">Search</button>
       </form>
+      <div class="board"><p data-i18n="next_free">Next free football pitches</p><div id="next-slots"></div></div>
     </div>
-    <div class="actions">
-      <a href="#/sports"><span>▦</span><strong data-i18n="act_court_t">Book a court</strong><small data-i18n="act_court_d">Padel, football, tennis & more</small></a>
-      <a href="#/coaches"><span>◎</span><strong data-i18n="act_coach_t">Find a coach</strong><small data-i18n="act_coach_d">Private or group training sessions</small></a>
-      <a href="#/gyms"><span>◈</span><strong data-i18n="act_gym_t">Compare gyms</strong><small data-i18n="act_gym_d">Memberships, facilities & free trials</small></a>
-      <a href="#/academies"><span>★</span><strong data-i18n="act_acad_t">Join an academy</strong><small data-i18n="act_acad_d">Youth & adult programs by age & level</small></a>
-    </div>
+    <nav class="actions" aria-label="What would you like to do?">
+      <a href="#/sports"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="9" width="30" height="22" rx="1"/><line x1="20" y1="9" x2="20" y2="31"/><circle cx="20" cy="20" r="4"/></svg><strong data-i18n="act_court_t">Book a court</strong><small data-i18n="act_court_d">Padel, football, tennis & more</small></a>
+      <a href="#/coaches"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="13" r="6"/><path d="M8 34c1-7 6-11 12-11s11 4 12 11"/></svg><strong data-i18n="act_coach_t">Find a coach</strong><small data-i18n="act_coach_d">Private or group training sessions</small></a>
+      <a href="#/gyms"><svg viewBox="0 0 40 40" aria-hidden="true"><line x1="6" y1="20" x2="34" y2="20"/><rect x="9" y="13" width="5" height="14" rx="1"/><rect x="26" y="13" width="5" height="14" rx="1"/></svg><strong data-i18n="act_gym_t">Compare gyms</strong><small data-i18n="act_gym_d">Memberships, facilities & free trials</small></a>
+      <a href="#/academies"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 6l13 7-13 7-13-7z"/><path d="M12 16v8c3 3 13 3 16 0v-8"/></svg><strong data-i18n="act_acad_t">Join an academy</strong><small data-i18n="act_acad_d">Youth & adult programs by age & level</small></a>
+    </nav>
     <div class="shortcuts">
       <button type="button" id="booked" data-i18n="my_bookings">My bookings</button>
       <button type="button" id="liked" data-i18n="saved_pitches">Saved listings</button>
     </div>
     <h2 data-i18n="featured_courts">Featured courts & pitches in Alexandria</h2>
     <div id="local-picks"></div>
-    <p class="operator-entry"><a id="operator-entry" href="../provider-admin/operators.html">Are you an operator?</a></p>
+    <a class="operator" id="operator-link" href="../provider/index.html#/join"><span data-i18n="operator_q">Are you a coach, venue, gym or academy?</span> <b data-i18n="operator_cta">Open your workspace</b></a>
   </section>
 
   <div class="intro">
@@ -487,7 +523,7 @@ let lang = localStorage.getItem('sport.lang') || 'en';
 const I18N = {
   en: {
     nav_courts:'Courts', nav_coaches:'Coaches', nav_gyms:'Gyms', nav_academies:'Academies',
-    my_bookings:'My bookings', city_alex:'ALEXANDRIA', welcome_user:'Hey, Marwan 👋',
+    my_bookings:'My bookings', city_alex:'Alexandria', welcome_user:'Welcome back, Marwan', hero_title:'Play tonight in Alexandria.', operator_q:'Are you a coach, venue, gym or academy?', operator_cta:'Open your workspace', next_free:'Next free football pitches',
     search_home_ph:'Search a venue, gym, academy, or neighborhood', btn_search:'Search',
     act_court_t:'Book a court', act_court_d:'Padel, football, tennis & more',
     act_coach_t:'Find a coach', act_coach_d:'Private or group training sessions',
@@ -525,7 +561,7 @@ const I18N = {
   },
   ar: {
     nav_courts:'الملاعب', nav_coaches:'المدربون', nav_gyms:'الجيم', nav_academies:'الأكاديميات',
-    my_bookings:'حجوزاتي', city_alex:'الإسكندرية', welcome_user:'أهلاً يا مروان 👋',
+    my_bookings:'حجوزاتي', city_alex:'الإسكندرية', welcome_user:'أهلاً بعودتك يا مروان', hero_title:'العب الليلة في الإسكندرية.', operator_q:'هل أنت مدرب أو صاحب ملعب أو جيم أو أكاديمية؟', operator_cta:'افتح مساحة عملك', next_free:'أقرب ملاعب كرة قدم متاحة',
     search_home_ph:'ابحث عن ملعب، جيم، أكاديمية، أو منطقة', btn_search:'بحث',
     act_court_t:'احجز ملعب', act_court_d:'بادل، كرة قدم، تنس والمزيد',
     act_coach_t:'ابحث عن مدرب', act_coach_d:'حصص تدريب فردية أو جماعية',
@@ -567,12 +603,6 @@ const t = key => (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key;
 function applyLanguage() {
   const isAr = lang === 'ar';
   document.documentElement.lang = isAr ? 'ar' : 'en';
-  const operatorEntry = document.getElementById('operator-entry');
-  operatorEntry.textContent = isAr ? 'هل أنت مدرّب أو صاحب منشأة رياضية؟' : 'Are you an operator?';
-  const operatorUrl = new URL('../provider-admin/operators.html', location.href);
-  operatorUrl.search = location.search;
-  operatorUrl.searchParams.set('lang', isAr ? 'ar' : 'en');
-  operatorEntry.href = operatorUrl.href;
   document.documentElement.dir = isAr ? 'rtl' : 'ltr';
   $('lang-toggle').textContent = isAr ? 'EN' : 'عربي';
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
@@ -1045,7 +1075,7 @@ function showClubs(s) {
 function showVenue(s, c, b) {
   const base = '#/sports/' + s[0], branch = c.branches[b]; heading(s[1], base, c.name);
   ApiClient.loadAvailability(dayIndex, Array.from({ length: branch[1] }, (_, i) => keyFor(s, c, b, i + 1)), showMarket);
-  const banner = el('div', `${s[3]}   ${s[1]}  /  ${branch[0]}`, 'vbanner'); banner.style.backgroundColor = c.color; market.insertBefore(banner, market.querySelector('h1'));
+  const banner = el('div', `${s[1]} · ${branch[0]}`, 'vbanner'); banner.style.backgroundColor = c.color; market.insertBefore(banner, market.querySelector('h1'));
   const branches = el('div', null, 'branches'); c.branches.forEach(([name, size], i) => { const a = link('', base + '/' + c.id + '/' + i); a.append(el('strong', name), el('small', `${size} ${s[2]}`)); if (i === b) a.setAttribute('aria-current', 'page'); branches.append(a); });
   market.append(branches, dateBar(showMarket));
   const scroll = el('div', null, 'gridslide'), table = el('table'), header = table.createTHead().insertRow();
@@ -1086,7 +1116,7 @@ function route() {
   if (page === 'academies') { $('academies-view').hidden = false; renderAcademies(); return; }
   $('search').value = ''; openResults(true); if (pendingSaved) { pendingSaved = false; onlySaved = true; drawResults(); }
 }
-$('lang-toggle').onclick = () => { lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('sport.lang', lang); applyLanguage(); route(); };
+$('lang-toggle').onclick = () => { lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('sport.lang', lang); applyLanguage(); route(); renderNextSlots(); };
 $('browse-date').append(...days.map((_, i) => new Option(dayLabel(i), String(i))));
 $('browse-date').onchange = () => { selection.day = Number($('browse-date').value); drawResults(); };
 $('area').onchange = drawResults; $('kind').onchange = drawResults;
@@ -1099,8 +1129,21 @@ $('refine').onclick = () => { const f = document.querySelector('.filters'); f.hi
 $('sort').onchange = drawResults; $('search').oninput = drawResults;
 days.forEach((date, i) => { const b = node('button'); b.append(node('small', new Intl.DateTimeFormat(localeCode(), { weekday: 'short', timeZone: 'Africa/Cairo' }).format(date)), node('b', String(date.getUTCDate()))); b.onclick = () => { selection.day = i; drawResults(); }; $('week').append(b); });
 for (const [key, item] of Object.entries(courts)) { const [cid, b] = key.split('/'); const a = node('a'); a.href = `#/sports/football/${cid}/${b}`; a.append(diagram(key), node('strong', item.name), node('small', `${item.detail} · ${money(item.price)}/hr`)); $('local-picks').append(a); }
+function renderNextSlots() {
+  const now = Number(new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: 'Africa/Cairo' }).format(new Date()));
+  const out = [];
+  for (const [key, c] of Object.entries(courts)) {
+    const h = marketTimes.find(h => h > now && freeUnit(c, h, 0)) ?? marketTimes.find(h => freeUnit(c, h, 0));
+    if (h !== undefined) out.push([key, c, h]);
+  }
+  $('next-slots').replaceChildren(...out.sort((a, b) => a[2] - b[2]).slice(0, 6).map(([key, c, h]) => {
+    const a = node('a'); a.href = `#/sports/football/${key}`; a.append(node('b', timeLabel(h)), node('small', c.name), node('small', `${dayLabel(0)} · ${money(c.price)}`));
+    a.onclick = () => { dayIndex = 0; }; return a;
+  }));
+}
 window.addEventListener('hashchange', () => { window.scrollTo(0, 0); route(); });
-applyLanguage(); route(); ApiClient.probe();
+$('operator-link').href = '../provider/index.html' + location.search + '#/join';
+applyLanguage(); route(); renderNextSlots(); ApiClient.probe();
 </script>
 </body>
 </html>

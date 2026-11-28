@@ -1,5 +1,59 @@
 # SPORT verification log
 
+## 28 Nov 2026 · Claude · Provider app: a mini app for each role (`apps/provider/index.html`)
+
+- **Entry:** athlete home ends with "Are you a coach, venue, gym or academy? Open your workspace", which leads to the role picker. The choice is remembered. Sample accounts stand in until real sign-in exists.
+- **Coach** (coach-omar):
+  - Today's sessions: who, where, Mark attended, Add private session
+  - Schedule: weekly hours and closures
+  - Prices
+  - Bookings for the next 7 days
+- **Venue** (venue-coastal):
+  - Today's courts: branch × sport × day grid. Tap a free slot to add a walk-in (charged at the server price) or a block (0 EGP). Tap a booked slot to check in, or to remove a walk-in or block.
+  - Hours & closures for the whole club
+  - Prices per sport
+- **Gym** (gym-apex):
+  - Enquiries pipeline: New → Contacted → Visit booked (date) → Joined / Closed
+  - Plans & prices
+  - Facilities & hours
+- **Academy** (academy-alex-youth):
+  - Programs: ages, levels, schedule, price, billing, coaches, description
+  - Trials: booked trials, then Enrolled or Close
+  - Enquiries pipeline
+- **New API routes:**
+  - `GET /api/provider/me`
+  - `GET /api/provider/calendar`
+  - `POST /api/provider/blocks`
+  - `POST /api/provider/bookings/:id/checkin|cancel`
+  - `PUT /api/provider/prices`
+  - `PATCH /api/provider/enquiries/:id`
+  - `PATCH /api/provider/listings/:id`
+- **Rules:**
+  - Owners act only on their own coach, club or listing.
+  - Walk-ins use the same overlap guard as athlete bookings.
+  - Providers can't cancel a paid athlete booking (refunds go through support).
+  - Provider prices are what athletes are charged.
+  - Listing edits survive restarts: the startup sync skips edited listings.
+- **Database:** new columns `bookings.source/note/checked_in_at`, `enquiries.trial_date/provider_note` and the `TRIAL` status, `directory_listings.edited_at`. New table `resource_prices`. Added on startup for older databases.
+
+| Check | Result |
+|---|---|
+| `npm test` with PostgreSQL (new `tests/api/provider.test.mjs`, 7 cases × 2 stores) | **82 / 82** |
+| `tests/ui/live_e2e.py` (new: athlete home → role picker, each role lands on its page, venue walk-in → athlete hold refused 409, gym moves an enquiry, no JS errors) | **31 / 31** |
+| Screenshots of each workspace at 390×844 | reviewed. Found and fixed a builder bug that dropped text, before this run. |
+
+Open: the provider app is English only; real sign-up and sign-in with roles and admin approval; one person with several roles (switcher); notifications.
+
+
+## 28 Nov 2026 · Claude · Pitch-side redesign of the athlete app (owner chose "Pitch-side")
+
+- **Type:** Big Shoulders Display (stadium signage) for headlines, times and prices. Barlow for reading. Noto Kufi Arabic in Arabic. Fonts load from Google Fonts, with system fallbacks offline.
+- **Colour:** deep pitch green `#0d3a28`, turf `#165c3f`, chalk `#f3f6f1`, lime `#d4f74a`. Lime marks only what you can press or have chosen.
+- **Signature:** home is a pitch, with chalk lines behind the headline and a "next free pitches" scoreboard row. Every bookable time in the app is a scoreboard tile.
+- **Removed:** emoji icons (sports, banner, greeting), the four coloured home tiles (now a line list with simple drawn icons), all-caps labels, and the pill-shaped nav (now tabs with a sliding underline).
+- **Reference patterns kept:** MultiSport Booking System (prices visible on cards), BookingCalendar (date, then times), Motion Primitives (sliding selection indicator, now an underline) and Vaul (bottom sheet on phone). The new type and colour direction came from the frontend-design plugin, not from a cloned repo. The cloned repos were not available in this session.
+- **Tests:** `npm test` 68/68, `tests/ui/test_preview.py` passed, `tests/ui/smoke.py` (phone and desktop, English and Arabic) has no JS errors and no sideways scroll, `tests/ui/live_e2e.py` 22/22. No selectors changed.
+
 ## 28 Nov 2026 · Operator entry
 
 Browser coverage in `test_operator_entry_and_workspace_pages` opens the athlete home on mobile, chooses each operator, checks both pages and reload, and returns to the athlete app. Results are recorded by the PR’s UI job.
@@ -177,3 +231,11 @@ The bundle added an API, a PostgreSQL schema, a provider/admin portal, Gyms and 
 - Original 62 / 66, fixed **66 / 66**.
 - Fixed: a cancelled facility booking stayed blocked; the facility review dialog was unstyled with no accessible name; the desktop detail layout was misaligned.
 - Covered: home, sports grid, club search, slot hint, facility booking and cancel, pitch listing, review focus and Escape, fixed vs flexible coach, itemized 900 EGP total, "No shared times", padel coach location rule.
+
+## 2026-11-28 — Listing ownership always re-synced at startup (Claude)
+- Security review: once a provider edited a listing, the startup sync skipped the whole row, including `owner_user_id`. A catalog ownership change would not reach the database. Now owner, kind, name, sport and area always follow the catalog; only price, billing and details are kept after an edit.
+- PRV-07 extended (fails without the fix). `npm test` with PostgreSQL: 82/82.
+
+## 2026-11-28 — Merge of ChatGPT operator entry (Claude)
+- Two operator entries existed. Kept the provider app link; `operators.html` redirects old links (with `?workspace=` → that role). `test_operator_entry_and_workspace_pages` updated to the single entry and still covers the admin portal's `?workspace=` views.
+- `npm test` (PostgreSQL) 82/82, `tests/ui/test_preview.py` 2/2, `tests/ui/live_e2e.py` 31/31.

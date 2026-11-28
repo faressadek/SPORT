@@ -4,8 +4,9 @@ This file is shared by ChatGPT/Codex, Gemini and Claude. Keep project rules here
 
 ## Read first
 1. `docs/decisions.md`: the owner's decisions, newest first.
-2. `docs/handoff.md`: vision, architecture and history.
-3. `docs/verification-log.md`: what has been tested and what is still open.
+2. `docs/architecture.md`: target architecture, entry flow and what each role's workspace does.
+3. `docs/handoff.md`: vision and history.
+4. `docs/verification-log.md`: what has been tested and what is still open.
 
 ## Product rules (owner decisions)
 - SPORT is an Egyptian sports marketplace. The pilot is a mobile-friendly web app in Alexandria.
