@@ -228,3 +228,7 @@ The bundle added an API, a PostgreSQL schema, a provider/admin portal, Gyms and 
 - Original 62 / 66, fixed **66 / 66**.
 - Fixed: a cancelled facility booking stayed blocked; the facility review dialog was unstyled with no accessible name; the desktop detail layout was misaligned.
 - Covered: home, sports grid, club search, slot hint, facility booking and cancel, pitch listing, review focus and Escape, fixed vs flexible coach, itemized 900 EGP total, "No shared times", padel coach location rule.
+
+## 2026-11-28 — Listing ownership always re-synced at startup (Claude)
+- Security review: once a provider edited a listing, the startup sync skipped the whole row, including `owner_user_id`. A catalog ownership change would not reach the database. Now owner, kind, name, sport and area always follow the catalog; only price, billing and details are kept after an edit.
+- PRV-07 extended (fails without the fix). `npm test` with PostgreSQL: 82/82.

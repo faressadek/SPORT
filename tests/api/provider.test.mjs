@@ -94,9 +94,13 @@ storeTest('PRV-07 prices and listing edits survive a restart (startup sync keeps
   const { createPgStore } = await import('../../apps/api/src/pg-store.mjs');
   await store.setPrice('club:coastal:padel', 700);
   await store.updateListing('gold-smouha', { hours: '05:00 – 01:00' });
+  const { default: pg } = await import('pg');
+  const db = new pg.Client({ connectionString: url }); await db.connect();
+  await db.query(`UPDATE sport.directory_listings SET owner_user_id = NULL WHERE id = 'gold-smouha'`); await db.end();
   const again = await createPgStore(url);
   try {
     assert.equal((await again.getPrices()).get('club:coastal:padel'), 700);
     assert.equal((await again.getListing('gold-smouha')).hours, '05:00 – 01:00');
+    assert.equal((await again.getListing('gold-smouha')).ownerId, 'gym-apex', 'ownership always follows the catalog');
   } finally { await again.close(); }
 });

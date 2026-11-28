@@ -151,9 +151,11 @@ export async function createPgStore(connectionString, { setup = true } = {}) {
           `INSERT INTO sport.directory_listings (id, kind, name, sport, area, price_egp_minor, billing_period, owner_user_id, details)
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
            ON CONFLICT (id) DO UPDATE SET kind = EXCLUDED.kind, name = EXCLUDED.name, sport = EXCLUDED.sport, area = EXCLUDED.area,
-             price_egp_minor = EXCLUDED.price_egp_minor, billing_period = EXCLUDED.billing_period,
-             owner_user_id = EXCLUDED.owner_user_id, details = EXCLUDED.details
-           WHERE sport.directory_listings.edited_at IS NULL`,
+             owner_user_id = EXCLUDED.owner_user_id,
+             -- Ownership and identity always follow the catalog; only provider-editable fields are kept once edited.
+             price_egp_minor = CASE WHEN sport.directory_listings.edited_at IS NULL THEN EXCLUDED.price_egp_minor ELSE sport.directory_listings.price_egp_minor END,
+             billing_period = CASE WHEN sport.directory_listings.edited_at IS NULL THEN EXCLUDED.billing_period ELSE sport.directory_listings.billing_period END,
+             details = CASE WHEN sport.directory_listings.edited_at IS NULL THEN EXCLUDED.details ELSE sport.directory_listings.details END`,
           [id, kind, name, sport, area, Math.round(price * 100), billing, ownerId ?? null, details]);
       }
     });
