@@ -10,6 +10,8 @@ export function createMemoryStore() {
   const payments = new Map();
   const enquiries = [];
   const outbox = [];
+  const schedules = new Map(); // target -> weekly
+  const closures = [];
   const listings = new Map(SEED_LISTINGS.map(l => [l.id, { ...structuredClone(l), published: true }]));
 
   function sweep(now = Date.now()) {
@@ -77,6 +79,17 @@ export function createMemoryStore() {
       if (!['HOLD', 'CONFIRMED'].includes(b.status)) return { httpStatus: 409, result: { error: `Cannot cancel a ${b.status} booking` } };
       b.status = 'CANCELLED'; b.active = false;
       return { httpStatus: 200, result: { bookingId, status: 'CANCELLED' } };
+    },
+
+    async getSchedules() { return new Map([...schedules].map(([k, v]) => [k, structuredClone(v)])); },
+    async setWeekly(target, weekly) { if (weekly === null) schedules.delete(target); else schedules.set(target, structuredClone(weekly)); },
+    async listClosures() { return closures.map(c => structuredClone(c)); },
+    async addClosure(c) {
+      const row = { id: newId('CLS', crypto), createdAt: new Date().toISOString(), ...c };
+      closures.push(row); return structuredClone(row);
+    },
+    async deleteClosure(id) {
+      const i = closures.findIndex(c => c.id === id); return i < 0 ? null : closures.splice(i, 1)[0];
     },
 
     async listListings() { return [...listings.values()].map(l => structuredClone(l)); },

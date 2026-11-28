@@ -1,5 +1,30 @@
 # SPORT verification log
 
+## 28 Nov 2026 · Claude · Provider schedules (opening hours and closures)
+
+- **Targets:** each coach, and each club. A club target covers every court of every sport there.
+- **Weekly hours:** Cairo local hours per weekday. A weekday left out is closed. With no schedule, the catalog hours apply.
+- **Closures:** a date, plus either some hours or the whole day. Both are stored in PostgreSQL (`resource_schedules`, `resource_closures`). Older databases get the tables on startup. They're read on every request, so all API servers agree.
+- **Holds:** refused (409) outside open hours. `GET /api/availability` now returns `resources: {id: {openHours, busyHours}}`.
+- **Provider routes:**
+  - `GET /api/provider/schedule`
+  - `PUT /api/provider/schedule/:target` (`{weekly}`, or `null` to reset)
+  - `POST /api/provider/closures`
+  - `DELETE /api/provider/closures/:id`
+  - Owner or admin only.
+- **Existing bookings:** a closure doesn't cancel them, because that would need refunds. The response lists them so the provider can contact those athletes.
+- **Portal:** an "Opening Hours & Closures" editor (hours typed as `8-12, 16-21`).
+- **Athlete app:** with the API running, the club grid and coach times use the server's open and busy hours instead of the sample availability.
+
+| Check | Result |
+|---|---|
+| `npm test` with PostgreSQL (new `tests/api/schedule.test.mjs`: ownership, weekly hours, validation, club closure across sports, reported bookings, all-day coach closure, two servers) | **68 / 68** |
+| `tests/ui/live_e2e.py` (new: venue closes its club in the portal, existing booking reported, athlete grid shows no free slot, closure removed) | **22 / 22** |
+| `tests/ui/test_preview.py`, `tests/ui/smoke.py` | passed, no JS errors |
+
+Open: closures don't notify athletes; there's no recurring closure (e.g. every Friday 12–14, which weekly hours can cover); the offline demo still uses sample availability.
+
+
 ## 28 Nov 2026 · Claude · Plugins installed (Claude Code 2.1.332)
 
 `claude plugin install <name>@claude-plugins-official --scope project` failed at first: "not found in marketplace". The official marketplace was not registered in the cloud container. After `claude plugin marketplace add anthropics/claude-plugins-official`, all four installed and show as enabled in `claude plugin list`: code-review 1.0.1, frontend-design 1.1.1, security-guidance 2.0.21, superpowers 7.0.2. `.claude/settings.json` now registers that marketplace, so new sessions can find it.

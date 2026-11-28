@@ -1,9 +1,9 @@
 import http from 'node:http';
 import { pathToFileURL } from 'node:url';
 import { authenticate, requireRole, canAccessBooking } from './access.mjs';
-import { HttpError, validateHold } from './rules.mjs';
+import { HttpError, validateHold, validateWeekly, validateClosure, openHours, bookingInClosure, cairoDate } from './rules.mjs';
 import { createMemoryStore } from './memory-store.mjs';
-import { filterListings, publicListing } from './catalog.mjs';
+import { filterListings, publicListing, SEED_RESOURCES, CLUBS } from './catalog.mjs';
 
 export { createMemoryStore as createStore };
 export { SPORTS, CLUBS } from './catalog.mjs';
@@ -12,7 +12,7 @@ function sendJson(res, status, data) {
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS',
+    'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type,Authorization',
   });
   res.end(status === 204 ? undefined : JSON.stringify(data));
@@ -30,6 +30,16 @@ async function readBody(req) {
   try { return JSON.parse(Buffer.concat(chunks).toString('utf8')); }
   catch { throw new HttpError(400, 'Request body must be valid JSON'); }
 }
+
+// Schedule targets: each coach, and each club (all of its courts). Owner = who may change the hours.
+function scheduleTargets(store) {
+  const coaches = SEED_RESOURCES.filter(r => r.kind === 'coach').map(r => store.lookup(r.id))
+    .map(r => ({ target: r.id, kind: 'coach', name: r.name, ownerId: r.ownerId ?? null, defaultHours: r.hours }));
+  const clubs = CLUBS.map(c => ({ target: 'club:' + c.id, kind: 'club', name: c.name, ownerId: c.ownerId ?? null,
+    defaultHours: store.lookup(`football/${c.id}/0/1`).hours }));
+  return [...coaches, ...clubs];
+}
+const canManage = (user, t) => user.role === 'admin' || (t && t.ownerId === user.id);
 
 // store: createMemoryStore() or await createPgStore(url). Both implement the same async interface.
 export function createApp(store = createMemoryStore()) {
@@ -59,7 +69,15 @@ export function createApp(store = createMemoryStore()) {
         const day = url.searchParams.get('day');
         const resourceIds = (url.searchParams.get('resources') || '').split(',').filter(Boolean);
         if (!day || Number.isNaN(Date.parse(day))) throw new HttpError(400, 'A valid day is required');
-        return sendJson(res, 200, { day, busyHours: await store.busyHours(new Date(day).toISOString(), resourceIds) });
+        if (resourceIds.length > 60) throw new HttpError(400, 'At most 60 resources per request');
+        const iso = new Date(day).toISOString();
+        const [schedules, closures] = await Promise.all([store.getSchedules(), store.listClosures()]);
+        const resources = {};
+        for (const id of resourceIds) {
+          const r = store.lookup(id); if (!r || !r.published) continue;
+          resources[id] = { openHours: openHours(r, iso, schedules, closures), busyHours: await store.busyHours(iso, [id]) };
+        }
+        return sendJson(res, 200, { day, busyHours: await store.busyHours(iso, resourceIds), resources });
       }
 
       if (req.method === 'GET' && path === '/api/bookings') {
@@ -72,6 +90,10 @@ export function createApp(store = createMemoryStore()) {
       if (req.method === 'POST' && path === '/api/holds') {
         requireRole(user, ['athlete']);
         const hold = validateHold(await readBody(req), store.lookup);
+        const [schedules, closures] = await Promise.all([store.getSchedules(), store.listClosures()]);
+        if (hold.resourceIds.some(id => !openHours(store.lookup(id), hold.day, schedules, closures).includes(hold.hour))) {
+          throw new HttpError(409, 'Not available at this hour.');
+        }
         const booking = await store.createHold(hold, user.id);
         return sendJson(res, 201, { bookingId: booking.id, status: booking.status, holdExpiresAt: booking.holdExpiresAt, total: booking.total, label: booking.label });
       }
@@ -145,6 +167,48 @@ export function createApp(store = createMemoryStore()) {
         const resource = await store.setPublished(decodeURIComponent(path.split('/').pop()), body.published);
         if (!resource) throw new HttpError(404, 'Resource not found');
         return sendJson(res, 200, resource);
+      }
+
+      // Provider schedules: weekly opening hours and dated closures for the coaches and clubs the caller owns.
+      if (req.method === 'GET' && path === '/api/provider/schedule') {
+        requireRole(user, ['coach', 'venue_operator', 'gym_operator', 'academy_operator', 'admin']);
+        const mine = scheduleTargets(store).filter(t => canManage(user, t));
+        const schedules = await store.getSchedules(), names = new Set(mine.map(t => t.target));
+        return sendJson(res, 200, {
+          targets: mine.map(({ ownerId, ...t }) => ({ ...t, weekly: schedules.get(t.target) ?? null })),
+          closures: (await store.listClosures()).filter(c => names.has(c.target)),
+        });
+      }
+      const weeklyMatch = path.match(/^\/api\/provider\/schedule\/([^/]+)$/);
+      if (req.method === 'PUT' && weeklyMatch) {
+        requireRole(user, ['coach', 'venue_operator', 'admin']);
+        const t = scheduleTargets(store).find(x => x.target === decodeURIComponent(weeklyMatch[1]));
+        if (!t) throw new HttpError(404, 'Unknown coach or club');
+        if (!canManage(user, t)) throw new HttpError(403, 'You can change only your own hours');
+        const weekly = validateWeekly((await readBody(req)).weekly);
+        await store.setWeekly(t.target, weekly);
+        return sendJson(res, 200, { target: t.target, weekly });
+      }
+      if (req.method === 'POST' && path === '/api/provider/closures') {
+        requireRole(user, ['coach', 'venue_operator', 'admin']);
+        const body = await readBody(req);
+        const t = scheduleTargets(store).find(x => x.target === String(body.target));
+        if (!t) throw new HttpError(404, 'Unknown coach or club');
+        if (!canManage(user, t)) throw new HttpError(403, 'You can close only your own coach or club');
+        const closure = await store.addClosure({ target: t.target, ...validateClosure(body), createdBy: user.id });
+        // Existing bookings are kept: cancelling would need refunds. Report them so the provider can contact the athletes.
+        const affected = (await store.listBookings({ activeOnly: true })).filter(b => bookingInClosure(b, closure));
+        return sendJson(res, 201, { closure, affectedBookings: affected.map(b => ({ id: b.id, day: cairoDate(b.day), hour: b.hour, label: b.label })) });
+      }
+      const closureMatch = path.match(/^\/api\/provider\/closures\/([^/]+)$/);
+      if (req.method === 'DELETE' && closureMatch) {
+        requireRole(user, ['coach', 'venue_operator', 'admin']);
+        const id = decodeURIComponent(closureMatch[1]);
+        const existing = (await store.listClosures()).find(c => c.id === id);
+        if (!existing) throw new HttpError(404, 'Closure not found');
+        if (!canManage(user, scheduleTargets(store).find(x => x.target === existing.target))) throw new HttpError(403, 'Forbidden');
+        await store.deleteClosure(id);
+        return sendJson(res, 200, { deleted: id });
       }
 
       if (req.method === 'PATCH' && path.startsWith('/api/admin/listings/')) {

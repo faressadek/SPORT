@@ -125,6 +125,23 @@ CREATE TABLE enquiries (
     created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Provider schedules: weekly opening hours and dated closures (also created on startup for older databases)
+CREATE TABLE IF NOT EXISTS sport.resource_schedules (
+    target      TEXT PRIMARY KEY,           -- coach resource id, or 'club:<id>' for every court at a club
+    weekly      JSONB NOT NULL,             -- {"0": [hours], ... "6": [hours]}, Cairo local hours, 0 = Sunday
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS sport.resource_closures (
+    id          TEXT PRIMARY KEY,
+    target      TEXT NOT NULL,
+    day         DATE NOT NULL,              -- Cairo date
+    hours       INT[],                      -- NULL = closed all day
+    reason      TEXT NOT NULL DEFAULT '',
+    created_by  TEXT REFERENCES sport.users(id),
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS resource_closures_day ON sport.resource_closures (day);
+
 -- Seed Pilot Data (Alexandria)
 INSERT INTO users (id, role, full_name, email, preferred_lang) VALUES
     ('demo-athlete-marwan', 'athlete', 'Marwan', 'marwan@example.eg', 'en'),
