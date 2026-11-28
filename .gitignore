@@ -158,3 +158,9 @@ vite.config.ts.timestamp-*
 shots/
 __pycache__/
 !.env.example
+
+# Next.js / Turborepo workspace
+.next/
+.turbo/
+next-env.d.ts
+*.tsbuildinfo

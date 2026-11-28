@@ -1,0 +1,89 @@
+flowchart TD
+    %% ================= ATHLETE SIDE =================
+    open(["Open SPORT"]) --> home["Athlete Home<br/>browse as guest"]
+
+    home --> coachList["Coaches<br/>list of coach accounts"]
+    home --> gymList["Gyms<br/>list of gym accounts"]
+    home --> acadList["Academies<br/>list of academy accounts"]
+    home --> courts["Courts<br/>venue list with photos<br/>pick venue, branch, time"]
+    home --> myb["My Bookings and Enquiries<br/>details and status"]
+
+    %% ---- Coach profile ----
+    coachList -->|tap a coach| coachProf["Coach profile<br/>About · Portfolio · Packages · Reviews<br/>photos, bio, experience, certifications"]
+    coachProf -->|tap a package| coachPkg["Package detail<br/>single session or bundle"]
+    coachPkg --> pickTime["Pick date and time"]
+    pickTime --> venueQ{"Coach has a<br/>listed venue?"}
+    venueQ -->|Yes| trainVenue["Train at the listed venue"]
+    venueQ -->|No| ownLoc["Use your own location<br/>or add an available court"]
+
+    %% ---- Gym profile ----
+    gymList -->|tap a gym| gymProf["Gym profile<br/>About · Portfolio · Plans · Reviews<br/>photos, facilities, hours, trainers"]
+    gymProf -->|tap a plan| gymPlan["Plan detail"]
+    gymPlan --> gymChoice{"What does the<br/>athlete want?"}
+    gymChoice -->|Buy membership| review
+    gymChoice -->|Free visit or question| gymEnq["Send enquiry"]
+
+    %% ---- Academy profile ----
+    acadList -->|tap an academy| acadProf["Academy profile<br/>About · Portfolio · Programs · Reviews<br/>coaches, age groups, results"]
+    acadProf -->|tap a program| acadProg["Program detail"]
+    acadProg --> acadChoice{"What does the<br/>athlete want?"}
+    acadChoice -->|Enrol| review
+    acadChoice -->|Free trial or question| acadEnq["Book trial or send enquiry"]
+
+    %% ---- Checkout ----
+    courts --> review
+    trainVenue --> review
+    ownLoc --> review
+    review["Review details and price<br/>coach + court shown together"] --> signIn{"Signed in?"}
+    signIn -->|No| login["Sign in or create account"] --> checkout
+    signIn -->|Yes| checkout["Checkout and confirmation<br/>one payment, split to each operator"]
+    checkout --> myb
+    gymEnq --> myb
+    acadEnq --> myb
+    myb --> manage["Cancel or reschedule"]
+    manage --> refundReq["Refund request"]
+
+    %% ================= OPERATOR SIDE =================
+    open -->|Operator link| opLink["For-business page"]
+    opLink --> opAccount["Sign in or create account"]
+    opAccount --> chooseRun["Choose what you run"]
+    chooseRun --> apply["Submit application"]
+    apply --> pending["Pending approval"]
+    pending --> adminReview
+
+    adminReview{"Admin reviews<br/>application"}
+    adminReview -->|Reject| rejected["Rejected · message sent"]
+    adminReview -->|Ask for changes| changes["Fix and resubmit"] --> pending
+    adminReview -->|Approve| setup
+
+    setup["First-time setup · Profile builder<br/>photos, bio, experience, portfolio<br/>packages / plans / programs, prices, hours"] --> live["Profile goes live"]
+    live --> coachHome["Coach Home<br/>sessions, attendance, schedule"]
+    live --> courtHome["Court Owner Home<br/>calendar, walk-ins, bookings"]
+    live --> gymHome["Gym Owner Home<br/>enquiries, members, plans"]
+    live --> acadHome["Academy Owner Home<br/>programs, trials, parent enquiries"]
+    coachHome & courtHome & gymHome & acadHome --> editProf["Edit profile and packages"]
+
+    %% ============ SPORT ADMIN (separate app, see sport-admin-flow.mmd) ============
+    adminApp(["SPORT Admin app<br/>separate staff app"]) --> adminReview
+    refundReq --> adminApp
+
+    %% ============ HOW THE TWO SIDES CONNECT ============
+    live -.->|shows up in| coachList
+    live -.->|shows up in| gymList
+    live -.->|shows up in| acadList
+    checkout -.->|coach session| coachHome
+    checkout -.->|court slot| courtHome
+    checkout -.->|membership| gymHome
+    checkout -.->|enrolment| acadHome
+    gymEnq -.-> gymHome
+    acadEnq -.-> acadHome
+
+    %% ================= STYLE =================
+    classDef athlete fill:#0b2a4a,stroke:#3b82f6,color:#dbeafe
+    classDef operator fill:#2a1b4a,stroke:#a78bfa,color:#ede9fe
+    classDef admin fill:#3a2a0b,stroke:#f59e0b,color:#fef3c7
+    classDef decision fill:#111827,stroke:#9ca3af,color:#f9fafb
+    class open,home,coachList,gymList,acadList,courts,myb,coachProf,coachPkg,pickTime,trainVenue,ownLoc,gymProf,gymPlan,gymEnq,acadProf,acadProg,acadEnq,review,login,checkout,manage,refundReq athlete
+    class opLink,opAccount,chooseRun,apply,pending,rejected,changes,setup,live,coachHome,courtHome,gymHome,acadHome,editProf operator
+    class adminApp admin
+    class venueQ,gymChoice,acadChoice,signIn,adminReview decision

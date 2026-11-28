@@ -1,0 +1,5 @@
+@import 'tailwindcss';
+@import '@sport/ui/styles.css';
+
+/* Tailwind must see the class names used inside the shared UI package. */
+@source '../../../packages/ui/src';

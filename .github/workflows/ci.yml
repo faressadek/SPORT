@@ -22,7 +22,7 @@ jobs:
       - run: npm ci
       - run: sudo apt-get install -y postgresql-client
       # Every API test runs against the in-memory store and against PostgreSQL.
-      - run: npm test
+      - run: npm run test:legacy
   ui:
     runs-on: ubuntu-latest
     services:
@@ -54,3 +54,33 @@ jobs:
           node apps/api/src/server.mjs &
           for i in $(seq 1 20); do curl -sf http://127.0.0.1:3000/api/health && break; sleep 1; done
           python tests/ui/live_e2e.py . http://127.0.0.1:3000
+  workspace:
+    # SPORT build kit: pnpm + Turborepo apps and packages (SPEC.md §7.3).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm exec turbo run test
+      - name: Build SPORT with the UI kit page
+        run: pnpm --filter @sport/web build
+        env:
+          ENABLE_DEV_UI: 'true'
+      - name: UI kit and shells in a browser (axe, 390px and 1280px, light, dark, RTL)
+        run: |
+          pnpm --filter @sport/ui exec playwright install --with-deps chromium
+          ENABLE_DEV_UI=true pnpm --filter @sport/web start &
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:3000/dev/ui > /dev/null && break; sleep 1; done
+          node packages/ui/scripts/check-pages.mjs http://127.0.0.1:3000 ui-shots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-shots
+          path: ui-shots
+          retention-days: 14
