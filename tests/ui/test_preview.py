@@ -1,6 +1,6 @@
 """Playwright UI smoke tests for SPORT Athlete Preview (Courts, Coaches, Gyms, Academies, RTL)."""
 from pathlib import Path
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
 HTML_URI = (Path(__file__).resolve().parents[2] / "apps" / "athlete-preview" / "index.html").as_uri()
 
@@ -59,3 +59,37 @@ def test_athlete_journeys_and_rtl():
 if __name__ == "__main__":
     test_athlete_journeys_and_rtl()
     print("All UI checks passed.")
+
+
+PROVIDER_ADMIN = (Path(__file__).resolve().parents[2] / "apps" / "provider-admin" / "index.html").as_uri()
+
+
+def test_operator_entry_and_workspace_pages():
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page(viewport={"width": 390, "height": 844})
+        # One entry at the bottom of athlete home leads to the provider app's role picker
+        page.goto(HTML_URI)
+        assert page.locator("#home").is_visible()
+        page.click("#operator-link")
+        assert "/apps/provider/index.html" in page.url and page.url.endswith("#/join")
+        for role in ["coach", "venue", "gym", "academy"]:
+            expect(page.locator("#role-" + role)).to_be_visible()
+        # Old operator links still land in the provider app
+        page.goto(PROVIDER_ADMIN.replace("index.html", "operators.html") + "?workspace=gym")
+        page.wait_for_url("**/apps/provider/index.html#/gym")
+        page.click("#athlete-link")
+        assert page.locator("#home").is_visible()
+        # The admin portal's single-role views (from the earlier operator entry) still work
+        for role, landing, detail in [
+            ("coach", "Session roster", "Training availability"),
+            ("venue", "Court bookings", "Opening hours & closures"),
+            ("academy", "Family enquiries", "Academy programs"),
+            ("gym", "Membership enquiries", "Gym listings"),
+        ]:
+            page.goto(PROVIDER_ADMIN + "?workspace=" + role)
+            assert page.locator(".grid section:visible h2").inner_text() == landing
+            page.get_by_role("link", name=detail, exact=True).click()
+            expect(page.locator(".grid section:visible h2")).to_have_text(detail)
+            assert not page.locator("#token-select").is_visible()
+        browser.close()

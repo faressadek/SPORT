@@ -54,6 +54,9 @@ Open: the provider app is English only; real sign-up and sign-in with roles and 
 - **Reference patterns kept:** MultiSport Booking System (prices visible on cards), BookingCalendar (date, then times), Motion Primitives (sliding selection indicator, now an underline) and Vaul (bottom sheet on phone). The new type and colour direction came from the frontend-design plugin, not from a cloned repo. The cloned repos were not available in this session.
 - **Tests:** `npm test` 68/68, `tests/ui/test_preview.py` passed, `tests/ui/smoke.py` (phone and desktop, English and Arabic) has no JS errors and no sideways scroll, `tests/ui/live_e2e.py` 22/22. No selectors changed.
 
+## 28 Nov 2026 · Operator entry
+
+Browser coverage in `test_operator_entry_and_workspace_pages` opens the athlete home on mobile, chooses each operator, checks both pages and reload, and returns to the athlete app. Results are recorded by the PR’s UI job.
 
 ## 28 Nov 2026 · Claude · Provider schedules (opening hours and closures)
 
@@ -232,3 +235,7 @@ The bundle added an API, a PostgreSQL schema, a provider/admin portal, Gyms and 
 ## 2026-11-28 — Listing ownership always re-synced at startup (Claude)
 - Security review: once a provider edited a listing, the startup sync skipped the whole row, including `owner_user_id`. A catalog ownership change would not reach the database. Now owner, kind, name, sport and area always follow the catalog; only price, billing and details are kept after an edit.
 - PRV-07 extended (fails without the fix). `npm test` with PostgreSQL: 82/82.
+
+## 2026-11-28 — Merge of ChatGPT operator entry (Claude)
+- Two operator entries existed. Kept the provider app link; `operators.html` redirects old links (with `?workspace=` → that role). `test_operator_entry_and_workspace_pages` updated to the single entry and still covers the admin portal's `?workspace=` views.
+- `npm test` (PostgreSQL) 82/82, `tests/ui/test_preview.py` 2/2, `tests/ui/live_e2e.py` 31/31.

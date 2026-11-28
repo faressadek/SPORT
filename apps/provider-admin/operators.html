@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Operator workspaces · SPORT</title>
+<p>Opening the provider workspaces… <a id="go" href="../provider/index.html#/join">Continue</a></p>
+<script>
+// The operator entry now lives in the provider app (apps/provider). Keep old links working.
+const to = new URL('../provider/index.html', location.href);
+to.search = location.search; to.searchParams.delete('workspace');
+const role = { coach: 'coach', venue: 'venue', academy: 'academy', gym: 'gym' }[new URLSearchParams(location.search).get('workspace')];
+to.hash = role ? '#/' + role : '#/join';
+document.getElementById('go').href = to; location.replace(to);
+</script></html>
