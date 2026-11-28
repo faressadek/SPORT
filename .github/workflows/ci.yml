@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - run: sudo apt-get install -y postgresql-client
       # Every API test runs against the in-memory store and against PostgreSQL.
       - run: pnpm run test:prototype
@@ -40,7 +40,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'

@@ -17,11 +17,15 @@ This file is shared by ChatGPT/Codex, Gemini and Claude. Keep project rules here
 - UI work starts from the cloned reference repos listed in `docs/handoff.md`. Name the repo and pattern you borrowed and say why it fits. Don't add decoration for its own sake.
 - All data is sample data. Never present the preview as taking real bookings or payments.
 
+## Next.js implementation
+
+Follow `SPEC.md` for workspace ownership and the wave dependencies. `tasks/codex.md` and `tasks/claude-code.md` contain the task acceptance criteria. Review `CONTRACT-REQUESTS.md` at the start of each task. Keep the existing prototype runnable while the Next.js apps are built.
+
 ## Repo layout
 - `apps/athlete-preview/index.html`: athlete app. No build step. Runs offline or against the API with `?api=http://127.0.0.1:3000`.
 - `apps/provider-admin/index.html`: provider/admin portal.
 - `apps/api/src/`: booking API. `pg-store.mjs` (PostgreSQL, used when `DATABASE_URL` is set) and `memory-store.mjs` implement one interface. Put booking rules in `rules.mjs` and sample data in `catalog.mjs`, never in one store only. `db/schema.sql`: PostgreSQL schema.
-- Tests: `npm test` (every API test runs on both stores when `DATABASE_URL` is set), `python -m pytest tests/ui/test_preview.py`, `python tests/ui/smoke.py apps/athlete-preview/index.html shots`, `python tests/ui/live_e2e.py . http://127.0.0.1:3000`.
+- Tests: `pnpm typecheck`, `pnpm lint`, and `pnpm test` (prototype API tests run on both stores when `DATABASE_URL` is set), `python -m pytest tests/ui/test_preview.py`, `python tests/ui/smoke.py apps/athlete-preview/index.html shots`, `python tests/ui/live_e2e.py . http://127.0.0.1:3000`.
 - `docs/`: handoff, decisions, verification log. Tool guides: `docs/codex-toolkit.md` (Codex), `docs/claude-toolkit.md` (Claude Code; plugins are listed in `.claude/settings.json`).
 
 ## Booking-engine rules the code must keep

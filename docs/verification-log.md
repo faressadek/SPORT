@@ -3,7 +3,7 @@
 ## 28 Nov 2026 - ChatGPT - CX0 workspace scaffold
 
 - Added the pnpm/Turborepo workspace and starter Next.js apps on ports 3000 and 3001.
-- The workspace CI job runs the typecheck, lint, tests, build and HTTP checks for both dev servers. The existing prototype jobs retain their API, PostgreSQL and browser checks.
+- GitHub Actions run 46159484862 passed typecheck, lint, tests, production builds and HTTP checks for both dev servers. The generated pnpm lockfile is committed and subsequent installs run frozen. Local package installation was blocked by npm registry DNS resolution.
 
 
 ## 28 Nov 2026 · Claude · Provider app: a mini app for each role (`apps/provider/index.html`)
