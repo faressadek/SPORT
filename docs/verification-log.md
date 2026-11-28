@@ -258,3 +258,9 @@ The bundle added an API, a PostgreSQL schema, a provider/admin portal, Gyms and 
 
 - Resolved the CC1 merge against the merged CX0 scaffold and verified frozen install, type checking, linting, and both production builds.
 - Passed 82 API and database tests, 69 UI unit tests, and 19 browser accessibility scenarios.
+
+## 2026-11-28 — Clean-up after the Codex audit of main at 11983d9 (Claude)
+- Fixed in Claude-owned folders: removed the `@sport/ui/tokens` export that pointed at a missing file; one stylesheet (`packages/ui/src/styles/globals.css`, the file `components.json` names) instead of two; `apps/web` and `packages/ui` now use the root TypeScript 5.9.3 and the root ESLint config (removed `packages/eslint-config`).
+- The stricter root ESLint (React compiler rules) found two refs read during render (`PhotoGallery`, `FileUploader`); both fixed.
+- CI: one workspace job (`workspace.yml`) now runs typecheck, lint, tests, build, the two-app start check and the UI browser check. The duplicate job in `ci.yml` is gone. README: preview tests are `npm run test:legacy`.
+- Local: `pnpm install --frozen-lockfile`, `pnpm typecheck`, `pnpm lint` pass; `pnpm test` 38/38 + 69/69; `pnpm build` (both apps) passes; `check-pages.mjs` 19 scenarios, 0 axe violations, no overflow, no small targets; gallery keys (LTR and RTL) and walk-in dialog still work.

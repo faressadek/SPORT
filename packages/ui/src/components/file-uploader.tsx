@@ -37,6 +37,8 @@ export interface FileUploaderProps {
 }
 
 let seq = 0;
+/** Items added in this session keep their File, so only they can be retried. */
+const LOCAL_PREFIX = 'up-';
 
 export function FileUploader({
   label,
@@ -105,7 +107,7 @@ export function FileUploader({
         continue;
       }
       const kind = file.type.startsWith('video/') ? 'video' : 'photo';
-      const id = `up-${++seq}`;
+      const id = `${LOCAL_PREFIX}${++seq}`;
       files.current.set(id, file);
       accepted.push({
         id,
@@ -246,7 +248,7 @@ export function FileUploader({
                             : formatFileSize(it.size)}
                   </p>
                 </div>
-                {it.status === 'error' && files.current.has(it.id) ? (
+                {it.status === 'error' && it.id.startsWith(LOCAL_PREFIX) ? (
                   <button
                     type="button"
                     aria-label={`Retry ${it.name}`}

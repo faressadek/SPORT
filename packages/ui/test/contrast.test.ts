@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-/** Reads the token blocks out of styles.css so the test checks what ships. */
-const css = readFileSync(resolve(__dirname, '../src/styles.css'), 'utf8');
+/** Reads the token blocks out of styles/globals.css so the test checks what ships. */
+const css = readFileSync(resolve(__dirname, '../src/styles/globals.css'), 'utf8');
 
 function block(selector: string): Record<string, string> {
   const start = css.indexOf(selector);

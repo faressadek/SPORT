@@ -39,7 +39,9 @@ function Slider({
   const slides = useRef<(HTMLDivElement | null)[]>([]);
   const fromScroll = useRef(false);
   const current = useRef(index);
-  current.current = index;
+  useEffect(() => {
+    current.current = index;
+  }, [index]);
 
   // Keep `index` in sync with what the user swiped to.
   useEffect(() => {

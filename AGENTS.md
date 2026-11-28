@@ -26,7 +26,7 @@ This file is shared by ChatGPT/Codex, Gemini and Claude. Keep project rules here
 
 ## New stack: the SPORT build kit (owner decision, 2026-11-28)
 The production apps are being built from `SPEC.md` (product, data model, contract, waves) alongside the preview apps above, which stay until the new apps replace them.
-- Turborepo + pnpm workspace: `apps/web` (SPORT, Next.js), `apps/admin` (SPORT Admin), `packages/ui`, `packages/shared`, `packages/db`, `packages/core`, `packages/eslint-config`.
+- Turborepo + pnpm workspace: `apps/web` (SPORT, Next.js), `apps/admin` (SPORT Admin), `packages/ui`, `packages/shared`, `packages/db`, `packages/core`. One ESLint config at the root (`eslint.config.mjs`).
 - Ownership (SPEC §3, §7.3): Claude Code owns `packages/ui`, `apps/web/app/(athlete)`, `apps/web/app/(operator)`, `apps/web/mocks`, `docs/DESIGN.md`. Codex owns `packages/db`, `packages/shared`, `packages/core`, `apps/web/app/(auth)`, `apps/web/app/api`, `apps/web/lib/data`, `apps/admin`, `e2e/`. Ask for anything outside your folders in `CONTRACT-REQUESTS.md`.
 - Tasks: `tasks/claude-code.md`, `tasks/codex.md`. Per-tool rules from the kit: `docs/agents-claude-code.md`, `docs/agents-codex.md`.
 - UI follows `docs/DESIGN.md`. Check UI with `node packages/ui/scripts/check-pages.mjs <base-url> <out-dir>` (axe, 390px and 1280px, light, dark, RTL).

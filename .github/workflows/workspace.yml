@@ -13,14 +13,37 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm lint
+      - run: pnpm exec turbo run test
+      # ENABLE_DEV_UI serves /dev/ui in the production build for the browser check below.
       - run: pnpm build
+        env:
+          ENABLE_DEV_UI: "true"
       - name: Start both apps
         shell: bash
         run: |
-          pnpm dev > "$RUNNER_TEMP/sport-dev.log" 2>&1 &
+          # Own process group, so the cleanup also stops the Next.js servers
+          # turbo starts; otherwise they keep ports 3000 and 3001 for later steps.
+          setsid pnpm dev > "$RUNNER_TEMP/sport-dev.log" 2>&1 &
           dev_pid=$!
-          trap 'kill "$dev_pid" 2>/dev/null || true; cat "$RUNNER_TEMP/sport-dev.log"' EXIT
+          trap 'kill -- -"$dev_pid" 2>/dev/null || true; cat "$RUNNER_TEMP/sport-dev.log"' EXIT
           curl --fail --silent --show-error --retry 20 --retry-all-errors --retry-delay 2 http://127.0.0.1:3000/ -o "$RUNNER_TEMP/sport-web.html"
           curl --fail --silent --show-error --retry 20 --retry-all-errors --retry-delay 2 http://127.0.0.1:3001/ -o "$RUNNER_TEMP/sport-admin.html"
           grep -q '<title>SPORT</title>' "$RUNNER_TEMP/sport-web.html"
           grep -q '<title>SPORT Admin</title>' "$RUNNER_TEMP/sport-admin.html"
+      - name: UI kit and shells in a browser (axe, 390px and 1280px, light, dark, RTL)
+        shell: bash
+        run: |
+          pnpm --filter @sport/ui exec playwright install --with-deps chromium
+          ENABLE_DEV_UI=true setsid pnpm --filter @sport/web start > "$RUNNER_TEMP/sport-start.log" 2>&1 &
+          start_pid=$!
+          trap 'kill -- -"$start_pid" 2>/dev/null || true' EXIT
+          curl --fail --silent --retry 20 --retry-all-errors --retry-delay 2 http://127.0.0.1:3000/dev/ui -o /dev/null
+          # Fail if another server answered instead of this production build.
+          kill -0 "$start_pid" || { cat "$RUNNER_TEMP/sport-start.log"; exit 1; }
+          node packages/ui/scripts/check-pages.mjs http://127.0.0.1:3000 ui-shots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-shots
+          path: ui-shots
+          retention-days: 14

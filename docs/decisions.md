@@ -39,3 +39,4 @@ Newest first. Only the owner makes decisions. Agents record them here.
 - 2026-11-28 · Codex: scaffolded the SPORT and SPORT Admin monorepo and initialized the local Supabase project. Open: CX0 merge and CX1 schema and data contract.
 
 - 2026-11-28 · Codex: reconciled CC1 with the merged CX0 scaffold and verified both apps. Open: CX1 schema and data contract.
+- 2026-11-28 · Claude: acted on the Codex audit of `main`: one UI stylesheet, root TypeScript and ESLint for web and UI, removed the broken `tokens` export, one workspace CI job, README test commands. Open: CX1.
