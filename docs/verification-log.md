@@ -264,3 +264,9 @@ The bundle added an API, a PostgreSQL schema, a provider/admin portal, Gyms and 
 - The stricter root ESLint (React compiler rules) found two refs read during render (`PhotoGallery`, `FileUploader`); both fixed.
 - CI: one workspace job (`workspace.yml`) now runs typecheck, lint, tests, build, the two-app start check and the UI browser check. The duplicate job in `ci.yml` is gone. README: preview tests are `npm run test:legacy`.
 - Local: `pnpm install --frozen-lockfile`, `pnpm typecheck`, `pnpm lint` pass; `pnpm test` 38/38 + 69/69; `pnpm build` (both apps) passes; `check-pages.mjs` 19 scenarios, 0 axe violations, no overflow, no small targets; gallery keys (LTR and RTL) and walk-in dialog still work.
+
+## 2026-11-28 · Codex · CX1 Supabase schema and data contract
+
+- Local Supabase PostgreSQL 17 reset and seed passed. The 19 pgTAP assertions cover table RLS, catalog visibility, private review identifiers, athlete and operator booking isolation, staff MFA and permissions, and refund integrity.
+- Generated the public-schema TypeScript types from the reset database. Exported all 24 SPEC §6 data signatures and their shared Zod schemas.
+- Type checking and linting passed. The repository test run passed 82 API and schema checks against both preview stores and 69 UI unit tests.

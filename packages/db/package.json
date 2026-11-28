@@ -5,5 +5,11 @@
   "type": "module",
   "devDependencies": {
     "supabase": "3.4.0"
+  },
+  "exports": {
+    ".": "./src/database.types.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
   }
 }

@@ -40,3 +40,5 @@ Newest first. Only the owner makes decisions. Agents record them here.
 
 - 2026-11-28 · Codex: reconciled CC1 with the merged CX0 scaffold and verified both apps. Open: CX1 schema and data contract.
 - 2026-11-28 · Claude: acted on the Codex audit of `main`: one UI stylesheet, root TypeScript and ESLint for web and UI, removed the broken `tokens` export, one workspace CI job, README test commands. Open: CX1.
+
+- 2026-11-28 · Codex: implemented CX1 Supabase migrations, seed, RLS tests, generated types, and the typed data contract. Open: CX1 merge before dependent work.
