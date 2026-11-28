@@ -11,6 +11,7 @@ export function createMemoryStore() {
   const enquiries = [];
   const outbox = [];
   const schedules = new Map(); // target -> weekly
+  const prices = new Map(); // price target -> EGP
   const closures = [];
   const listings = new Map(SEED_LISTINGS.map(l => [l.id, { ...structuredClone(l), published: true }]));
 
@@ -33,11 +34,24 @@ export function createMemoryStore() {
     async createHold(hold, athleteId) {
       sweep();
       if (taken(hold.resourceIds, hold.day, hold.hour)) throw new HttpError(409, 'One or more selected resources are no longer available at this time.');
-      const booking = { id: newId('BKG', crypto), athleteId, status: 'HOLD', active: true, ...hold,
+      const booking = { id: newId('BKG', crypto), athleteId, status: 'HOLD', active: true, source: 'athlete', note: null, checkedInAt: null, ...hold,
         holdExpiresAt: Date.now() + HOLD_TTL_MS, createdAt: new Date().toISOString(), confirmedAt: null };
       bookings.set(booking.id, booking);
       return copy(booking);
     },
+    // Walk-ins and blocks recorded by a provider: confirmed at once, same overlap rule as athlete bookings.
+    async createProviderBooking(hold, userId, { source, note }) {
+      sweep();
+      if (taken(hold.resourceIds, hold.day, hold.hour)) throw new HttpError(409, 'One or more selected resources are no longer available at this time.');
+      const now = new Date().toISOString();
+      const booking = { id: newId('BKG', crypto), athleteId: userId, status: 'CONFIRMED', active: true, ...hold, source, note,
+        checkedInAt: null, holdExpiresAt: null, createdAt: now, confirmedAt: now };
+      bookings.set(booking.id, booking);
+      return copy(booking);
+    },
+    async checkIn(id) { const b = bookings.get(id); if (!b.checkedInAt) b.checkedInAt = new Date().toISOString(); return copy(b); },
+    async getPrices() { return new Map(prices); },
+    async setPrice(target, price) { if (price === null) prices.delete(target); else prices.set(target, price); },
     async getBooking(id) { sweep(); return copy(bookings.get(id)); },
     async listBookings({ athleteId, activeOnly } = {}) {
       sweep();
@@ -92,13 +106,15 @@ export function createMemoryStore() {
       const i = closures.findIndex(c => c.id === id); return i < 0 ? null : closures.splice(i, 1)[0];
     },
 
+    async updateListing(id, fields) { const l = listings.get(id); Object.assign(l, structuredClone(fields)); return structuredClone(l); },
+    async updateEnquiry(id, fields) { const e = enquiries.find(x => x.id === id); if (!e) return null; Object.assign(e, fields); return { ...e }; },
     async listListings() { return [...listings.values()].map(l => structuredClone(l)); },
     async getListing(id) { const l = listings.get(id); return l ? structuredClone(l) : null; },
     async setListingPublished(id, published) {
       const l = listings.get(id); if (!l) return null; l.published = published; return structuredClone(l);
     },
 
-    async addEnquiry(e) { const row = { id: newId('ENQ', crypto), status: 'NEW', createdAt: new Date().toISOString(), ...e }; enquiries.push(row); return { ...row }; },
+    async addEnquiry(e) { const row = { id: newId('ENQ', crypto), status: 'NEW', trialDate: null, providerNote: null, createdAt: new Date().toISOString(), ...e }; enquiries.push(row); return { ...row }; },
     async listEnquiries(user) {
       return user.role === 'admin' ? enquiries.map(e => ({ ...e })) : enquiries.filter(e => listings.get(e.targetId)?.ownerId === user.id).map(e => ({ ...e }));
     },

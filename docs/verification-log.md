@@ -1,5 +1,50 @@
 # SPORT verification log
 
+## 28 Nov 2026 · Claude · Provider app: a mini app for each role (`apps/provider/index.html`)
+
+- **Entry:** athlete home ends with "Are you a coach, venue, gym or academy? Open your workspace", which leads to the role picker. The choice is remembered. Sample accounts stand in until real sign-in exists.
+- **Coach** (coach-omar):
+  - Today's sessions: who, where, Mark attended, Add private session
+  - Schedule: weekly hours and closures
+  - Prices
+  - Bookings for the next 7 days
+- **Venue** (venue-coastal):
+  - Today's courts: branch × sport × day grid. Tap a free slot to add a walk-in (charged at the server price) or a block (0 EGP). Tap a booked slot to check in, or to remove a walk-in or block.
+  - Hours & closures for the whole club
+  - Prices per sport
+- **Gym** (gym-apex):
+  - Enquiries pipeline: New → Contacted → Visit booked (date) → Joined / Closed
+  - Plans & prices
+  - Facilities & hours
+- **Academy** (academy-alex-youth):
+  - Programs: ages, levels, schedule, price, billing, coaches, description
+  - Trials: booked trials, then Enrolled or Close
+  - Enquiries pipeline
+- **New API routes:**
+  - `GET /api/provider/me`
+  - `GET /api/provider/calendar`
+  - `POST /api/provider/blocks`
+  - `POST /api/provider/bookings/:id/checkin|cancel`
+  - `PUT /api/provider/prices`
+  - `PATCH /api/provider/enquiries/:id`
+  - `PATCH /api/provider/listings/:id`
+- **Rules:**
+  - Owners act only on their own coach, club or listing.
+  - Walk-ins use the same overlap guard as athlete bookings.
+  - Providers can't cancel a paid athlete booking (refunds go through support).
+  - Provider prices are what athletes are charged.
+  - Listing edits survive restarts: the startup sync skips edited listings.
+- **Database:** new columns `bookings.source/note/checked_in_at`, `enquiries.trial_date/provider_note` and the `TRIAL` status, `directory_listings.edited_at`. New table `resource_prices`. Added on startup for older databases.
+
+| Check | Result |
+|---|---|
+| `npm test` with PostgreSQL (new `tests/api/provider.test.mjs`, 7 cases × 2 stores) | **82 / 82** |
+| `tests/ui/live_e2e.py` (new: athlete home → role picker, each role lands on its page, venue walk-in → athlete hold refused 409, gym moves an enquiry, no JS errors) | **31 / 31** |
+| Screenshots of each workspace at 390×844 | reviewed. Found and fixed a builder bug that dropped text, before this run. |
+
+Open: the provider app is English only; real sign-up and sign-in with roles and admin approval; one person with several roles (switcher); notifications.
+
+
 ## 28 Nov 2026 · Claude · Pitch-side redesign of the athlete app (owner chose "Pitch-side")
 
 - **Type:** Big Shoulders Display (stadium signage) for headlines, times and prices. Barlow for reading. Noto Kufi Arabic in Arabic. Fonts load from Google Fonts, with system fallbacks offline.

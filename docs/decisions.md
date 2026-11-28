@@ -18,6 +18,7 @@ Newest first. Only the owner makes decisions. Agents record them here.
 - Cancellation window, fees and refund rules before live checkout.
 
 ## Activity
+- 2026-11-28 · Claude: provider app with a mini app per role (coach, venue, gym, academy) and the API behind it. The first demo (venue walk-in blocks the athlete) passes. Open: Arabic for the provider app, real sign-in.
 - 2026-11-28 · Claude: wrote `docs/architecture.md` (target architecture, entry flow, workspace per role, build order).
 - 2026-11-28 · Claude: Pitch-side redesign of the athlete app. Open: portal not restyled beyond colours; review on a real phone.
 - 2026-11-28 · Claude: provider schedules (weekly hours, closures) in API, PostgreSQL, portal and athlete app. Open: athlete notifications for closures, real sign-in, Paymob sandbox.

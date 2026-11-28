@@ -86,6 +86,8 @@ input[type=search]{background:var(--surface);border:1px solid var(--line);border
 #local-picks a :is(strong,small){display:block;margin:6px 12px 0}
 #local-picks small{color:var(--muted)}
 #local-picks .field{height:96px;border-radius:0}
+.operator{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:28px;padding:16px 18px;border-radius:14px;border:1px solid var(--pitch);color:var(--ink);text-decoration:none}
+.operator b{background:var(--pitch);color:var(--chalk);padding:8px 14px;border-radius:8px;font-weight:600}
 
 /* Page headings */
 .intro{padding:22px 0 8px}
@@ -289,6 +291,7 @@ dialog h2{font-size:2.2rem;margin-bottom:8px}
     </div>
     <h2 data-i18n="featured_courts">Featured courts & pitches in Alexandria</h2>
     <div id="local-picks"></div>
+    <a class="operator" id="operator-link" href="../provider/index.html#/join"><span data-i18n="operator_q">Are you a coach, venue, gym or academy?</span> <b data-i18n="operator_cta">Open your workspace</b></a>
   </section>
 
   <div class="intro">
@@ -520,7 +523,7 @@ let lang = localStorage.getItem('sport.lang') || 'en';
 const I18N = {
   en: {
     nav_courts:'Courts', nav_coaches:'Coaches', nav_gyms:'Gyms', nav_academies:'Academies',
-    my_bookings:'My bookings', city_alex:'Alexandria', welcome_user:'Welcome back, Marwan', hero_title:'Play tonight in Alexandria.', next_free:'Next free football pitches',
+    my_bookings:'My bookings', city_alex:'Alexandria', welcome_user:'Welcome back, Marwan', hero_title:'Play tonight in Alexandria.', operator_q:'Are you a coach, venue, gym or academy?', operator_cta:'Open your workspace', next_free:'Next free football pitches',
     search_home_ph:'Search a venue, gym, academy, or neighborhood', btn_search:'Search',
     act_court_t:'Book a court', act_court_d:'Padel, football, tennis & more',
     act_coach_t:'Find a coach', act_coach_d:'Private or group training sessions',
@@ -558,7 +561,7 @@ const I18N = {
   },
   ar: {
     nav_courts:'الملاعب', nav_coaches:'المدربون', nav_gyms:'الجيم', nav_academies:'الأكاديميات',
-    my_bookings:'حجوزاتي', city_alex:'الإسكندرية', welcome_user:'أهلاً بعودتك يا مروان', hero_title:'العب الليلة في الإسكندرية.', next_free:'أقرب ملاعب كرة قدم متاحة',
+    my_bookings:'حجوزاتي', city_alex:'الإسكندرية', welcome_user:'أهلاً بعودتك يا مروان', hero_title:'العب الليلة في الإسكندرية.', operator_q:'هل أنت مدرب أو صاحب ملعب أو جيم أو أكاديمية؟', operator_cta:'افتح مساحة عملك', next_free:'أقرب ملاعب كرة قدم متاحة',
     search_home_ph:'ابحث عن ملعب، جيم، أكاديمية، أو منطقة', btn_search:'بحث',
     act_court_t:'احجز ملعب', act_court_d:'بادل، كرة قدم، تنس والمزيد',
     act_coach_t:'ابحث عن مدرب', act_coach_d:'حصص تدريب فردية أو جماعية',
@@ -1139,6 +1142,7 @@ function renderNextSlots() {
   }));
 }
 window.addEventListener('hashchange', () => { window.scrollTo(0, 0); route(); });
+$('operator-link').href = '../provider/index.html' + location.search + '#/join';
 applyLanguage(); route(); renderNextSlots(); ApiClient.probe();
 </script>
 </body>

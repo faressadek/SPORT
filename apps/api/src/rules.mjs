@@ -86,6 +86,56 @@ export function openHours(resource, day, schedules, closures) {
 export const bookingInClosure = (b, c) => cairoDate(b.day) === c.day && (c.hours === null || c.hours.includes(b.hour))
   && b.resourceIds.some(id => targetsFor(id).includes(c.target));
 
+// ---- Provider workspaces ------------------------------------------------------------------------
+// Price overrides: a coach (its id) or one sport at one club ("club:<id>:<sport>"); the club's branch steps still apply.
+export const priceTarget = r => (r.kind === 'coach' ? r.id : `club:${clubOf(r.id)}:${r.sport}`);
+export function priceOf(r, prices) {
+  const base = prices.get(priceTarget(r));
+  if (base === undefined) return r.price;
+  return r.kind === 'coach' ? base : base + Number(String(r.id).split('/')[2]) * 25;
+}
+export function validatePrice(price) {
+  if (price === null) return null;
+  if (!Number.isInteger(price) || price < 50 || price > 20000) throw new HttpError(400, 'Price must be a whole number of EGP from 50 to 20,000');
+  return price;
+}
+
+export const ENQUIRY_STATUSES = ['NEW', 'CONTACTED', 'TRIAL', 'ENROLLED', 'CLOSED'];
+export function validateEnquiryUpdate(body) {
+  const out = {};
+  if (body.status !== undefined) {
+    if (!ENQUIRY_STATUSES.includes(body.status)) throw new HttpError(400, 'Unknown enquiry status');
+    out.status = body.status;
+  }
+  if (body.trialDate !== undefined) {
+    if (body.trialDate !== null && (!/^\d{4}-\d{2}-\d{2}$/.test(String(body.trialDate)) || Number.isNaN(Date.parse(body.trialDate)))) throw new HttpError(400, 'trialDate must be a date like 2026-12-05');
+    out.trialDate = body.trialDate;
+  }
+  if (body.note !== undefined) out.providerNote = String(body.note).slice(0, 300);
+  if (!Object.keys(out).length) throw new HttpError(400, 'Nothing to update');
+  return out;
+}
+
+// Fields a gym or academy may edit on its own listing.
+const text = (v, max, what) => { if (typeof v !== 'string' || !v.trim()) throw new HttpError(400, `${what} is required`); return v.trim().slice(0, max); };
+const list = (v, maxItems, what) => {
+  if (!Array.isArray(v) || !v.length || v.length > maxItems || !v.every(x => typeof x === 'string' && x.trim())) throw new HttpError(400, `${what} must be a list of 1 to ${maxItems} items`);
+  return v.map(x => x.trim().slice(0, 40));
+};
+const egp = (v, what) => { if (!Number.isInteger(v) || v < 50 || v > 200000) throw new HttpError(400, `${what} must be a whole number of EGP`); return v; };
+export function validateListingEdit(kind, body) {
+  const out = {};
+  const fields = kind === 'gym'
+    ? { plans: v => { if (!v || typeof v !== 'object') throw new HttpError(400, 'plans must have Monthly, Quarterly and Annual');
+          return { Monthly: egp(v.Monthly, 'Monthly price'), Quarterly: egp(v.Quarterly, 'Quarterly price'), Annual: egp(v.Annual, 'Annual price') }; },
+        facilities: v => list(v, 10, 'Facilities'), hours: v => text(v, 40, 'Opening hours'), trial: v => text(v, 80, 'Trial offer'), note: v => text(v, 200, 'Description') }
+    : { ages: v => list(v, 6, 'Age groups'), levels: v => list(v, 5, 'Levels'), schedule: v => text(v, 120, 'Schedule'),
+        price: v => egp(v, 'Price'), billing: v => text(v, 60, 'Billing period'), coachLead: v => text(v, 100, 'Coaches'), summary: v => text(v, 240, 'Description') };
+  for (const [k, fn] of Object.entries(fields)) if (body[k] !== undefined) out[k] = fn(body[k]);
+  if (!Object.keys(out).length) throw new HttpError(400, 'Nothing to update');
+  return out;
+}
+
 // What a payment capture should do, given the booking's status after expired holds are swept.
 //   confirm → HOLD becomes CONFIRMED
 //   late    → EXPIRED hold: confirm only if every resource can be re-reserved, else refund

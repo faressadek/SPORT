@@ -80,11 +80,13 @@ All provider workspaces live in one provider portal. After sign-in, the role dec
 | Athlete app: Courts (clubs and branches), Coaches with court add-on, Gyms, Academies, Arabic | Built (Pitch-side design) |
 | Bookings, payments simulator, refunds, enquiries in PostgreSQL | Built and tested |
 | Provider hours and closures (coach or club) | Built |
-| Provider portal | One shared page for every role. Not yet a separate workspace per role. |
-| Operator entry ("Are you a coach or venue?") and role picker | **To build** |
-| Venue walk-in / block on the court calendar | **To build** (first demo) |
-| Coach Today roster and attendance | To build |
-| Gym enquiry pipeline, academy programs and trials | To build |
+| Operator entry and role picker (`apps/provider/index.html#/join`) | Built |
+| Coach app: Today's sessions with attendance, Schedule, Prices, Bookings | Built |
+| Venue app: Today's courts (walk-in, block, check-in), Hours & closures, Prices | Built. **First demo works** |
+| Gym app: Enquiries pipeline, Plans & prices, Facilities & hours | Built |
+| Academy app: Programs, Trials, Enquiries | Built |
+| Admin workspace (`apps/provider-admin`) | Basic: bookings, listings moderation, refunds |
+| Provider app in Arabic | To build |
 | Real sign-in and sign-up with roles, admin approval | To build (demo tokens today) |
 | Paymob sandbox, worker, notifications | To build |
 
