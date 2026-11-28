@@ -214,7 +214,7 @@ dialog h2{font-size:1.5rem;letter-spacing:-.04em;margin-bottom:8px}
   .top nav a{padding-inline:8px;font-size:.82rem}
   dialog{margin:auto 0 0;width:100%;max-width:none;border-radius:20px 20px 0 0;padding-bottom:max(22px,env(safe-area-inset-bottom))}
 }
-</style>
+.operator-entry{text-align:center;padding:24px 0}.operator-entry a{color:var(--brand);font-weight:700;text-underline-offset:4px}</style>
 </head>
 <body>
 <header class="shell top" data-page="courts">
@@ -255,6 +255,7 @@ dialog h2{font-size:1.5rem;letter-spacing:-.04em;margin-bottom:8px}
     </div>
     <h2 data-i18n="featured_courts">Featured courts & pitches in Alexandria</h2>
     <div id="local-picks"></div>
+    <p class="operator-entry"><a id="operator-entry" href="../provider-admin/operators.html">Are you an operator?</a></p>
   </section>
 
   <div class="intro">
@@ -566,6 +567,12 @@ const t = key => (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key;
 function applyLanguage() {
   const isAr = lang === 'ar';
   document.documentElement.lang = isAr ? 'ar' : 'en';
+  const operatorEntry = document.getElementById('operator-entry');
+  operatorEntry.textContent = isAr ? 'هل أنت مدرّب أو صاحب منشأة رياضية؟' : 'Are you an operator?';
+  const operatorUrl = new URL('../provider-admin/operators.html', location.href);
+  operatorUrl.search = location.search;
+  operatorUrl.searchParams.set('lang', isAr ? 'ar' : 'en');
+  operatorEntry.href = operatorUrl.href;
   document.documentElement.dir = isAr ? 'rtl' : 'ltr';
   $('lang-toggle').textContent = isAr ? 'EN' : 'عربي';
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
